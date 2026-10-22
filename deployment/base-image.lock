@@ -1,0 +1,44 @@
+# Base image digest pins for the ARM64 controller container cross-build.
+#
+# Status: Resolved 2026-10-21. Both digests below come from one
+# `docker buildx imagetools inspect` of
+# public.ecr.aws/docker/library/python:3.12-slim-bookworm, run on the x86_64
+# build host; the raw manifest is recorded alongside the build evidence. The
+# tag is mutable and has moved since the earlier controller build, so these
+# digests are not the earlier ones; each is immutable in itself.
+#
+# Two digests, because the build has two stages with different needs. The
+# builder runs on the build host's own architecture and the runtime is always
+# linux/arm64, so one digest cannot serve both: a single-architecture digest
+# refuses to run natively on a host of another architecture, which is the
+# `exec /bin/sh: exec format error` this split removes.
+#
+# BUILDER_IMAGE_DIGEST
+#   The multi-arch *index* digest. `--platform=$BUILDPLATFORM` resolves the
+#   build host's own native manifest out of the index, so the same recorded
+#   digest builds natively on x86_64 and on arm64 hosts alike. An index digest
+#   is as immutable as a manifest digest; what it pins is the whole set.
+#
+# RUNTIME_IMAGE_DIGEST
+#   The single `linux/arm64` *manifest* digest, not the index digest, so the
+#   shipped image cannot drift to another architecture.
+#
+# The operator records each as an uncommented `KEY=sha256:<64 hex>` line below,
+# after resolving both from the same tag:
+#
+#   docker buildx imagetools inspect \
+#     public.ecr.aws/docker/library/python:3.12-slim-bookworm \
+#     --format '{{json .Manifest}}'
+#
+# The top-level `digest` of that output is the index digest. The `linux/arm64`
+# entry of its `manifests` list carries the manifest digest. Verify that the
+# runtime entry's platform reads `linux/arm64` before recording it.
+#
+# deployment/Dockerfile declares both build arguments without a default, so it
+# refuses to build until both values are supplied and an unpinned image cannot
+# ship.
+#
+# The runtime entry's platform was verified to read
+# `os: linux, architecture: arm64, variant: v8` before being recorded.
+BUILDER_IMAGE_DIGEST=sha256:6a0e06f5ba0b373d051aabd3fffb9b873f27f9a2a3a14bcbe37dee6f0e3bbc70
+RUNTIME_IMAGE_DIGEST=sha256:c3729439afc4ec3f3e159e0c86aeabfadac8030ef46838a0256383d0511c5f5e

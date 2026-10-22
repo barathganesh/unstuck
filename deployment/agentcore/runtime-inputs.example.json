@@ -1,0 +1,45 @@
+{
+  "_comment": [
+    "Example AgentCore Runtime deployment inputs. Every value is a visibly",
+    "synthetic placeholder: the account is all zeroes, the image digest is a",
+    "repeated byte, and none of these resources exists. Copy this file, replace",
+    "the placeholders with your own identifiers, and keep it out of version",
+    "control. It holds resource identifiers and pinned non-secret versions",
+    "only; the contract refuses a value shaped like a credential.",
+    "network_mode has no default. VPC names its own subnets and security",
+    "groups. PUBLIC additionally needs owner_approved_public_egress, because",
+    "the installed service contract documents no semantics for it.",
+    "telemetry is optional. runtime_arn, runtime_id, agent_id and model_id are",
+    "deploy outputs rather than inputs, so they are absent here and the live",
+    "telemetry gate stays pending until a deployment has been observed."
+  ],
+  "agentcore": {
+    "runtime_name": "unstuck_controller",
+    "endpoint_name": "unstuck_private",
+    "image_uri": "000000000000.dkr.ecr.us-east-1.amazonaws.com/unstuck-controller@sha256:0000000000000000000000000000000000000000000000000000000000000000",
+    "network_mode": "VPC",
+    "server_protocol": "HTTP",
+    "vpc": {
+      "subnets": ["subnet-0000000000000000a", "subnet-0000000000000000b"],
+      "security_groups": ["sg-0000000000000000a"]
+    },
+    "owner_approved_public_egress": false,
+    "idle_session_timeout_seconds": 900,
+    "max_lifetime_seconds": 3600,
+    "tags": [
+      { "key": "auto-delete", "value": "no" },
+      { "key": "unstuck:unit", "value": "cloud-platform" }
+    ]
+  },
+  "telemetry": {
+    "region": "us-east-1",
+    "account_id": "000000000000",
+    "partition": "aws",
+    "log_group": "/aws/unstuck/controller",
+    "log_stream": "controller-example",
+    "service_name": "unstuck-controller",
+    "classification": "synthetic",
+    "observability_enabled": true,
+    "unified_telemetry": true
+  }
+}

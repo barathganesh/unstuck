@@ -1,0 +1,25 @@
+{
+  "config": {
+    "region": "us-east-1",
+    "account_id": "000000000000",
+    "run_table_name": "unstuck-example-runs",
+    "receipt_table_name": "unstuck-example-receipts",
+    "artifact_bucket": "unstuck-example-artifacts",
+    "controller_runtime_arn": "arn:aws:bedrock-agentcore:us-east-1:000000000000:runtime/unstuck-example",
+    "decider_api_id": "example0api",
+    "decider_vpc_endpoint_id": "vpce-0000000000000000a",
+    "dataset_version": "v17",
+    "model_revision": "pending-pf1",
+    "policy_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+    "calibration_hash": "0000000000000000000000000000000000000000000000000000000000000000"
+  },
+  "holdout_bucket": "unstuck-example-holdout",
+  "vpc_cidr": "10.80.0.0/16",
+  "decider_ami_id": "ami-00000000000000000",
+  "decider_instance_type": "g5.xlarge",
+  "main_model_arn": "arn:aws:bedrock:us-east-1:000000000000:inference-profile/example-main",
+  "baseline_model_arn": "arn:aws:bedrock:us-east-1:000000000000:inference-profile/example-baseline",
+  "operator_principal_arn": "arn:aws:iam::000000000000:role/unstuck-example-operator",
+  "evaluator_principal_arn": "arn:aws:iam::000000000000:role/unstuck-example-evaluator",
+  "deployer_principal_arn": "arn:aws:iam::000000000000:role/unstuck-example-deployer"
+}

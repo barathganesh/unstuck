@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Unstuck: the receipt acts before selection</title>
+<meta name="description" content="An offline step-through of one synthetic case. Run 1 stores a Decision Receipt. Run 2 precludes only the exact dead end before the first Decider request. The same Decider makes one fresh choice and completes on one read.">
+<style>
+  :root {
+    --paper: #F5F1E8;
+    --paper-2: #EFE9DB;
+    --climax: #F0E7DC;
+    --ink: #1F1D1A;
+    --ember: #C14A16;
+    /* small ember text and the primary button: 6.1:1 on paper, 5.6:1 on the
+       climax tint; full ember stays for strokes, rules and large type */
+    --ember-deep: #9E3A0F;
+    --ember-press: #85300B;
+    --muted: #6B6558;
+    --rule: #D8D1C2;
+    --rule-ember: #D3BCA8;
+    --mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+    --serif: "Iowan Old Style", Palatino, Georgia, serif;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--serif);
+    font-size: 15px;
+    line-height: 1.45;
+    font-variant-numeric: tabular-nums;
+    height: 100vh;
+    display: grid;
+    grid-template-rows: auto auto minmax(0, 1fr) auto auto;
+    caret-color: var(--ember);
+  }
+
+  /* ---------- browser surfaces ---------- */
+  ::selection { background: var(--ember); color: var(--paper); }
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-track { background: var(--paper-2); }
+  ::-webkit-scrollbar-thumb { background: var(--muted); border: 2px solid var(--paper-2); }
+  ::-webkit-scrollbar-thumb:hover { background: var(--ember); }
+  * { scrollbar-color: var(--muted) var(--paper-2); scrollbar-width: thin; }
+  :focus-visible { outline: 2px solid var(--ember); outline-offset: 2px; }
+
+  .vh {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  /* ---------- shared type ---------- */
+  .label {
+    font-family: var(--mono);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--muted);
+  }
+  .mono { font-family: var(--mono); font-size: 12px; }
+
+  /* ---------- masthead ---------- */
+  header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1.5rem;
+    padding: 0.7rem 1.4rem 0.6rem;
+    border-bottom: 1px solid var(--rule);
+  }
+  h1 {
+    font-family: var(--serif);
+    font-size: 27px;
+    font-weight: 400;
+    letter-spacing: 0.01em;
+    margin: 0;
+  }
+  h1 .sub {
+    font-family: var(--serif);
+    font-size: 17px;
+    color: var(--muted);
+    margin-left: 0.7rem;
+  }
+  .masthead-right { text-align: right; }
+  .masthead-right .mono { color: var(--muted); font-size: 11px; }
+
+  /* ---------- counter strip ---------- */
+  #counters {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    border-bottom: 1px solid var(--rule);
+  }
+  .counter {
+    padding: 0.45rem 1.4rem 0.5rem;
+    border-right: 1px solid var(--rule);
+  }
+  .counter:last-child { border-right: 0; }
+  .counter .num {
+    font-family: var(--serif);
+    font-size: 25px;
+    line-height: 1.05;
+    display: block;
+  }
+  .counter.changed .num { color: var(--ember); }
+
+  /* ---------- main three columns ---------- */
+  main {
+    display: grid;
+    grid-template-columns: 16.5rem minmax(0, 1fr) 30rem;
+    min-height: 0;
+  }
+  main > section {
+    min-height: 0;
+    overflow: auto;
+    padding: 0.85rem 1.4rem 1.2rem;
+    border-right: 1px solid var(--rule);
+  }
+  main > section:last-child { border-right: 0; }
+
+  /* ---------- step list, grouped by act ---------- */
+  .act { margin: 0 0 0.6rem; }
+  .act h3 {
+    margin: 0;
+    padding: 0.5rem 0 0.35rem;
+    border-bottom: 1px solid var(--rule);
+    font-weight: 400;
+  }
+  .act ol { list-style: none; margin: 0; padding: 0; }
+  .act li { border-bottom: 1px solid var(--rule); }
+  .plate {
+    display: grid;
+    grid-template-columns: 1.9rem 1fr;
+    gap: 0.5rem;
+    align-items: start;
+    width: 100%;
+    min-height: 44px;
+    text-align: left;
+    background: transparent;
+    border: 0;
+    color: var(--muted);
+    font-family: var(--serif);
+    font-size: 13.5px;
+    line-height: 1.3;
+    text-transform: none;
+    letter-spacing: 0;
+    padding: 0.42rem 0.3rem 0.45rem 0.4rem;
+    cursor: pointer;
+    transition: background 120ms linear, color 120ms linear;
+  }
+  .plate .idx {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    padding-top: 0.18em;
+  }
+  .plate:hover { background: var(--paper-2); }
+  .plate[aria-current="step"] {
+    color: var(--ink);
+    background: var(--paper-2);
+    box-shadow: inset 0 1px 0 var(--ember), inset 0 -1px 0 var(--ember);
+  }
+  .plate[aria-current="step"] .idx { color: var(--ember-deep); }
+  .plate[data-done="true"]:not([aria-current="step"]) { color: var(--ink); }
+  .plate[data-climax="true"][aria-current="step"] { background: var(--climax); }
+
+  /* ---------- detail ---------- */
+  #detail { padding: 1.1rem 2rem 1.6rem; }
+  #detail h2 {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: 30px;
+    line-height: 1.12;
+    margin: 0.2rem 0 0.7rem;
+    max-width: 30ch;
+    text-wrap: balance;
+  }
+  #detail p.body {
+    margin: 0 0 1rem;
+    max-width: 66ch;
+    font-size: 15px;
+  }
+  #detail.climax {
+    border-top: 2px solid var(--ember);
+    border-bottom: 2px solid var(--ember);
+    background: var(--climax);
+  }
+  #detail.climax h2 {
+    font-size: 40px;
+    color: var(--ember);
+    letter-spacing: -0.005em;
+    max-width: 24ch;
+  }
+  .refused {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.4rem 1.2rem;
+    margin: 0 0 0.9rem;
+    padding: 0.45rem 0;
+    border-top: 1px solid var(--ember);
+    border-bottom: 1px solid var(--ember);
+    max-width: 66ch;
+  }
+  .refused .struck {
+    font-family: var(--mono);
+    font-size: 15px;
+    text-decoration: line-through;
+    text-decoration-color: var(--ember);
+    text-decoration-thickness: 2px;
+  }
+  .refused .cost {
+    font-family: var(--mono);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: var(--ember-deep);
+  }
+
+  /* ---------- hairline fact tables ---------- */
+  table { border-collapse: collapse; width: 100%; }
+  table.facts { margin-top: 0.3rem; max-width: 46rem; }
+  table.facts + table.facts { margin-top: 1rem; }
+  table.facts caption {
+    text-align: left;
+    padding-bottom: 0.25rem;
+  }
+  table.facts th, table.facts td {
+    text-align: left;
+    vertical-align: baseline;
+    padding: 0.32rem 0.6rem 0.32rem 0;
+    border-top: 1px solid var(--rule);
+  }
+  table.facts th {
+    font-family: var(--mono);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+    font-weight: 400;
+    width: 42%;
+  }
+  table.facts td { font-family: var(--mono); font-size: 12.5px; overflow-wrap: anywhere; }
+  table.facts.limits td { font-family: var(--serif); font-size: 14px; }
+  #detail.climax table.facts th, #detail.climax table.facts td { border-top-color: var(--rule-ember); }
+
+  /* ---------- comparison ---------- */
+  .compare-wrap { overflow-x: auto; }
+  table.compare { table-layout: fixed; }
+  table.compare th, table.compare td {
+    border-top: 1px solid var(--rule);
+    padding: 0.36rem 0.45rem 0.36rem 0;
+    text-align: left;
+    vertical-align: baseline;
+  }
+  table.compare thead th {
+    font-family: var(--mono);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--ink);
+    font-weight: 400;
+    border-top: 0;
+    padding-top: 0.5rem;
+    vertical-align: bottom;
+  }
+  table.compare thead th:first-child { width: 24%; }
+  table.compare tbody th {
+    font-family: var(--mono);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    font-weight: 400;
+    line-height: 1.35;
+  }
+  table.compare td {
+    font-family: var(--mono);
+    font-size: 12px;
+    line-height: 1.35;
+    overflow-wrap: anywhere;
+  }
+  table.compare td.pending { color: var(--muted); }
+  table.compare td.em { color: var(--ember-deep); }
+  table.compare td.fresh { background: var(--paper-2); }
+  .compare-note {
+    font-family: var(--serif);
+    font-size: 13px;
+    color: var(--muted);
+    padding-top: 0.8rem;
+    margin: 0;
+    max-width: 40ch;
+  }
+
+  /* ---------- controls ---------- */
+  #controls {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    padding: 0.6rem 1.4rem;
+    border-top: 1px solid var(--rule);
+  }
+  button {
+    min-height: 44px;
+    font-family: var(--mono);
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    background: var(--paper);
+    color: var(--ink);
+    border: 1px solid var(--ink);
+    border-radius: 0;
+    cursor: pointer;
+    transition: background 120ms linear, color 120ms linear;
+  }
+  button:hover { background: var(--paper-2); }
+  button[disabled] { color: var(--muted); border-color: var(--rule); cursor: default; }
+  button[disabled]:hover { background: var(--paper); }
+  #advance {
+    font-size: 13px;
+    padding: 0.7rem 2.6rem;
+    background: var(--ember-deep);
+    border-color: var(--ember-deep);
+    color: var(--paper);
+  }
+  #advance:hover { background: var(--ember-press); }
+  #advance[disabled] { background: var(--paper); color: var(--muted); border-color: var(--rule); }
+  #back, #reset { font-size: 10.5px; padding: 0.5rem 1rem; }
+  #position {
+    font-family: var(--mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--muted);
+    margin-left: auto;
+    text-align: right;
+  }
+  #position b { color: var(--ink); font-weight: 400; }
+  #position kbd {
+    font-family: var(--mono);
+    font-size: 10px;
+    border: 1px solid var(--rule);
+    padding: 0.05rem 0.3rem;
+  }
+
+  /* ---------- footer ---------- */
+  footer {
+    border-top: 1px solid var(--rule);
+    padding: 0.5rem 1.4rem 0.6rem;
+    font-family: var(--mono);
+    font-size: 10px;
+    line-height: 1.6;
+    letter-spacing: 0.04em;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+
+  @media (max-width: 1200px) {
+    body { height: auto; display: flex; flex-direction: column; }
+    header { flex-wrap: wrap; }
+    h1 .sub { display: block; margin-left: 0; }
+    .masthead-right { text-align: left; }
+    main { grid-template-columns: minmax(0, 1fr); order: 1; }
+    footer { order: 2; }
+    main > section {
+      border-right: 0;
+      border-bottom: 1px solid var(--rule);
+      overflow: visible;
+    }
+    #counters { grid-template-columns: repeat(2, 1fr); }
+    .counter { border-bottom: 1px solid var(--rule); }
+    .counter:nth-child(2n) { border-right: 0; }
+    #detail { padding: 1rem 1.4rem 1.4rem; scroll-margin-top: 110px; }
+    #detail h2 { font-size: 25px; }
+    #detail.climax h2 { font-size: 30px; }
+    table.facts th { width: 46%; }
+    #detail { order: -1; }
+    .counter { padding: 0.4rem 1rem 0.45rem; }
+    #controls {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      position: sticky;
+      top: 0;
+      z-index: 2;
+      background: var(--paper);
+      gap: 0.6rem;
+      padding: 0.6rem 1rem;
+    }
+    #advance, #back, #reset { padding: 0.65rem 0.3rem; font-size: 10.5px; letter-spacing: 0.08em; }
+    #position { grid-column: 1 / -1; margin-left: 0; width: 100%; text-align: left; }
+    #position .keys { display: none; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      transition: none !important;
+      animation: none !important;
+      scroll-behavior: auto !important;
+    }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Unstuck<span class="sub">Run 1 records the dead end. Run 2 uses the receipt before selection.</span></h1>
+  <div class="masthead-right">
+    <span class="label">One declared synthetic case</span><br>
+    <span class="mono">n = 1, each proof run once</span>
+  </div>
+</header>
+
+<div id="counters" role="group" aria-label="Running totals across the calls shown so far">
+  <div class="counter"><span class="label">Reads spent</span><span class="num" id="c-reads">0</span></div>
+  <div class="counter"><span class="label">Receipts written</span><span class="num" id="c-receipts">0</span></div>
+  <div class="counter"><span class="label">Dead ends precluded</span><span class="num" id="c-blocks">0</span></div>
+  <div class="counter"><span class="label">Calls completed</span><span class="num" id="c-completed">0</span></div>
+  <div class="counter"><span class="label">Calls unresolved</span><span class="num" id="c-unresolved">0</span></div>
+</div>
+
+<main>
+  <section id="timeline-col" aria-labelledby="steps-head">
+    <h2 class="vh" id="steps-head">Steps</h2>
+    <div id="acts"></div>
+  </section>
+
+  <section id="detail" aria-live="polite" aria-label="Current step"></section>
+
+  <section id="calls-col" aria-labelledby="compare-head">
+    <h2 class="label" id="compare-head" style="margin:0;padding-bottom:0.45rem;border-bottom:1px solid var(--rule);font-weight:400;">Same incident, three ways</h2>
+    <div class="compare-wrap">
+      <table class="compare">
+        <thead>
+          <tr><th scope="col"><span class="vh">Reading</span></th><th scope="col">Control, 3 calls</th><th scope="col">Run 1</th><th scope="col">Run 2</th></tr>
+        </thead>
+        <tbody id="compare-body"></tbody>
+      </table>
+    </div>
+    <p class="compare-note">Values appear as the steps reach them. Same synthetic case, one diagnostic read per call. Run 2 offers only the 3 remaining diagnostics, in original order.</p>
+  </section>
+</main>
+
+<div id="controls">
+  <button id="advance" type="button">Next step</button>
+  <button id="back" type="button">Previous step</button>
+  <button id="reset" type="button">Start over</button>
+  <span id="position"><b id="pos-text">Step 1 of 10</b><span class="keys"> &nbsp; <kbd>Right</kbd> <kbd>Space</kbd> next &nbsp; <kbd>Left</kbd> previous &nbsp; <kbd>Home</kbd> <kbd>End</kbd> &nbsp; <kbd>R</kbd> start over</span></span>
+</div>
+
+<footer>
+  One declared synthetic case. n = 1. Each proof was run once. Not a benchmark, not a rate, not a statistical result.
+  The model is unchanged between calls. Only the observed Run 2 client latency comparison is measured. No dollar savings measured or guaranteed benefit.
+</footer>
+
+<script>
+(function () {
+  "use strict";
+
+  var ACTS = ["The problem", "Run 1 pays once", "Run 2 uses the receipt", "The control stays stuck", "Measured comparison"];
+
+  var STEPS = [
+    {
+      act: 0,
+      plate: "Report returns zero rows",
+      head: "A report comes back empty, and one read is allowed",
+      body: "A synthetic order report comes back empty. Decider 2B is offered four read-only diagnostics and picks one. Each call may spend one diagnostic read. If that read settles nothing, the call ends unresolved. The observed pair uses one Decider inference per call.",
+      facts: [
+        ["Case", "one declared synthetic repairable case"],
+        ["Initial options offered", "4"],
+        ["Diagnostic reads per call", "1, below the ceiling of 2"],
+        ["Observed inferences", "1 per call"]
+      ],
+      counters: { reads: 0, receipts: 0, blocks: 0, completed: 0, unresolved: 0 }
+    },
+    {
+      act: 1,
+      plate: "Decider picks inspect_pipeline",
+      head: "Decider 2B picks inspect_pipeline",
+      body: "The first call with receipts starts with empty history. Strands Decider 2B makes one choice from the four options. No dead end has been proven yet. Decider is the only model that selects a tool.",
+      facts: [
+        ["Decision history", "empty"],
+        ["Decider choice", "inspect_pipeline"],
+        ["Inferences", "1"]
+      ],
+      counters: { reads: 0, receipts: 0, blocks: 0, completed: 0, unresolved: 0 }
+    },
+    {
+      act: 1,
+      plate: "The one read settles nothing",
+      head: "The read returns real data and settles nothing",
+      body: "The controller executes the read. The partition arrived, which is true and beside the point: this incident turns on how the two sides of a join spell their keys. The call's one read is spent, and the call ends unresolved. Run 1 takes 21.6 s of client time and is not saved.",
+      facts: [
+        ["Executed by", "controller, not the model"],
+        ["Diagnostic reads", "1 of 1"],
+        ["Disposition moved", "none"],
+        ["Terminal", "unresolved / diagnostic_reads_exhausted"],
+        ["Run 1 client time", "21.6 s, 1 inference"]
+      ],
+      counters: { reads: 1, receipts: 0, blocks: 0, completed: 0, unresolved: 1 }
+    },
+    {
+      act: 1,
+      plate: "Verifier writes a Decision Receipt",
+      head: "Run 1 pays the learning cost once",
+      body: "The deterministic verifier stores a Decision Receipt: real data, no change to any supported disposition. The model is unchanged. The system recorded a verified fact. Run 1 is not saved: 1 inference, 21.6 s client time, unresolved, receipt stored.",
+      facts: [
+        ["Written by", "deterministic verifier, never the model"],
+        ["Receipt tool", "inspect_pipeline"],
+        ["outcome_class", "disposition_unchanged"],
+        ["Cites", "Run 1's own first choice"],
+        ["Receipt authority", "exact negative authority only"]
+      ],
+      counters: { reads: 1, receipts: 1, blocks: 0, completed: 0, unresolved: 1 }
+    },
+    {
+      act: 2,
+      plate: "New call, exact receipt matches",
+      head: "Run 2 starts with an exact receipt match",
+      body: "Run 2 is a new call about the same incident. The controller matches Run 1's receipt against the same tool, arguments and decision context. This happens before the first Decider request. No model choice and no read have happened yet.",
+      facts: [
+        ["Decision history", "matched"],
+        ["Receipt match", "exact"],
+        ["First Decider request", "not sent yet"],
+        ["Run 2 inferences so far", "0"]
+      ],
+      counters: { reads: 1, receipts: 1, blocks: 0, completed: 0, unresolved: 1 }
+    },
+    {
+      act: 2,
+      plate: "Dead end precluded before selection",
+      head: "Only the dead end is precluded before selection",
+      body: "Before the first Decider request and before any read, the controller removes only inspect_pipeline from the offer. The 3 remaining diagnostics keep their original order. The preclusion spends no read and no inference. The receipt does not choose a replacement.",
+      climax: true,
+      struck: "inspect_pipeline",
+      facts: [
+        ["Precluded tool", "inspect_pipeline"],
+        ["Preclusion cites", "the receipt Run 1 wrote"],
+        ["Reads and inferences spent here", "0 and 0"],
+        ["Remaining offer", "3 diagnostics, original order"]
+      ],
+      counters: { reads: 1, receipts: 1, blocks: 1, completed: 0, unresolved: 1 }
+    },
+    {
+      act: 2,
+      plate: "Same Decider picks a new path",
+      head: "The same Decider makes one fresh choice",
+      body: "Decider 2B receives the remaining offer and chooses inspect_schema_keys. The controller spends the one read on it, and the key encodings come back. No larger model takes over and no second Decider call occurs.",
+      facts: [
+        ["Chosen by", "Decider 2B"],
+        ["Options remaining", "3"],
+        ["Fresh choice", "inspect_schema_keys"],
+        ["Diagnostic reads", "1 of 1"],
+        ["Run 2 inferences", "1"]
+      ],
+      counters: { reads: 2, receipts: 1, blocks: 1, completed: 0, unresolved: 1 }
+    },
+    {
+      act: 2,
+      plate: "Verified repair, call completes",
+      head: "The repair is verified and the call completes",
+      body: "Deterministic code applies the repair, authorized only by verifier-held evidence, and verification passes. The verifier stores a useful_evidence receipt. Run 2 completes in 26.6 s of client time: one inference, one read. The verifier owns truth.",
+      facts: [
+        ["Repair applied", "yes, deterministic"],
+        ["Verified", "yes"],
+        ["Terminal", "completed / populated_after_repair"],
+        ["Receipt stored", "useful_evidence"],
+        ["Run 2 client time", "26.6 s, 1 inference"]
+      ],
+      counters: { reads: 2, receipts: 2, blocks: 1, completed: 1, unresolved: 1 }
+    },
+    {
+      act: 3,
+      plate: "Three calls, three dead ends",
+      head: "Without receipts, three calls stay stuck",
+      body: "The memoryless control ran three independent calls on the same case without receipts. Each picked inspect_pipeline, spent its one read on it, had no read left for a second choice, and ended unresolved. Nothing about the third call differed from the first.",
+      facts: [
+        ["Calls", "3 independent, no receipts"],
+        ["D1 chose inspect_pipeline", "3 of 3"],
+        ["Diagnostic reads", "1 of 1, each call"],
+        ["Unresolved", "3 of 3, diagnostic_reads_exhausted"],
+        ["Completed", "0 of 3"]
+      ],
+      counters: { reads: 5, receipts: 2, blocks: 1, completed: 1, unresolved: 4 }
+    },
+    {
+      act: 4,
+      plate: "What was recorded, and what was not",
+      head: "Observed Run 2 client latency fell 51.4%",
+      body: "Compare the superseded post-choice Run 2 with the optimized pre-selection Run 2. The old Run 2 is a separate earlier run, not the memoryless control. The observed difference is 28.2 s and one fewer inference. n = 1, same synthetic case, each proof once.",
+      facts: [
+        ["Superseded Run 2", "54.8 s client, 2 inferences"],
+        ["Optimized Run 2", "26.6 s client, 1 inference"],
+        ["Observed client latency delta", "28.2 s, 51.4% lower"],
+        ["Run 1, not saved", "21.6 s client, 1 inference, unresolved"],
+        ["Memoryless control", "3 of 3 unresolved"]
+      ],
+      limits: [
+        ["Dollar savings", "No dollar savings measured. Endpoint billed by uptime, not requests."],
+        ["Beyond this observation", "No rate, significance or guaranteed benefit. The model is unchanged."]
+      ],
+      counters: { reads: 5, receipts: 2, blocks: 1, completed: 1, unresolved: 4 }
+    }
+  ];
+
+  // The comparison. Each cell appears at the 1-based step given.
+  var COMPARE = [
+    { label: "Decision history", c: ["not requested", 9], a: ["empty", 2], b: ["matched, exact receipt", 5] },
+    { label: "Precluded before selection", c: ["no receipts", 9], a: ["no receipt yet", 2], b: ["inspect_pipeline", 6, true] },
+    { label: "Options offered", c: ["4", 9], a: ["4", 2], b: ["3, original order", 6] },
+    { label: "Decider choice", c: ["inspect_pipeline", 9], a: ["inspect_pipeline", 2], b: ["inspect_schema_keys", 7, true] },
+    { label: "Inferences", c: ["1 per call", 9], a: ["1", 2], b: ["1", 7] },
+    { label: "Diagnostic reads, of 1", c: ["1, each call", 9], a: ["1", 3], b: ["1", 7] },
+    { label: "Receipt", c: ["none stored", 9], a: ["disposition_unchanged", 4, true], b: ["useful_evidence", 8] },
+    { label: "Terminal", c: ["unresolved, 3 of 3", 9], a: ["unresolved", 3], b: ["completed", 8, true] },
+    { label: "Client time", c: ["not compared", 9], a: ["21.6 s", 3], b: ["26.6 s", 8] }
+  ];
+
+  var COUNTER_KEYS = ["reads", "receipts", "blocks", "completed", "unresolved"];
+  var counterEls = {
+    reads: document.getElementById("c-reads"),
+    receipts: document.getElementById("c-receipts"),
+    blocks: document.getElementById("c-blocks"),
+    completed: document.getElementById("c-completed"),
+    unresolved: document.getElementById("c-unresolved")
+  };
+
+  var detail = document.getElementById("detail");
+  var actsBox = document.getElementById("acts");
+  var compareBody = document.getElementById("compare-body");
+  var advanceBtn = document.getElementById("advance");
+  var backBtn = document.getElementById("back");
+  var resetBtn = document.getElementById("reset");
+  var posText = document.getElementById("pos-text");
+
+  var current = 0;
+  var plateButtons = [];
+
+  function el(tag, cls, text) {
+    var n = document.createElement(tag);
+    if (cls) { n.className = cls; }
+    if (text !== undefined && text !== null) { n.textContent = text; }
+    return n;
+  }
+
+  function pad(n) { return n < 10 ? "0" + n : String(n); }
+
+  /* Identifiers wrap after an underscore, never inside a word. */
+  function breakable(node, text) {
+    node.textContent = "";
+    text.split("_").forEach(function (part, k) {
+      if (k > 0) {
+        node.appendChild(document.createTextNode("_"));
+        node.appendChild(document.createElement("wbr"));
+      }
+      node.appendChild(document.createTextNode(part));
+    });
+  }
+
+  function reducedMotion() {
+    return window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  }
+
+  /* ---- build the step list once, grouped by act ---- */
+  var lists = ACTS.map(function (name, a) {
+    var box = el("div", "act");
+    var h = el("h3", "label", name);
+    h.id = "act-" + a;
+    var ol = document.createElement("ol");
+    ol.setAttribute("aria-labelledby", h.id);
+    box.appendChild(h);
+    box.appendChild(ol);
+    actsBox.appendChild(box);
+    return ol;
+  });
+
+  STEPS.forEach(function (step, i) {
+    var li = document.createElement("li");
+    var b = el("button", "plate");
+    b.type = "button";
+    if (step.climax) { b.setAttribute("data-climax", "true"); }
+    var idx = el("span", "idx", pad(i + 1));
+    idx.setAttribute("aria-hidden", "true");
+    b.appendChild(idx);
+    b.appendChild(el("span", null, step.plate));
+    b.setAttribute("aria-label", "Step " + (i + 1) + ": " + step.plate);
+    b.addEventListener("click", function () { go(i); });
+    li.appendChild(b);
+    lists[step.act].appendChild(li);
+    plateButtons.push(b);
+  });
+
+  /* ---- build the comparison once ---- */
+  var compareCells = [];
+  COMPARE.forEach(function (row) {
+    var tr = document.createElement("tr");
+    var th = el("th", null, row.label);
+    th.setAttribute("scope", "row");
+    tr.appendChild(th);
+    var cells = [row.c, row.a, row.b].map(function (spec) {
+      var td = el("td", "pending", "not yet");
+      tr.appendChild(td);
+      return { td: td, spec: spec };
+    });
+    compareBody.appendChild(tr);
+    compareCells.push(cells);
+  });
+
+  function renderCompare(step) {
+    compareCells.forEach(function (cells) {
+      cells.forEach(function (cell) {
+        var shown = step >= cell.spec[1];
+        var cls = [];
+        if (!shown) { cls.push("pending"); }
+        if (shown && cell.spec[2]) { cls.push("em"); }
+        if (step === cell.spec[1]) { cls.push("fresh"); }
+        breakable(cell.td, shown ? cell.spec[0] : "not yet");
+        cell.td.className = cls.join(" ");
+      });
+    });
+  }
+
+  function factsTable(rows, captionText, cls) {
+    var table = el("table", "facts" + (cls ? " " + cls : ""));
+    table.appendChild(el("caption", "label", captionText));
+    var tbody = document.createElement("tbody");
+    rows.forEach(function (f) {
+      var tr = document.createElement("tr");
+      var th = el("th", null, f[0]);
+      th.setAttribute("scope", "row");
+      tr.appendChild(th);
+      tr.appendChild(el("td", null, f[1]));
+      tbody.appendChild(tr);
+    });
+    table.appendChild(tbody);
+    return table;
+  }
+
+  function renderDetail(idx) {
+    var step = STEPS[idx];
+    detail.className = step.climax ? "climax" : "";
+    detail.textContent = "";
+    detail.appendChild(el("h2", null, step.head));
+    if (step.struck) {
+      var p = el("p", "refused");
+      p.appendChild(el("span", "label", "Precluded before the first Decider request"));
+      p.appendChild(el("span", "struck", step.struck));
+      p.appendChild(el("span", "cost", "0 reads, 0 inferences"));
+      detail.appendChild(p);
+    }
+    detail.appendChild(el("p", "body", step.body));
+    detail.appendChild(factsTable(step.facts, step.climax ? "Preclusion record" : "Record"));
+    if (step.limits) {
+      detail.appendChild(factsTable(step.limits, "Not claimed", "limits"));
+    }
+  }
+
+  function renderCounters(idx) {
+    var now = STEPS[idx].counters;
+    var prev = idx > 0 ? STEPS[idx - 1].counters : null;
+    COUNTER_KEYS.forEach(function (k) {
+      counterEls[k].textContent = String(now[k]);
+      var changed = prev !== null && prev[k] !== now[k];
+      counterEls[k].parentNode.className = changed ? "counter changed" : "counter";
+    });
+  }
+
+  function renderPlates(idx) {
+    plateButtons.forEach(function (b, i) {
+      if (i === idx) {
+        b.setAttribute("aria-current", "step");
+      } else {
+        b.removeAttribute("aria-current");
+      }
+      b.setAttribute("data-done", i < idx ? "true" : "false");
+    });
+    var active = plateButtons[idx];
+    if (active && active.scrollIntoView && window.innerWidth > 1200) {
+      active.scrollIntoView({ block: "nearest", behavior: reducedMotion() ? "auto" : "smooth" });
+    }
+  }
+
+  function render() {
+    renderPlates(current);
+    renderDetail(current);
+    renderCounters(current);
+    renderCompare(current + 1);
+    advanceBtn.disabled = current >= STEPS.length - 1;
+    backBtn.disabled = current <= 0;
+    resetBtn.disabled = current === 0;
+    posText.textContent = "Step " + (current + 1) + " of " + STEPS.length + ", " + ACTS[STEPS[current].act];
+    detail.scrollTop = 0;
+  }
+
+  function go(i) {
+    if (i < 0) { i = 0; }
+    if (i > STEPS.length - 1) { i = STEPS.length - 1; }
+    current = i;
+    render();
+  }
+
+  advanceBtn.addEventListener("click", function () { go(current + 1); });
+  backBtn.addEventListener("click", function () { go(current - 1); });
+  resetBtn.addEventListener("click", function () { go(0); });
+
+  document.addEventListener("keydown", function (e) {
+    if (e.metaKey || e.ctrlKey || e.altKey) { return; }
+    var onButton = e.target && e.target.tagName === "BUTTON";
+    var k = e.key;
+    if (k === "ArrowRight") {
+      e.preventDefault();
+      go(current + 1);
+    } else if (k === "ArrowLeft") {
+      e.preventDefault();
+      go(current - 1);
+    } else if (k === "Home") {
+      e.preventDefault();
+      go(0);
+    } else if (k === "End") {
+      e.preventDefault();
+      go(STEPS.length - 1);
+    } else if (k === " " || k === "Spacebar" || k === "Enter") {
+      if (onButton) { return; }
+      e.preventDefault();
+      go(current + 1);
+    } else if (k === "r" || k === "R") {
+      e.preventDefault();
+      go(0);
+    }
+  });
+
+  render();
+}());
+</script>
+
+</body>
+</html>

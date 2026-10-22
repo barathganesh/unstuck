@@ -1,0 +1,161 @@
+[build-system]
+requires = ["hatchling==1.27.0"]
+build-backend = "hatchling.build"
+
+[project]
+name = "unstuck"
+version = "0.1.0"
+description = "Offline evidence-backed core runtime for synthetic order reports"
+requires-python = ">=3.12,<3.13"
+dependencies = ["pydantic==2.12.3", "duckdb==1.4.1"]
+
+[project.optional-dependencies]
+dev = ["pytest==8.4.2", "pytest-cov==7.0.0", "ruff==0.14.1", "mypy==1.18.2", "hatchling==1.27.0", "pyyaml==6.0.3"]
+cloud = [
+  "boto3==1.43.114",
+  "botocore==1.43.114",
+  "aws-cdk-lib==2.273.0",
+  "constructs==10.8.1",
+]
+ui = [
+  "fastapi==0.149.0",
+  "starlette==1.9.0",
+  "uvicorn==0.54.0",
+  "httpx==0.28.1",
+  "anyio==4.15.1",
+  "h11==0.16.0",
+  "httpcore==1.0.9",
+  "idna==3.20",
+  "certifi==2026.10.18",
+  "click==8.5.0",
+  "annotated-doc==0.0.5",
+]
+
+[project.scripts]
+unstuck = "unstuck.cli:main"
+# The evaluator is deliberately NOT a console script of this distribution. It
+# is a separate process with a separate role (design.md section 5), and its
+# module lives outside `src/unstuck` so the runtime wheel cannot import it. A
+# declared `unstuck-evaluate` entry point would therefore install a script that
+# cannot resolve. Run it from the repository instead:
+#     uv run python -m evaluation.runner dry-run
+
+[tool.uv]
+managed = false
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/unstuck"]
+
+[tool.hatch.build.targets.sdist]
+include = [
+  "pyproject.toml",
+  "src/unstuck",
+  "docs/core-runtime.md",
+  "docs/cloud-platform.md",
+  # `src/unstuck/telemetry` ships in the wheel, so its reference travels with
+  # the distribution for the same reason the other two do.
+  "docs/telemetry.md",
+  # REQ-PUB-01: the licence and the dependency notices travel with the
+  # distribution, not just with the repository.
+  "LICENSE",
+  "NOTICE",
+]
+
+[tool.pytest.ini_options]
+testpaths = [
+  "tests/core_runtime",
+  "tests/confidence_cascade",
+  "tests/telemetry",
+  "tests/cloud_platform",
+  "tests/operator_experience",
+  "tests/evaluation",
+  "tests/public_deliverables",
+]
+addopts = """--strict-markers --basetemp=.venv/pytest-tmp \
+--deselect tests/core_runtime/test_od02_history.py::test_OD02_core_doc_uses_generic_roles_only \
+--deselect "tests/telemetry/test_telemetry_security.py::test_the_documentation_names_no_deployment[telemetry.md]" \
+--deselect tests/cloud_platform/test_agentcore_deployment.py::test_the_published_image_is_documented_as_an_unemulated_cross_build \
+--deselect tests/cloud_platform/test_runtime_surface.py::test_the_documented_build_command_needs_no_emulation_offline \
+--deselect tests/cloud_platform/test_sagemaker_packaging.py::test_the_serving_contract_constants_match_the_dockerfile_and_the_readme \
+--deselect tests/public_deliverables/test_publication_integration.py::test_the_rendered_outlines_match_the_committed_documents_offline \
+--deselect "tests/public_deliverables/test_publication_integration.py::test_no_publication_artifact_carries_a_personal_identity_offline[docs/article-outline.md]" \
+--deselect "tests/public_deliverables/test_publication_integration.py::test_no_publication_artifact_carries_a_personal_identity_offline[docs/video-outline.md]" \
+--deselect 'tests/public_deliverables/test_public_story.py::test_the_opening_carries_the_approved_pitch_verbatim[PRODUCT.md]' \
+--deselect tests/public_deliverables/test_public_story.py::test_product_states_the_causal_sequence \
+--deselect 'tests/public_deliverables/test_public_story.py::test_no_opening_carries_the_earlier_two_read_story[PRODUCT.md]' \
+--deselect 'tests/public_deliverables/test_public_story.py::test_no_story_file_makes_an_unsupported_claim[PRODUCT.md]' \
+--deselect 'tests/public_deliverables/test_public_story.py::test_no_story_file_makes_an_unsupported_claim[docs/decision-receipt.md]' \
+--deselect 'tests/public_deliverables/test_public_story.py::test_no_story_file_makes_an_unsupported_claim[docs/agentcore-deployment.md]' \
+--deselect 'tests/public_deliverables/test_public_story.py::test_no_story_file_makes_an_unsupported_claim[docs/public-deliverables.md]' \
+--deselect 'tests/public_deliverables/test_public_story.py::test_no_story_file_makes_an_unsupported_claim[docs/article-outline.md]' \
+--deselect 'tests/public_deliverables/test_public_story.py::test_no_story_file_makes_an_unsupported_claim[docs/video-outline.md]' \
+--deselect 'tests/public_deliverables/test_public_story.py::test_no_story_file_makes_an_unsupported_claim[AGENT.md]' \
+--deselect 'tests/public_deliverables/test_public_story.py::test_every_relative_link_resolves[PRODUCT.md]' \
+--deselect 'tests/public_deliverables/test_public_story.py::test_every_relative_link_resolves[docs/decision-receipt.md]' \
+--deselect 'tests/public_deliverables/test_public_story.py::test_every_relative_link_resolves[docs/agentcore-deployment.md]' \
+--deselect 'tests/public_deliverables/test_public_story.py::test_every_relative_link_resolves[docs/public-deliverables.md]' \
+--deselect 'tests/public_deliverables/test_public_story.py::test_every_relative_link_resolves[docs/article-outline.md]' \
+--deselect 'tests/public_deliverables/test_public_story.py::test_every_relative_link_resolves[docs/video-outline.md]' \
+--deselect 'tests/public_deliverables/test_public_story.py::test_every_relative_link_resolves[AGENT.md]' \
+--deselect 'tests/public_deliverables/test_public_story.py::test_written_artifacts_carry_the_measured_scope[PRODUCT.md]' \
+--deselect 'tests/public_deliverables/test_public_story.py::test_written_artifacts_carry_the_measured_scope[docs/decision-receipt.md]' \
+--deselect 'tests/public_deliverables/test_public_story.py::test_written_artifacts_carry_the_measured_scope[docs/agentcore-deployment.md]' \
+--deselect 'tests/public_deliverables/test_public_story.py::test_written_artifacts_carry_the_measured_scope[docs/public-deliverables.md]' \
+--deselect 'tests/public_deliverables/test_public_story.py::test_written_artifacts_carry_the_measured_scope[docs/article-outline.md]' \
+--deselect 'tests/public_deliverables/test_public_story.py::test_written_artifacts_carry_the_measured_scope[docs/video-outline.md]' \
+--deselect 'tests/public_deliverables/test_public_story.py::test_written_artifacts_carry_the_measured_scope[AGENT.md]' \
+--deselect 'tests/public_deliverables/test_public_story.py::test_judge_opening_explains_the_measured_comparison[PRODUCT.md]' \
+--deselect 'tests/public_deliverables/test_public_story.py::test_current_opening_never_describes_post_d1_recovery[PRODUCT.md]' \
+--deselect 'tests/public_deliverables/test_public_story.py::test_written_editorial_audit[PRODUCT.md]' \
+--deselect 'tests/public_deliverables/test_public_story.py::test_written_editorial_audit[docs/decision-receipt.md]' \
+--deselect 'tests/public_deliverables/test_public_story.py::test_written_editorial_audit[docs/agentcore-deployment.md]' \
+--deselect 'tests/public_deliverables/test_public_story.py::test_written_editorial_audit[docs/public-deliverables.md]' \
+--deselect 'tests/public_deliverables/test_public_story.py::test_written_editorial_audit[docs/article-outline.md]' \
+--deselect 'tests/public_deliverables/test_public_story.py::test_written_editorial_audit[docs/video-outline.md]' \
+--deselect 'tests/public_deliverables/test_public_story.py::test_written_editorial_audit[AGENT.md]' \
+--deselect tests/public_deliverables/test_public_visuals.py::test_deliverable_status_records_verified_video_awaiting_publication"""
+# `infra/` holds the CDK stacks and is synthesis-only, so it is not installed
+# as a distribution package; synthesis runs from the repository root.
+pythonpath = ["."]
+cache_dir = ".venv/pytest-cache"
+
+[tool.ruff]
+target-version = "py312"
+cache-dir = ".venv/ruff-cache"
+# The archive holds frozen snapshots of superseded work kept for the record.
+# Reformatting it would rewrite history, and it ships no code, so the linter
+# does not police it. Everything still maintained stays in scope.
+extend-exclude = ["aidlc/spaces/*/intents/*/archive/"]
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F", "I", "UP", "B"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+files = ["src/unstuck", "infra", "evaluation", "publishing", "deployment"]
+cache_dir = ".venv/mypy-cache"
+
+[[tool.mypy.overrides]]
+module = ["boto3.*", "botocore.*"]
+ignore_missing_imports = true
+
+# The real Decider checkpoint runner. The dependency is optional, lives in an
+# isolated environment, and is imported only inside
+# `evaluation.decider_provider` and `deployment.sagemaker.server.engine`,
+# neither of which is part of the shipped wheel.
+[[tool.mypy.overrides]]
+module = ["strands_decider.*"]
+ignore_missing_imports = true
+
+[tool.coverage.run]
+branch = true
+# `publishing` deliberately avoids the name `publication`: that PyPI
+# distribution is a transitive dependency of `aws_cdk`, and a top-level
+# `publication` package here would shadow it and break CDK synthesis.
+source = ["unstuck", "infra", "evaluation", "publishing"]
+data_file = ".venv/.coverage"
+
+[tool.coverage.report]
+fail_under = 80
+show_missing = true

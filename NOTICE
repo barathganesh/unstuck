@@ -1,0 +1,93 @@
+Unstuck
+Copyright 2026 The Unstuck authors
+
+This product includes software developed as part of the Unstuck project and
+distributed under the Apache License, Version 2.0 (see LICENSE).
+
+================================================================================
+Third-party dependencies
+================================================================================
+
+Status: every licence below is UNVERIFIED and its verification is pending.
+
+Licence verification means reading each upstream licence text and recording what
+it says. That has not been done. This file therefore names what the project
+depends on and the pinned version it depends on, and deliberately does not
+assert a licence for any of it. Do not treat an entry here as a licence
+determination, and do not publish or redistribute on the strength of this file.
+Completing the verification is an owner action with legal consequence; the
+`licence` item in the submission checklist stays Pending until it is recorded.
+
+Pins are taken from `pyproject.toml`. A transitive dependency pulled in by one
+of these is not listed individually and is equally unverified.
+
+Runtime dependencies
+--------------------
+
+  pydantic              2.12.3        licence unverified, verification pending
+  duckdb                1.4.1         licence unverified, verification pending
+
+Cloud dependencies (optional extra `cloud`)
+-------------------------------------------
+
+  boto3                 1.43.114      licence unverified, verification pending
+  botocore              1.43.114      licence unverified, verification pending
+  aws-cdk-lib           2.273.0       licence unverified, verification pending
+  constructs            10.8.1        licence unverified, verification pending
+
+Operator surface dependencies (optional extra `ui`)
+---------------------------------------------------
+
+  fastapi               0.149.0       licence unverified, verification pending
+  starlette             1.9.0         licence unverified, verification pending
+  uvicorn               0.54.0        licence unverified, verification pending
+  httpx                 0.28.1        licence unverified, verification pending
+  anyio                 4.15.1        licence unverified, verification pending
+  h11                   0.16.0        licence unverified, verification pending
+  httpcore              1.0.9         licence unverified, verification pending
+  idna                  3.20          licence unverified, verification pending
+  certifi               2026.10.18    licence unverified, verification pending
+  click                 8.5.0         licence unverified, verification pending
+  annotated-doc         0.0.5         licence unverified, verification pending
+
+Development dependencies (optional extra `dev`)
+-----------------------------------------------
+
+  pytest                8.4.2         licence unverified, verification pending
+  pytest-cov            7.0.0         licence unverified, verification pending
+  ruff                  0.14.1        licence unverified, verification pending
+  mypy                  1.18.2        licence unverified, verification pending
+  hatchling             1.27.0        licence unverified, verification pending
+  pyyaml                6.0.3         licence unverified, verification pending
+
+================================================================================
+Model
+================================================================================
+
+  Decider 2B            licence unverified and terms of use unverified,
+                        verification pending
+
+Decider 2B is the only model diagnostic-tool selector in this project. Its
+checkpoint is operator-supplied and is not vendored, redistributed, or pinned
+here: the runtime records whichever revision the operator configures. Its
+licence, its terms of use, and whether those terms permit the use this project
+makes of it are all unverified.
+
+================================================================================
+Container base image
+================================================================================
+
+  Base image            recorded by digest in deployment/base-image.lock
+                        licence unverified, verification pending
+
+The runtime container builds from an operator-supplied base image pinned by
+digest. The image's contents and their licences are unverified.
+
+================================================================================
+Bundled pattern
+================================================================================
+
+`recipes/diagnostic-tool-selection/` is part of this project and is covered by
+LICENSE. It has no third-party dependency: it imports the Python standard
+library only, and imports no module of this project either. It bundles no
+vendored code.

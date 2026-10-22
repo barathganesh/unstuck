@@ -1,0 +1,88 @@
+{
+  "schema_version": "2",
+  "what_this_is": "A curated, judge facing step by step record of the two executed invocations in one cloud window. Each step says what happened and who did it. Every identifier has been removed on purpose: there are no run, request, session, trace, span, model call, decision, diagnostic, evidence or receipt identifiers here, no hashes or digests, and no timestamps.",
+  "what_this_is_not": "Not a benchmark, not a rate, and not a latency claim. Two timelines for two executed calls, and no timeline at all for the exact repeat, which executed nothing.",
+  "classification": "synthetic",
+  "timelines": [
+    {
+      "call": 1,
+      "invocation": "new",
+      "history": "none",
+      "steps": [
+        { "step": 1, "stage": "OBSERVE", "event": "run_started", "acted_by": "controller" },
+        { "step": 2, "stage": "OBSERVE", "event": "agent_turn_started", "acted_by": "controller" },
+        { "step": 3, "stage": "OBSERVE", "event": "report_requested", "acted_by": "controller" },
+        { "step": 4, "stage": "OBSERVE", "event": "query_observed", "acted_by": "controller", "note": "The order report returned zero rows." },
+        { "step": 5, "stage": "VERIFY", "event": "verification_finished", "acted_by": "verifier", "verification": "passed" },
+        { "step": 6, "stage": "OBSERVE", "event": "incident_opened", "acted_by": "controller" },
+        { "step": 7, "stage": "DECISION_HISTORY", "event": "decision_history_requested", "acted_by": "controller" },
+        { "step": 8, "stage": "DECISION_HISTORY", "event": "decision_history_returned", "acted_by": "controller", "history": "none", "references_returned": 0 },
+        { "step": 9, "stage": "DECIDER_FIRST", "event": "first_decision_requested", "acted_by": "controller", "candidates": ["inspect_pipeline", "inspect_schema_keys", "inspect_scope"], "remaining_selector_calls": 2, "remaining_diagnostic_reads": 2 },
+        { "step": 10, "stage": "DECIDER_FIRST", "event": "first_decision_returned", "acted_by": "Strands Decider 2B", "choice": "inspect_pipeline", "reported_confidence": 0.3067, "accepted": true, "answer_validation": "valid" },
+        { "step": 11, "stage": "DIRECT_PATH", "event": "chosen_read_admitted", "acted_by": "controller", "tool": "inspect_pipeline", "note": "No receipt existed to match, so nothing was refused." },
+        { "step": 12, "stage": "RUN_PROBE", "event": "read_started", "acted_by": "controller", "tool": "inspect_pipeline", "read_number": 1 },
+        { "step": 13, "stage": "RUN_PROBE", "event": "read_returned", "acted_by": "controller", "tool": "inspect_pipeline", "result": "evidence returned" },
+        { "step": 14, "stage": "RUN_PROBE", "event": "decision_receipt_written", "acted_by": "verifier", "tool": "inspect_pipeline", "admitted_evidence": true, "disposition_moved": false, "outcome_class": "disposition_unchanged", "reason": "insufficient_evidence", "eligible_to_block_an_identical_repeat": true, "note": "The read returned true data that resolved nothing. The verifier recorded both facts; the model wrote nothing." },
+        { "step": 15, "stage": "DECIDER_FINAL", "event": "second_decision_requested", "acted_by": "controller", "candidates": ["inspect_schema_keys", "inspect_scope"], "remaining_selector_calls": 1, "remaining_diagnostic_reads": 1 },
+        { "step": 16, "stage": "DECIDER_FINAL", "event": "second_decision_returned", "acted_by": "Strands Decider 2B", "choice": "inspect_schema_keys", "reported_confidence": 0.4746, "accepted": true, "answer_validation": "valid" },
+        { "step": 17, "stage": "RUN_PROBE_FINAL", "event": "read_started", "acted_by": "controller", "tool": "inspect_schema_keys", "read_number": 2 },
+        { "step": 18, "stage": "RUN_PROBE_FINAL", "event": "read_returned", "acted_by": "controller", "tool": "inspect_schema_keys", "result": "evidence returned" },
+        { "step": 19, "stage": "RUN_PROBE_FINAL", "event": "decision_receipt_written", "acted_by": "verifier", "tool": "inspect_schema_keys", "admitted_evidence": true, "disposition_moved": true, "outcome_class": "useful_evidence", "reason": "populated_after_repair", "eligible_to_block_an_identical_repeat": false, "note": "A read that moved a gate can never refuse anything." },
+        { "step": 20, "stage": "REPAIR", "event": "repair_requested", "acted_by": "controller" },
+        { "step": 21, "stage": "REPAIR", "event": "repair_applied", "acted_by": "deterministic repair", "note": "Authorized only by verifier held evidence." },
+        { "step": 22, "stage": "REPAIR", "event": "report_requested", "acted_by": "controller" },
+        { "step": 23, "stage": "REPAIR", "event": "query_observed", "acted_by": "controller" },
+        { "step": 24, "stage": "VERIFY", "event": "verification_finished", "acted_by": "verifier", "verification": "passed" },
+        { "step": 25, "stage": "DONE", "event": "run_finished", "acted_by": "controller", "final_choice": "inspect_schema_keys", "terminal_result": "completed", "terminal_reason": "populated_after_repair", "disposition": "CONTINUE", "verification": "passed", "row_count": 2, "counters": { "selector_calls": 2, "diagnostic_reads": 2, "history_lookups": 1, "repairs": 1, "report_queries": 2, "wait_checks": 0 } }
+      ],
+      "finalized": true,
+      "steps_emitted": 25,
+      "steps_dropped": 0,
+      "steps_refused": 0
+    },
+    {
+      "call": 2,
+      "invocation": "new",
+      "history": "matched",
+      "steps": [
+        { "step": 1, "stage": "OBSERVE", "event": "run_started", "acted_by": "controller" },
+        { "step": 2, "stage": "OBSERVE", "event": "agent_turn_started", "acted_by": "controller" },
+        { "step": 3, "stage": "OBSERVE", "event": "report_requested", "acted_by": "controller" },
+        { "step": 4, "stage": "OBSERVE", "event": "query_observed", "acted_by": "controller", "note": "The order report returned zero rows again." },
+        { "step": 5, "stage": "VERIFY", "event": "verification_finished", "acted_by": "verifier", "verification": "passed" },
+        { "step": 6, "stage": "OBSERVE", "event": "incident_opened", "acted_by": "controller" },
+        { "step": 7, "stage": "DECISION_HISTORY", "event": "decision_history_requested", "acted_by": "controller" },
+        { "step": 8, "stage": "DECISION_HISTORY", "event": "decision_history_returned", "acted_by": "controller", "history": "matched", "references_returned": 2, "references": [
+          { "tool": "inspect_pipeline", "match": "exact", "outcome_class": "disposition_unchanged", "reason": "insufficient_evidence", "eligible_to_block_an_identical_repeat": true },
+          { "tool": "inspect_schema_keys", "match": "compatible", "outcome_class": "useful_evidence", "reason": "populated_after_repair", "eligible_to_block_an_identical_repeat": false }
+        ] },
+        { "step": 9, "stage": "DECIDER_FIRST", "event": "first_decision_requested", "acted_by": "controller", "candidates": ["inspect_pipeline", "inspect_schema_keys", "inspect_scope"], "history_references_supplied": 2, "remaining_selector_calls": 2, "remaining_diagnostic_reads": 2, "note": "History was supplied as references only. It selected nothing and changed no probability." },
+        { "step": 10, "stage": "DECIDER_FIRST", "event": "first_decision_returned", "acted_by": "Strands Decider 2B", "choice": "inspect_pipeline", "reported_confidence": 0.2158, "accepted": true, "answer_validation": "valid", "note": "The model chose the same tool again, from its own distribution." },
+        { "step": 11, "stage": "RECEIPT_CHECK", "event": "repeated_choice_blocked", "acted_by": "controller", "tool": "inspect_pipeline", "match": "exact", "blocked_class": "exact_repeat", "reason": "insufficient_evidence", "diagnostic_reads_charged": 0, "note": "Refused before the tool executed, on an exact match of capability, arguments and decision context." },
+        { "step": 12, "stage": "DECIDER_FINAL", "event": "second_decision_requested", "acted_by": "controller", "candidates": ["inspect_schema_keys", "inspect_scope"], "remaining_selector_calls": 1, "remaining_diagnostic_reads": 2 },
+        { "step": 13, "stage": "DECIDER_FINAL", "event": "second_decision_returned", "acted_by": "Strands Decider 2B", "choice": "inspect_schema_keys", "reported_confidence": 0.6498, "accepted": true, "answer_validation": "valid" },
+        { "step": 14, "stage": "RUN_PROBE_FINAL", "event": "read_started", "acted_by": "controller", "tool": "inspect_schema_keys", "read_number": 1 },
+        { "step": 15, "stage": "RUN_PROBE_FINAL", "event": "read_returned", "acted_by": "controller", "tool": "inspect_schema_keys", "result": "evidence returned" },
+        { "step": 16, "stage": "RUN_PROBE_FINAL", "event": "decision_receipt_written", "acted_by": "verifier", "tool": "inspect_schema_keys", "admitted_evidence": true, "disposition_moved": true, "outcome_class": "useful_evidence", "reason": "populated_after_repair", "eligible_to_block_an_identical_repeat": false },
+        { "step": 17, "stage": "REPAIR", "event": "repair_requested", "acted_by": "controller" },
+        { "step": 18, "stage": "REPAIR", "event": "repair_applied", "acted_by": "deterministic repair" },
+        { "step": 19, "stage": "REPAIR", "event": "report_requested", "acted_by": "controller" },
+        { "step": 20, "stage": "REPAIR", "event": "query_observed", "acted_by": "controller" },
+        { "step": 21, "stage": "VERIFY", "event": "verification_finished", "acted_by": "verifier", "verification": "passed" },
+        { "step": 22, "stage": "DONE", "event": "run_finished", "acted_by": "controller", "final_choice": "inspect_schema_keys", "terminal_result": "completed", "terminal_reason": "populated_after_repair", "disposition": "CONTINUE", "verification": "passed", "row_count": 2, "counters": { "selector_calls": 2, "diagnostic_reads": 1, "history_lookups": 1, "repairs": 1, "report_queries": 2, "wait_checks": 0 } }
+      ],
+      "finalized": true,
+      "steps_emitted": 22,
+      "steps_dropped": 0,
+      "steps_refused": 0
+    }
+  ],
+  "window_totals": {
+    "timelines": 2,
+    "timelines_denominator": "2 timelines for 2 executed calls, and 0 timelines for the 1 exact repeat",
+    "steps_emitted": 47,
+    "steps_dropped": 0,
+    "steps_refused": 0,
+    "narration_status": "narrated on every terminal result, after the result was already fixed"
+  }
+}

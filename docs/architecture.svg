@@ -1,0 +1,328 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1100" role="img" aria-labelledby="figTitle figDesc" preserveAspectRatio="xMidYMid meet">
+  <title id="figTitle">Run 1 records the dead end. Run 2 uses the receipt before selection.</title>
+  <desc id="figDesc">Three lanes on one synthetic case, with one diagnostic read per call. The memoryless control repeats inspect_pipeline on three calls and stays 3 of 3 unresolved. Run 1 starts with empty history and four options. Decider 2B chooses inspect_pipeline, spends one read, and ends unresolved. One inference, 21.6 s client time. The deterministic verifier stores a disposition_unchanged Decision Receipt. Run 1 is not saved. Run 2 is a new call with an exact receipt match. Before the first Decider request and before any read, the controller precludes only inspect_pipeline. This block spends no read and no inference. The three remaining diagnostics retain their original order. The same Decider 2B makes one fresh choice, inspect_schema_keys, spends one read and completes with a verified repair in 26.6 s client time. No second Decider call. The receipt has exact negative authority, Decider chooses, and the verifier owns truth. The private AWS roles sit underneath. Measured comparison only: superseded post-choice Run 2 used 54.8 s and 2 inferences, optimized Run 2 uses 26.6 s and 1 inference. Observed Run 2 client latency fell 28.2 s, or 51.4%. n = 1, same synthetic case, each proof once. No dollar savings measured.</desc>
+
+  <!--
+    Grid. Canvas 1600 x 1100, frame inset 20, content margins 56 (x 56 to 1544).
+    Five shared columns, width 260, pitch 307: x = 56, 363, 670, 977, 1284.
+    Gutters 47 wide carry the connectors at each lane's box midline.
+    Lanes: control rows top 214 / 250 / 286 (height 26, pitch 36);
+    Run 1 boxes y 392 to 552 (midline 472); Run 2 boxes y 684 to 844 (midline 764).
+    Box interior: tag baseline +24, title +42 / +64, rule +82, lines +104 / +126 / +146,
+    notes below the box at +184 / +202. Runtime band from y 916, caption at 1068.
+    Colour. Ember #C14A16 paints strokes and fills; ember text is #9E3A0F, which
+    holds 4.5:1 or better on the paper and on the ember tint.
+  -->
+
+  <style>
+    @keyframes unstuck-travel { from { stroke-dashoffset: 0; } to { stroke-dashoffset: -1000; } }
+    @keyframes unstuck-breathe { 0%, 100% { stroke-opacity: 0.14; } 50% { stroke-opacity: 0.58; } }
+
+    /* Every element is painted at full strength with presentation attributes.
+       The two rules below are enhancement only, and both stop under reduced motion. */
+    .carry-mark { stroke-dasharray: 16 984; stroke-dashoffset: -500; animation: unstuck-travel 9s linear infinite; }
+    .halo { animation: unstuck-breathe 4.4s ease-in-out infinite; }
+
+    @media (prefers-reduced-motion: reduce) {
+      .carry-mark, .halo { animation: none; }
+      .carry-mark { stroke-dasharray: 16 984; stroke-dashoffset: -500; }
+      .halo { stroke-opacity: 0.34; }
+    }
+  </style>
+
+  <rect x="0" y="0" width="1600" height="1100" fill="#F5F1E8"/>
+  <rect x="20" y="20" width="1560" height="1060" fill="none" stroke="#D8D1C2" stroke-width="1"/>
+
+  <g font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" fill="#1F1D1A">
+
+    <!-- HEADER -->
+    <text x="56" y="58" font-size="13" letter-spacing="3.2" fill="#6B6558">UNSTUCK / DECISION LOOP ESCAPE</text>
+    <text x="56" y="102" font-family="Iowan Old Style, Palatino, Georgia, serif" font-size="38">The receipt acts before selection.</text>
+    <text x="56" y="132" font-size="15" fill="#6B6558">Run 1 records the dead end. Run 2 uses it. The same Decider 2B chooses every tool.</text>
+
+    <g font-size="13" letter-spacing="1.1" fill="#6B6558">
+      <rect x="1250" y="42" width="16" height="16" fill="#FCFAF4" stroke="#1F1D1A" stroke-width="1.2"/>
+      <text x="1276" y="55">MODEL CALL</text>
+      <rect x="1250" y="66" width="16" height="16" fill="#EDE8DC" stroke="#6B6558" stroke-width="1.2"/>
+      <text x="1276" y="79">DETERMINISTIC STEP</text>
+      <rect x="1250" y="90" width="16" height="16" fill="#FCFAF4" stroke="#C14A16" stroke-width="1.2"/>
+      <rect x="1253" y="93" width="10" height="10" fill="none" stroke="#C14A16" stroke-width="1"/>
+      <text x="1276" y="103">DECISION RECEIPT</text>
+      <rect x="1250" y="114" width="16" height="16" fill="#F4E1D5" stroke="#C14A16" stroke-width="1.6"/>
+      <path d="M1252.5 127.5 L1263.5 116.5" fill="none" stroke="#C14A16" stroke-width="1.4"/>
+      <text x="1276" y="127">BLOCKED, NOT EXECUTED</text>
+    </g>
+
+    <line x1="56" y1="158" x2="1544" y2="158" stroke="#1F1D1A" stroke-width="1"/>
+
+    <!-- ================= LANE A: MEMORYLESS CONTROL ================= -->
+    <text x="56" y="192" font-size="17" font-weight="600" letter-spacing="2.4">MEMORYLESS CONTROL</text>
+    <text x="300" y="192" font-size="14" letter-spacing="1.2" fill="#6B6558">3 calls, no receipts</text>
+    <text x="1544" y="192" font-size="14" letter-spacing="1.2" text-anchor="end">0 of 3 completed  /  3 of 3 unresolved</text>
+
+    <g font-size="13" fill="#6B6558">
+      <!-- connectors, one set per row, at the row midline -->
+      <g fill="none" stroke="#6B6558" stroke-width="1.1">
+        <path d="M316 227 H355"/><path d="M623 227 H662"/><path d="M930 227 H969"/><path d="M1237 227 H1276"/>
+        <path d="M316 263 H355"/><path d="M623 263 H662"/><path d="M930 263 H969"/><path d="M1237 263 H1276"/>
+        <path d="M316 299 H355"/><path d="M623 299 H662"/><path d="M930 299 H969"/><path d="M1237 299 H1276"/>
+      </g>
+      <g fill="#6B6558">
+        <polygon points="355,223 363,227 355,231"/><polygon points="662,223 670,227 662,231"/><polygon points="969,223 977,227 969,231"/><polygon points="1276,223 1284,227 1276,231"/>
+        <polygon points="355,259 363,263 355,267"/><polygon points="662,259 670,263 662,267"/><polygon points="969,259 977,263 969,267"/><polygon points="1276,259 1284,263 1276,267"/>
+        <polygon points="355,295 363,299 355,303"/><polygon points="662,295 670,299 662,303"/><polygon points="969,295 977,299 969,303"/><polygon points="1276,295 1284,299 1276,303"/>
+      </g>
+
+      <!-- control call 1 -->
+      <g transform="translate(0,214)">
+        <rect x="56" y="0" width="260" height="26" fill="none" stroke="#D8D1C2" stroke-width="1"/>
+        <text x="70" y="18" letter-spacing="1.6">CONTROL CALL 1</text>
+        <rect x="363" y="0" width="260" height="26" fill="#FCFAF4" stroke="#6B6558" stroke-width="1"/>
+        <text x="377" y="18">D1  inspect_pipeline</text>
+        <rect x="670" y="0" width="260" height="26" fill="#EDE8DC" stroke="#D8D1C2" stroke-width="1"/>
+        <text x="684" y="18">1 read of 1, no change</text>
+        <rect x="977" y="0" width="260" height="26" fill="none" stroke="#D8D1C2" stroke-width="1" stroke-dasharray="4 4"/>
+        <text x="991" y="18">no receipt stored</text>
+        <rect x="1284" y="0" width="260" height="26" fill="#EDE8DC" stroke="#D8D1C2" stroke-width="1"/>
+        <text x="1298" y="18">unresolved</text>
+      </g>
+
+      <!-- control call 2 -->
+      <g transform="translate(0,250)">
+        <rect x="56" y="0" width="260" height="26" fill="none" stroke="#D8D1C2" stroke-width="1"/>
+        <text x="70" y="18" letter-spacing="1.6">CONTROL CALL 2</text>
+        <rect x="363" y="0" width="260" height="26" fill="#FCFAF4" stroke="#6B6558" stroke-width="1"/>
+        <text x="377" y="18">D1  inspect_pipeline</text>
+        <rect x="670" y="0" width="260" height="26" fill="#EDE8DC" stroke="#D8D1C2" stroke-width="1"/>
+        <text x="684" y="18">1 read of 1, no change</text>
+        <rect x="977" y="0" width="260" height="26" fill="none" stroke="#D8D1C2" stroke-width="1" stroke-dasharray="4 4"/>
+        <text x="991" y="18">no receipt stored</text>
+        <rect x="1284" y="0" width="260" height="26" fill="#EDE8DC" stroke="#D8D1C2" stroke-width="1"/>
+        <text x="1298" y="18">unresolved</text>
+      </g>
+
+      <!-- control call 3 -->
+      <g transform="translate(0,286)">
+        <rect x="56" y="0" width="260" height="26" fill="none" stroke="#D8D1C2" stroke-width="1"/>
+        <text x="70" y="18" letter-spacing="1.6">CONTROL CALL 3</text>
+        <rect x="363" y="0" width="260" height="26" fill="#FCFAF4" stroke="#6B6558" stroke-width="1"/>
+        <text x="377" y="18">D1  inspect_pipeline</text>
+        <rect x="670" y="0" width="260" height="26" fill="#EDE8DC" stroke="#D8D1C2" stroke-width="1"/>
+        <text x="684" y="18">1 read of 1, no change</text>
+        <rect x="977" y="0" width="260" height="26" fill="none" stroke="#D8D1C2" stroke-width="1" stroke-dasharray="4 4"/>
+        <text x="991" y="18">no receipt stored</text>
+        <rect x="1284" y="0" width="260" height="26" fill="#EDE8DC" stroke="#D8D1C2" stroke-width="1"/>
+        <text x="1298" y="18">unresolved</text>
+      </g>
+    </g>
+
+    <line x1="56" y1="340" x2="1544" y2="340" stroke="#D8D1C2" stroke-width="1"/>
+
+    <!-- ================= LANE B: UNSTUCK RUN 1 ================= -->
+    <text x="56" y="372" font-size="17" font-weight="600" letter-spacing="2.4">UNSTUCK RUN 1</text>
+    <text x="240" y="372" font-size="14" letter-spacing="1.2" fill="#6B6558">history: empty  /  learning cost paid once</text>
+    <text x="1544" y="372" font-size="14" letter-spacing="1.2" text-anchor="end" fill="#6B6558">1 inference / 21.6 s client / unresolved</text>
+
+    <g fill="none" stroke="#1F1D1A" stroke-width="1.4">
+      <path d="M316 472 H351"/><path d="M623 472 H658"/><path d="M930 472 H965"/><path d="M1237 472 H1272"/>
+    </g>
+    <g fill="#1F1D1A">
+      <polygon points="351,466 363,472 351,478"/><polygon points="658,466 670,472 658,478"/>
+      <polygon points="965,466 977,472 965,478"/><polygon points="1272,466 1284,472 1272,478"/>
+    </g>
+
+    <!-- B1 current state -->
+    <g transform="translate(56,392)">
+      <rect x="0" y="0" width="260" height="160" fill="#EDE8DC" stroke="#6B6558" stroke-width="1.4"/>
+      <text x="244" y="24" font-size="12" letter-spacing="1.1" text-anchor="end" fill="#6B6558">INPUT</text>
+      <text x="18" y="42" font-size="18" font-weight="600" letter-spacing="1.2">CURRENT STATE</text>
+      <line x1="18" y1="82" x2="242" y2="82" stroke="#D8D1C2" stroke-width="1"/>
+      <text x="18" y="104" font-size="14" fill="#6B6558">the report is empty</text>
+      <text x="18" y="126" font-size="14">4 options offered</text>
+      <text x="18" y="146" font-size="14" fill="#6B6558">history: empty</text>
+      <text x="20" y="184" font-size="14" fill="#6B6558">task, evidence, state</text>
+      <text x="20" y="202" font-size="14" fill="#6B6558">and the option cards</text>
+    </g>
+
+    <!-- B2 decider D1 -->
+    <g transform="translate(363,392)">
+      <rect x="0" y="0" width="260" height="160" fill="#FCFAF4" stroke="#1F1D1A" stroke-width="1.4"/>
+      <text x="244" y="24" font-size="12" letter-spacing="1.1" text-anchor="end" fill="#6B6558">MODEL</text>
+      <text x="18" y="42" font-size="18" font-weight="600" letter-spacing="1.2">DECIDER D1</text>
+      <line x1="18" y1="82" x2="242" y2="82" stroke="#D8D1C2" stroke-width="1"/>
+      <text x="18" y="104" font-size="14" fill="#6B6558">Strands Decider 2B</text>
+      <text x="18" y="126" font-size="14" fill="#6B6558">choice:</text>
+      <text x="18" y="146" font-size="14">inspect_pipeline</text>
+      <text x="20" y="184" font-size="14" fill="#6B6558">one typed choice,</text>
+      <text x="20" y="202" font-size="14" fill="#6B6558">a fresh decision</text>
+    </g>
+
+    <!-- B3 the one read -->
+    <g transform="translate(670,392)">
+      <rect x="0" y="0" width="260" height="160" fill="#EDE8DC" stroke="#6B6558" stroke-width="1.4"/>
+      <text x="244" y="24" font-size="12" letter-spacing="1.1" text-anchor="end" fill="#6B6558">CONTROLLER</text>
+      <text x="18" y="42" font-size="18" font-weight="600" letter-spacing="1.2">ONE READ</text>
+      <line x1="18" y1="82" x2="242" y2="82" stroke="#D8D1C2" stroke-width="1"/>
+      <text x="18" y="104" font-size="14" fill="#6B6558">inspect_pipeline</text>
+      <text x="18" y="126" font-size="14">reads: 1 of 1</text>
+      <text x="18" y="146" font-size="14" fill="#6B6558">real data returned</text>
+      <text x="20" y="184" font-size="14" fill="#6B6558">moved no disposition,</text>
+      <text x="20" y="202" font-size="14" fill="#6B6558">the one read is spent</text>
+    </g>
+
+    <!-- B4 decision receipt, the stamp -->
+    <g transform="translate(977,392)">
+      <rect x="0" y="0" width="260" height="160" fill="#FCFAF4" stroke="#C14A16" stroke-width="1.6"/>
+      <rect x="5" y="5" width="250" height="150" fill="none" stroke="#C14A16" stroke-width="1"/>
+      <text x="240" y="26" font-size="12" letter-spacing="1.1" text-anchor="end" fill="#9E3A0F">VERIFIER</text>
+      <text x="18" y="44" font-size="18" font-weight="600" letter-spacing="1.2">DECISION</text>
+      <text x="18" y="66" font-size="18" font-weight="600" letter-spacing="1.2">RECEIPT</text>
+      <line x1="18" y1="82" x2="242" y2="82" stroke="#C14A16" stroke-width="1"/>
+      <text x="18" y="104" font-size="14" fill="#6B6558">outcome_class:</text>
+      <text x="18" y="126" font-size="14" fill="#9E3A0F">disposition_unchanged</text>
+      <text x="18" y="146" font-size="14" fill="#6B6558">receipt stored</text>
+      <text x="20" y="184" font-size="14" fill="#6B6558">verifier owned, content</text>
+      <text x="20" y="202" font-size="14" fill="#6B6558">identified, no expiry</text>
+    </g>
+
+    <!-- B5 unresolved -->
+    <g transform="translate(1284,392)">
+      <rect x="0" y="0" width="260" height="160" fill="#EDE8DC" stroke="#6B6558" stroke-width="1.4"/>
+      <text x="244" y="24" font-size="12" letter-spacing="1.1" text-anchor="end" fill="#6B6558">TERMINAL</text>
+      <text x="18" y="42" font-size="18" font-weight="600" letter-spacing="1.2">UNRESOLVED</text>
+      <line x1="18" y1="82" x2="242" y2="82" stroke="#D8D1C2" stroke-width="1"/>
+      <text x="18" y="104" font-size="14" fill="#6B6558">reason:</text>
+      <text x="18" y="126" font-size="13">diagnostic_reads_exhausted</text>
+      <text x="18" y="146" font-size="14" fill="#6B6558">no second choice run</text>
+      <text x="20" y="184" font-size="14" fill="#6B6558">Run 1 is not saved.</text>
+      <text x="20" y="202" font-size="14" fill="#6B6558">The receipt outlives it.</text>
+    </g>
+
+    <!-- CARRY: the receipt reaches a new call -->
+    <g>
+      <path d="M1225 552 V626 H38 V764 H44" fill="none" stroke="#1F1D1A" stroke-width="1.7"/>
+      <path class="carry-mark" d="M1225 552 V626 H38 V764 H44" pathLength="1000" fill="none" stroke="#C14A16" stroke-width="4" stroke-linecap="butt"/>
+      <polygon points="44,758 56,764 44,770" fill="#1F1D1A"/>
+      <circle cx="1225" cy="552" r="3.4" fill="#1F1D1A"/>
+      <circle cx="1225" cy="626" r="2.6" fill="#1F1D1A"/>
+      <circle cx="38" cy="626" r="2.6" fill="#1F1D1A"/>
+      <rect x="456" y="613" width="380" height="26" fill="#F5F1E8"/>
+      <text x="646" y="631" font-size="13" letter-spacing="2.4" text-anchor="middle">RECEIPT, EXACT MATCH ON A NEW CALL</text>
+    </g>
+
+    <!-- ================= LANE C: UNSTUCK RUN 2 ================= -->
+    <text x="56" y="664" font-size="17" font-weight="600" letter-spacing="2.4">UNSTUCK RUN 2</text>
+    <text x="240" y="664" font-size="14" letter-spacing="1.2" fill="#6B6558">history: matched  /  before selection</text>
+    <text x="1544" y="664" font-size="14" letter-spacing="1.2" text-anchor="end">1 inference / 26.6 s client / completed</text>
+
+    <g fill="none" stroke="#1F1D1A" stroke-width="1.4">
+      <path d="M316 764 H351"/><path d="M623 764 H658"/><path d="M1237 764 H1272"/>
+    </g>
+    <path d="M930 764 H965" fill="none" stroke="#C14A16" stroke-width="2"/>
+    <g fill="#1F1D1A">
+      <polygon points="351,758 363,764 351,770"/><polygon points="658,758 670,764 658,770"/>
+      <polygon points="1272,758 1284,764 1272,770"/>
+    </g>
+    <polygon points="965,758 977,764 965,770" fill="#C14A16"/>
+
+    <!-- C1 new call -->
+    <g transform="translate(56,684)">
+      <rect x="0" y="0" width="260" height="160" fill="#EDE8DC" stroke="#6B6558" stroke-width="1.4"/>
+      <text x="244" y="24" font-size="12" letter-spacing="1.1" text-anchor="end" fill="#6B6558">ENTRY</text>
+      <text x="18" y="42" font-size="18" font-weight="600" letter-spacing="1.2">NEW CALL</text>
+      <line x1="18" y1="82" x2="242" y2="82" stroke="#D8D1C2" stroke-width="1"/>
+      <text x="18" y="104" font-size="14" fill="#6B6558">same incident</text>
+      <text x="18" y="126" font-size="14">history: matched</text>
+      <text x="18" y="146" font-size="14" fill="#6B6558">receipt match: exact</text>
+      <text x="20" y="184" font-size="14" fill="#6B6558">current state plus</text>
+      <text x="20" y="202" font-size="14" fill="#6B6558">the receipt, as history</text>
+    </g>
+
+    <!-- C2 exact preclusion -->
+    <g transform="translate(363,684)">
+      <rect class="halo" x="-6" y="-6" width="272" height="172" fill="none" stroke="#C14A16" stroke-width="1.4" stroke-opacity="0.34"/>
+      <rect x="0" y="0" width="260" height="160" fill="#F4E1D5" stroke="#C14A16" stroke-width="2.6"/>
+      <text x="244" y="24" font-size="12" letter-spacing="1.1" text-anchor="end" fill="#9E3A0F">CONTROLLER</text>
+      <text x="18" y="42" font-size="18" font-weight="600" letter-spacing="1.2" fill="#9E3A0F">EXACT DEAD END</text>
+      <text x="18" y="64" font-size="18" font-weight="600" letter-spacing="1.2" fill="#9E3A0F">PRECLUDED</text>
+      <line x1="18" y1="82" x2="242" y2="82" stroke="#C14A16" stroke-width="1"/>
+      <text x="18" y="104" font-size="14" text-decoration="line-through">inspect_pipeline</text>
+      <text x="18" y="126" font-size="14" fill="#9E3A0F">before selection</text>
+      <text x="18" y="146" font-size="14" fill="#9E3A0F">0 reads, 0 inferences</text>
+      <text x="20" y="184" font-size="14" fill="#6B6558">before the first</text>
+      <text x="20" y="202" font-size="14" fill="#6B6558">Decider request</text>
+    </g>
+
+    <!-- C3 remaining offer -->
+    <g transform="translate(670,684)">
+      <rect x="0" y="0" width="260" height="160" fill="#EDE8DC" stroke="#6B6558" stroke-width="1.4"/>
+      <text x="244" y="24" font-size="12" letter-spacing="1.1" text-anchor="end" fill="#6B6558">OFFER</text>
+      <text x="18" y="42" font-size="18" font-weight="600" letter-spacing="1.2">3 DIAGNOSTICS</text>
+      <line x1="18" y1="82" x2="242" y2="82" stroke="#D8D1C2" stroke-width="1"/>
+      <text x="18" y="104" font-size="14">remaining options only</text>
+      <text x="18" y="126" font-size="14">original order preserved</text>
+      <text x="18" y="146" font-size="14" fill="#6B6558">no replacement chosen</text>
+      <text x="20" y="184" font-size="14" fill="#6B6558">same tool, args, context</text>
+      <text x="20" y="202" font-size="14" fill="#6B6558">exact negative authority</text>
+    </g>
+
+    <!-- C4 one fresh Decider choice -->
+    <g transform="translate(977,684)">
+      <rect x="0" y="0" width="260" height="160" fill="#FCFAF4" stroke="#1F1D1A" stroke-width="1.4"/>
+      <text x="244" y="24" font-size="12" letter-spacing="1.1" text-anchor="end" fill="#6B6558">MODEL</text>
+      <text x="18" y="42" font-size="18" font-weight="600" letter-spacing="1.2">DECIDER CHOOSES</text>
+      <line x1="18" y1="82" x2="242" y2="82" stroke="#D8D1C2" stroke-width="1"/>
+      <text x="18" y="104" font-size="14" fill="#6B6558">same Decider 2B</text>
+      <text x="18" y="126" font-size="14" fill="#6B6558">one fresh choice:</text>
+      <text x="18" y="146" font-size="14">inspect_schema_keys</text>
+      <text x="20" y="184" font-size="14" fill="#6B6558">no second Decider call</text>
+      <text x="20" y="202" font-size="14" fill="#6B6558">one inference total</text>
+    </g>
+
+    <!-- C5 one read, verified repair -->
+    <g transform="translate(1284,684)">
+      <rect x="0" y="0" width="260" height="160" fill="#EDE8DC" stroke="#1F1D1A" stroke-width="1.8"/>
+      <text x="244" y="24" font-size="12" letter-spacing="1.1" text-anchor="end" fill="#6B6558">DETERMINISTIC</text>
+      <text x="18" y="42" font-size="18" font-weight="600" letter-spacing="1.2">ONE READ,</text>
+      <text x="18" y="64" font-size="18" font-weight="600" letter-spacing="1.2">VERIFIED REPAIR</text>
+      <line x1="18" y1="82" x2="242" y2="82" stroke="#D8D1C2" stroke-width="1"/>
+      <text x="18" y="104" font-size="14" fill="#6B6558">reads: 1 of 1</text>
+      <text x="18" y="126" font-size="14">completed /</text>
+      <text x="18" y="146" font-size="14">populated_after_repair</text>
+      <text x="20" y="184" font-size="14" fill="#6B6558">checked by the verifier</text>
+      <text x="20" y="202" font-size="14" fill="#6B6558">before it is applied</text>
+    </g>
+
+    <!-- ================= RUNTIME ROLES, secondary ================= -->
+    <line x1="56" y1="916" x2="1544" y2="916" stroke="#D8D1C2" stroke-width="1"/>
+    <text x="56" y="942" font-size="12" letter-spacing="2.4" fill="#6B6558">WHERE IT RUNS, PRIVATE AND SIGNED</text>
+    <g font-size="13" fill="#6B6558">
+      <text x="56" y="970" font-weight="600" letter-spacing="1.2" fill="#1F1D1A">CONTROLLER</text>
+      <text x="56" y="992">Amazon Bedrock AgentCore Runtime</text>
+      <text x="56" y="1012">private, executes every read</text>
+
+      <text x="428" y="970" font-weight="600" letter-spacing="1.2" fill="#1F1D1A">DECIDER 2B</text>
+      <text x="428" y="992">private Amazon SageMaker endpoint</text>
+      <text x="428" y="1012">signed calls, no outbound route</text>
+
+      <text x="800" y="970" font-weight="600" letter-spacing="1.2" fill="#1F1D1A">VERIFIER AND REPAIR</text>
+      <text x="800" y="992">deterministic code</text>
+      <text x="800" y="1012">owns outcomes and receipts</text>
+
+      <text x="1172" y="970" font-weight="600" letter-spacing="1.2" fill="#1F1D1A">NARRATION</text>
+      <text x="1172" y="992">Amazon Bedrock Nova Lite</text>
+      <text x="1172" y="1012">after completion, no authority</text>
+    </g>
+    <g stroke="#D8D1C2" stroke-width="1">
+      <line x1="412" y1="956" x2="412" y2="1018"/>
+      <line x1="784" y1="956" x2="784" y2="1018"/>
+      <line x1="1156" y1="956" x2="1156" y2="1018"/>
+    </g>
+
+    <!-- CAPTION -->
+    <line x1="56" y1="1032" x2="1544" y2="1032" stroke="#D8D1C2" stroke-width="1"/>
+    <text x="56" y="1050" font-size="14" fill="#6B6558">Measured Run 2 client time: superseded post-choice 54.8 s / 2 inferences; optimized 26.6 s / 1 inference.</text>
+    <text x="56" y="1070" font-size="14" fill="#6B6558">28.2 s and 51.4% lower observed Run 2 client latency. n = 1, same synthetic case, each proof once. No dollar savings measured.</text>
+  </g>
+</svg>

@@ -1,0 +1,111 @@
+# Pinned serving closure for the x86_64 SageMaker model-server container.
+#
+# Every version below is transcribed from the resolved environment the golden
+# real-Decider path actually ran in, which is recorded at
+# .venv/decider-pf12/env. Nothing here is a guessed pin: each line is a
+# distribution that is installed in that environment, at the version it is
+# installed at. The environment's own platform is darwin/arm64, so these are
+# version pins rather than evidence that each one has an x86_64 wheel; a
+# distribution with no linux x86_64 wheel fails the build loudly, which is the
+# intended outcome rather than a silent source build.
+#
+# Installed with `pip install --no-deps`, so every transitive dependency is
+# listed explicitly and the pin is the only authority.
+#
+# Two identifiers are deliberately NOT resolved here, and are recorded as
+# deployment inputs in deployment/sagemaker/base-image.lock instead:
+#
+#   * the CUDA build variant of torch and the index it comes from. The
+#     default index serves CPU-only wheels for linux x86_64, which is correct
+#     for a `cpu` device deployment and wrong for a `cuda` one. The Dockerfile
+#     takes TORCH_INDEX_URL as a build argument with no default, so a cuda
+#     deployment supplies it and a cpu deployment omits it.
+#   * the distribution source of `strands-decider`. It is installed locally
+#     from a source this unit cannot verify from here, so its index is a
+#     deployment input. Pinning a guessed index would assert a fact nothing
+#     here can check.
+#
+# NOT installed, each for a stated reason:
+#
+#   * mlx and mlx-lm, the `mlx` extra of strands-decider. They are declared
+#     only for darwin/arm64, so they do not apply to this image at all.
+#   * flash-linear-attention, the `cuda` extra. It is an optional accelerator
+#     rather than a serving requirement, and no measurement in this repository
+#     shows it is needed, so adding it would be an unevidenced change.
+#   (httpx2 and httpcore2 were previously excluded here as "the test client's
+#   dependency". That was wrong and a build proved it: `httpx2<3,>=2.0.0` is a
+#   hard Requires-Dist of huggingface-hub 2.2.0, not an extra, and
+#   `huggingface_hub.file_download` imports it at module load, so
+#   `import transformers` failed in the image with
+#   `ModuleNotFoundError: No module named 'httpx2'`. Both are now pinned below.
+#   Nothing fetches at serving time regardless: HF_HUB_OFFLINE and
+#   TRANSFORMERS_OFFLINE are set in the image and re-checked at startup, so the
+#   HTTP client is imported but never used to reach a network.)
+#   * boto3 and botocore. The model host reaches no AWS API: its callers are
+#     authorized by SageMaker before a request arrives, and it reads no run
+#     state, receipt, artifact, or evaluator asset.
+#   * the `standard` extras of uvicorn beyond what is listed. uvloop,
+#     httptools, watchfiles and websockets are present in the resolved local
+#     environment because strands-decider declares `uvicorn[standard]`; they
+#     are listed below so --no-deps stays installable, and the server opens no
+#     WebSocket route regardless.
+
+# The model runtime. torch is pinned by version only; see TORCH_INDEX_URL.
+torch==2.14.1
+transformers==5.20.2
+tokenizers==0.23.3
+peft==0.21.2
+accelerate==1.15.0
+safetensors==0.8.0
+huggingface-hub==2.2.0
+hf-xet==1.7.0
+# The hard HTTP closure of huggingface-hub 2.2.0, at the versions the resolved
+# local environment carries. Imported, never used to reach a network.
+httpx2==2.15.1
+httpcore2==2.15.1
+numpy==2.5.4
+regex==2026.9.29
+sympy==1.14.0
+mpmath==1.3.0
+networkx==3.7
+filelock==4.2.4
+fsspec==2026.9.0
+jinja2==3.1.6
+markupsafe==3.0.4
+psutil==7.2.2
+packaging==26.3
+pyyaml==6.0.3
+tqdm==4.70.1
+setuptools==84.2.1
+
+# The Decider library. One loader, shared with the local path, so the shipped
+# criteria reach the checkpoint through identical code.
+strands-decider==0.2.0
+typer==0.27.3
+rich==15.0.0
+markdown-it-py==4.2.0
+mdurl==0.1.2
+pygments==2.21.0
+shellingham==1.5.4
+python-dotenv==1.2.4
+truststore==0.10.5
+
+# The server closure.
+fastapi==0.156.3
+starlette==1.9.0
+uvicorn==0.54.0
+pydantic==2.14.1
+pydantic-core==2.50.1
+annotated-types==0.8.0
+annotated-doc==0.0.5
+typing-extensions==4.16.0
+typing-inspection==0.4.4
+anyio==4.15.1
+h11==0.16.0
+idna==3.20
+click==8.5.0
+opentelemetry-api==1.45.1
+httptools==0.9.0
+uvloop==0.23.0
+watchfiles==1.3.0
+websockets==17.3

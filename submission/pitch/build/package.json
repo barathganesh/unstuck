@@ -1,0 +1,17 @@
+{
+  "name": "unstuck-pitch-build",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Local build tooling for the Unstuck pitch deck: frame capture and PPTX assembly.",
+  "scripts": {
+    "frames": "node capture.mjs",
+    "pptx": "node make-pptx.mjs",
+    "all": "node capture.mjs && node make-pptx.mjs"
+  },
+  "dependencies": {
+    "jszip": "^3.10.1",
+    "pptxgenjs": "^3.12.0",
+    "puppeteer": "^23.0.0"
+  }
+}

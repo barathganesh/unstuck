@@ -1,0 +1,56 @@
+# Pinned runtime closure for the controller container.
+#
+# Installed with `pip install --no-deps`, so every transitive dependency is
+# listed explicitly and the pin is the only authority. Versions match the
+# resolved set recorded in pyproject.toml.
+#
+# Synthesis-only packages (aws-cdk-lib, constructs) are deliberately absent:
+# the container never synthesizes infrastructure.
+#
+# No AgentCore runtime server library is pinned here, and that is a recorded
+# choice rather than an oversight. AWS documents a custom agent as one built
+# without the AgentCore Python SDK, served by FastAPI and Uvicorn, so that is
+# what this image installs: the second block below is the FastAPI and Uvicorn
+# closure the server layer needs. A dedicated AgentCore runtime server package
+# is not installed in this environment, so its distribution name, import path
+# and API cannot be verified, and pinning a guessed name would assert a fact
+# nothing here can check.
+#
+# The contract the server implements (GET /ping, POST /invocations, port 8080,
+# linux/arm64) is read from the AWS documentation, and the request headers
+# InvokeAgentRuntime forwards are verified against the installed botocore
+# service models for bedrock-agentcore and bedrock-agentcore-control, which
+# boto3 and botocore below already carry.
+annotated-types==0.8.0
+boto3==1.43.114
+botocore==1.43.114
+duckdb==1.4.1
+jmespath==1.1.0
+pydantic==2.12.3
+pydantic-core==2.41.4
+python-dateutil==2.9.0.post0
+s3transfer==0.19.2
+six==1.17.0
+typing-extensions==4.16.0
+typing-inspection==0.4.4
+urllib3==2.8.0
+
+# The server closure. Versions match the resolved `ui` extra of pyproject.toml,
+# which is the same FastAPI, Starlette and Uvicorn the local operator surface
+# already runs, so one resolved set covers both and neither drifts.
+#
+# opentelemetry-api is a hard requirement of this FastAPI release rather than
+# an extra, so it is pinned here to keep --no-deps installable. It is the API
+# package only: no SDK and no exporter is installed, so importing it configures
+# nothing and emits nothing. None of the `standard` extras is installed either,
+# so no HTTP client, template engine, multipart parser, file watcher, or
+# WebSocket implementation enters the image.
+annotated-doc==0.0.5
+anyio==4.15.1
+click==8.5.0
+fastapi==0.149.0
+h11==0.16.0
+idna==3.20
+opentelemetry-api==1.45.1
+starlette==1.9.0
+uvicorn==0.54.0

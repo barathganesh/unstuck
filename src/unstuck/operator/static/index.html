@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Unstuck operator</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to main content</a>
+
+    <header class="masthead">
+      <p class="product">Unstuck</p>
+      <p class="badge" id="mode-badge">Offline mode, mock provider</p>
+      <p class="badge badge-synthetic">Synthetic data</p>
+    </header>
+
+    <nav class="sidebar" aria-label="Sections">
+      <ul>
+        <li><button type="button" class="nav" data-view="setup" aria-current="page">Run setup</button></li>
+        <li><button type="button" class="nav" data-view="detail">Run detail</button></li>
+        <li><button type="button" class="nav" data-view="benchmark">Benchmark</button></li>
+        <li><button type="button" class="nav" data-view="export">Evidence export</button></li>
+      </ul>
+    </nav>
+
+    <main id="main" class="main">
+      <p class="status" id="live-status" role="status" aria-live="polite"></p>
+
+      <section id="view-setup" class="view" aria-labelledby="setup-heading">
+        <h1 id="setup-heading">Run setup</h1>
+        <p class="note" id="setup-boundary"></p>
+        <form id="run-form" novalidate>
+          <h2>Scenario and task</h2>
+          <div class="field">
+            <label for="scenario">Synthetic scenario</label>
+            <select id="scenario" name="scenario">
+              <option value="repairable-join">Repairable join key</option>
+              <option value="memory-repeat">Repeated read, refused by a receipt</option>
+              <option value="verified-empty">Verified empty result</option>
+              <option value="pending-partition">Bounded wait on pending evidence</option>
+              <option value="stalled-upstream">Incomplete upstream partition</option>
+            </select>
+            <p class="hint" id="scenario-hint">Each scenario is a different synthetic dataset and changes the run that happens. The task, date, and country filter are immutable once the run starts.</p>
+          </div>
+          <div class="field">
+            <label for="idempotency">Idempotency key</label>
+            <input id="idempotency" name="idempotency_key" type="text" value="offline-ui-01" autocomplete="off" />
+            <p class="hint">Starting twice with the same key resumes the same run.</p>
+          </div>
+          <fieldset class="field">
+            <legend>Mode</legend>
+            <label><input type="radio" name="mode" value="offline" checked /> Offline (mock provider)</label>
+            <label><input type="radio" name="mode" value="live" /> Live</label>
+            <label><input type="radio" name="mode" value="replay" /> Replay</label>
+            <p class="hint" id="mode-hint">Live and replay are blocked until their evidence exists. Nothing falls back silently.</p>
+          </fieldset>
+          <p class="error" id="run-error" hidden></p>
+          <button type="submit" id="start" class="primary">Start run</button>
+        </form>
+      </section>
+
+      <section id="view-detail" class="view" aria-labelledby="detail-heading" hidden>
+        <h1 id="detail-heading" tabindex="-1">Run detail</h1>
+        <dl class="summary" id="run-summary"></dl>
+        <div class="split">
+          <section aria-labelledby="spine-heading">
+            <h2 id="spine-heading">Provenance spine</h2>
+            <ol class="spine" id="spine"></ol>
+          </section>
+          <section aria-labelledby="evidence-heading">
+            <h2 id="evidence-heading">Evidence inspector</h2>
+            <div class="tabs" role="tablist" aria-label="Evidence panels">
+              <button type="button" role="tab" id="tab-evidence" aria-selected="true" aria-controls="panel-evidence">Evidence</button>
+              <button type="button" role="tab" id="tab-raw" aria-selected="false" aria-controls="panel-raw" tabindex="-1">Raw event</button>
+              <button type="button" role="tab" id="tab-validation" aria-selected="false" aria-controls="panel-validation" tabindex="-1">Validation</button>
+            </div>
+            <div role="tabpanel" id="panel-evidence" aria-labelledby="tab-evidence" tabindex="0"><pre id="out-evidence"></pre></div>
+            <div role="tabpanel" id="panel-raw" aria-labelledby="tab-raw" tabindex="0" hidden><pre id="out-raw"></pre></div>
+            <div role="tabpanel" id="panel-validation" aria-labelledby="tab-validation" tabindex="0" hidden><pre id="out-validation"></pre></div>
+          </section>
+        </div>
+      </section>
+
+      <section id="view-benchmark" class="view" aria-labelledby="benchmark-heading" hidden>
+        <h1 id="benchmark-heading">Benchmark</h1>
+        <p class="note" id="benchmark-notice"></p>
+        <table class="grid" id="benchmark-table">
+          <caption id="benchmark-caption">Arm comparison. Every figure is read from the evaluation export; none is computed here.</caption>
+          <thead>
+            <tr>
+              <th scope="col">Arm</th>
+              <th scope="col">Episodes</th>
+              <th scope="col">Verified success</th>
+              <th scope="col">Harmful choices</th>
+              <th scope="col">Diagnostic reads</th>
+              <th scope="col">Selector p50 ms</th>
+              <th scope="col">Selector p95 ms</th>
+              <th scope="col">Cost USD</th>
+            </tr>
+          </thead>
+          <tbody id="benchmark-body"></tbody>
+        </table>
+        <section aria-labelledby="retention-heading">
+          <h2 id="retention-heading">Retention decision</h2>
+          <p id="retention-rule"></p>
+          <p class="note" id="retention-state"></p>
+        </section>
+      </section>
+
+      <section id="view-export" class="view" aria-labelledby="export-heading" hidden>
+        <h1 id="export-heading">Evidence export</h1>
+        <p class="hint">Each format is labelled explicitly in the payload, not inferred from the file name.</p>
+        <ul class="checklist" id="export-checklist"></ul>
+        <div class="field">
+          <label for="export-format">Format</label>
+          <select id="export-format" name="format">
+            <option value="jsonl">JSONL (one record per line)</option>
+            <option value="json">JSON (single document)</option>
+            <option value="csv">CSV (flat manifest)</option>
+          </select>
+        </div>
+        <button type="button" id="download" class="primary">Download export</button>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <p>Local operator surface, bound to loopback. Offline, synthetic evidence. Live checks Pending.</p>
+    </footer>
+
+    <script src="/static/app.js"></script>
+  </body>
+</html>

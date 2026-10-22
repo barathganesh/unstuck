@@ -1,0 +1,267 @@
+{
+  "schema_version": "2",
+  "generated_for": "Unstuck public submission package",
+  "what_this_is": "A curated, judge facing record of the facts, choices and outcomes from one private cloud run of the Unstuck controller against a hosted Strands Decider 2B checkpoint, with every number placed next to the denominator it was counted against. Three signed invocations were made in one connected window: a first call with no decision history, a second call under a new request key, and an exact repeat of that second request key. The first call spends two diagnostic reads. The second matches the two Decision Receipts the first call's verifier wrote, has its repeated first tool choice refused by controller validation before that tool executes, re-decides once, and spends one read. The third is the exact repeat and returns the stored result without executing anything. Amazon Bedrock Nova Lite narrates each terminal result only after that result is already fixed by deterministic verification.",
+  "what_this_is_not": "Not a benchmark, not a rate, not a statistical result, and not a latency claim or a cost claim. No claim is made about the model's general accuracy and none about its calibration in either acceptance tier. Not a production readiness claim. The cloud read difference recorded here is a single pair of calls, n = 1, and is an existence result rather than a measured rate. The upstream evidence every call reasoned over is a declared synthetic fixture, so a real provider answered questions about synthetic evidence: that makes these real provider calls and not a live measurement of anything in production.",
+  "identifiers_note": "Every operational identifier has been removed on purpose. There are no run, request, session, trace, span, model call, decision, diagnostic, evidence or receipt identifiers here, no hashes or digests of any kind, no account or resource identifiers, no local paths and no timestamps. What remains is facts, choices, outcomes and denominators.",
+  "classification": "synthetic",
+  "evidence_note": "Every call reasoned over one declared synthetic fixture.",
+  "checkpoint": {
+    "model": "Strands Decider 2B",
+    "note": "One immutable checkpoint revision was pinned and used for both the local and the cloud work, 3 of 3 invocations on that one revision. The revision value is private and is not published, raw or digested.",
+    "selection_note": "This checkpoint was chosen because it exhibits a repeatable blind spot on this fixture, not because it performed well."
+  },
+  "cost": {
+    "availability": "not_measured",
+    "value": null,
+    "note": "Cost was not measured. An observed spend of zero would be evidence that no charge has surfaced yet and not evidence that the endpoint is free, so no cost figure is published."
+  },
+  "cloud_run": {
+    "denominator": "1 cloud run, 2 executed calls plus 1 exact repeat, 3 signed invocations in total",
+    "calls": [
+      {
+        "call": 1,
+        "invocation": "new",
+        "history": "none",
+        "receipts_consulted": 0,
+        "receipts_consulted_denominator": "0 of 0 receipts, because none existed when this call began",
+        "first_choice": "inspect_pipeline",
+        "first_reported_confidence": 0.3067,
+        "first_choice_executed": true,
+        "repeated_choice_blocked": false,
+        "repeated_choice_blocked_note": "On this call the first choice ran. Its read admitted real evidence and moved no supported disposition, so the verifier recorded that tool as eligible to block an identical later context. Nothing was refused before execution on this call, which is why the read count is 2 and not 1.",
+        "second_choice": "inspect_schema_keys",
+        "second_reported_confidence": 0.4746,
+        "diagnostic_reads": 2,
+        "diagnostic_reads_denominator": "2 of a hard bound of 2 diagnostic reads per incident",
+        "selector_calls": 2,
+        "selector_calls_denominator": "2 of a hard bound of 2 selector calls per incident, a first decision then one optional re-decision",
+        "repairs": 1,
+        "repairs_denominator": "1 of 1 repair applied, from a bound of 1 deterministic repair",
+        "terminal_result": "completed",
+        "terminal_reason": "populated_after_repair",
+        "disposition": "CONTINUE",
+        "verification": "passed",
+        "receipts_written": 2,
+        "narration": {
+          "by": "Amazon Bedrock Nova Lite",
+          "status": "narrated",
+          "latency_ms": 970,
+          "latency_availability": "measured",
+          "note": "Narration ran after the terminal result was already fixed and was handed counted facts. No result object carries a narration field, 0 of 3."
+        }
+      },
+      {
+        "call": 2,
+        "invocation": "new",
+        "history": "matched",
+        "receipts_consulted": 2,
+        "receipts_consulted_denominator": "2 of the 2 receipts call 1 wrote",
+        "first_choice": "inspect_pipeline",
+        "first_reported_confidence": 0.2158,
+        "first_choice_executed": false,
+        "repeated_choice_blocked": true,
+        "repeated_choice_blocked_reason": "insufficient_evidence",
+        "repeated_choice_blocked_note": "Controller validation matched the exact context receipt and refused this identical repetition before the tool executed, which is why the read count is 1 and not 2. A refused execution costs zero diagnostic reads.",
+        "second_choice": "inspect_schema_keys",
+        "second_reported_confidence": 0.6498,
+        "diagnostic_reads": 1,
+        "diagnostic_reads_denominator": "1 of a hard bound of 2 diagnostic reads per incident",
+        "selector_calls": 2,
+        "selector_calls_denominator": "2 of a hard bound of 2 selector calls per incident, a first decision then one optional re-decision",
+        "repairs": 1,
+        "repairs_denominator": "1 of 1 repair applied, from a bound of 1 deterministic repair",
+        "terminal_result": "completed",
+        "terminal_reason": "populated_after_repair",
+        "disposition": "CONTINUE",
+        "verification": "passed",
+        "narration": {
+          "by": "Amazon Bedrock Nova Lite",
+          "status": "narrated",
+          "latency_ms": 790,
+          "latency_availability": "measured",
+          "note": "Narration ran after the terminal result was already fixed and was handed counted facts."
+        }
+      },
+      {
+        "call": 3,
+        "invocation": "duplicate",
+        "history": "matched",
+        "receipts_consulted": 2,
+        "receipts_consulted_denominator": "2 of the 2 receipts call 1 wrote, carried on the resumed result",
+        "first_choice": "inspect_pipeline",
+        "first_reported_confidence": 0.2158,
+        "repeated_choice_blocked": true,
+        "repeated_choice_blocked_reason": "insufficient_evidence",
+        "second_choice": "inspect_schema_keys",
+        "second_reported_confidence": 0.6498,
+        "diagnostic_reads": 1,
+        "diagnostic_reads_denominator": "1 read, inherited from call 2. 0 of 0 new reads were taken, because nothing executed.",
+        "new_selector_calls": 0,
+        "new_selector_calls_denominator": "0 of 0 new selector calls, because nothing executed",
+        "repairs": 1,
+        "terminal_result": "duplicate",
+        "terminal_reason": "populated_after_repair",
+        "disposition": "CONTINUE",
+        "verification": "passed",
+        "observed_latency_ms": 1030,
+        "observed_latency_availability": "measured",
+        "duplicate_note": "An exact repeat of call 2's request key answered duplicate, returned the stored result unchanged under the same identity, executed nothing and emitted no second telemetry timeline. This records duplicate handling and is not a third piece of evidence about the mechanism.",
+        "narration": {
+          "by": "Amazon Bedrock Nova Lite",
+          "status": "narrated",
+          "latency_ms": 820,
+          "latency_availability": "measured",
+          "note": "A narration block accompanied the duplicate response. The underlying result was the stored one and nothing was re-executed to produce it."
+        }
+      }
+    ]
+  },
+  "decision_receipts": {
+    "written_on_call_1": 2,
+    "consulted_on_call_2": 2,
+    "consulted_on_call_2_denominator": "2 of 2 written",
+    "identifiers_note": "Receipt identifiers are not published here. A receipt is identified by the content of its immutable binding set, and that identity is a private implementation fact a judge does not need.",
+    "attested_receipt": {
+      "outcome_class": "disposition_unchanged",
+      "reason_code": "insufficient_evidence",
+      "eligible_to_block_an_identical_repeat": true,
+      "stored": true,
+      "author": "the deterministic verifier, never the model",
+      "content_note": "It records the public tool that ran, the identity of the arguments it ran with, the two observed facts, whether the read admitted evidence the problem did not already hold and whether that evidence moved a gate, and the pinned versions the decision was made under. It records no model prose and no model generated outcome label."
+    },
+    "second_receipt_note": "A second receipt was written on the same call. Its outcome class is not attested in the public claim register, so nothing is asserted about it here.",
+    "authority_note": "A receipt's only authority is negative. It can refuse one identical repetition and can do nothing else. It never selects a tool, never changes a probability, never scores a candidate, never generates an outcome label, never authorizes a repair, and never decides what is true. There is no expiry and no time window anywhere in the system: current facts dominate history instead.",
+    "blocks_in_this_run": 1,
+    "blocks_in_this_run_denominator": "1 block out of 4 selector answers across 2 executed calls"
+  },
+  "verified_rows": {
+    "row_count": 2,
+    "row_count_denominator": "2 of 2 rows, identical on both executed calls",
+    "classification": "synthetic",
+    "rows": [
+      { "country_code": "IN", "units": 4 },
+      { "country_code": "US", "units": 5 }
+    ]
+  },
+  "read_delta": {
+    "first_call_diagnostic_reads": 2,
+    "second_call_diagnostic_reads": 1,
+    "delta": "one fewer read",
+    "denominator": "n = 1 pair of calls",
+    "scope_note": "An existence result on a single pair of calls. It is not a rate, not a benchmark, and not a latency or cost benefit."
+  },
+  "false_blocks": {
+    "count": 0,
+    "denominator": "0 false blocks out of 1 block, across 4 Decider answers over 2 executed calls",
+    "note": "The only block was on an exact context repeat."
+  },
+  "telemetry": {
+    "lines_in_window": 49,
+    "run_timelines": 2,
+    "run_timelines_denominator": "2 timelines for 2 executed calls, and 0 timelines for the 1 exact repeat",
+    "events_per_timeline": [25, 22],
+    "events_per_timeline_note": "Two contiguous timelines of 25 and 22 events, 47 of the 49 lines in the window.",
+    "dropped": 0,
+    "dropped_denominator": "0 dropped across both finalized timelines",
+    "refused": 0,
+    "refused_denominator": "0 refused across both finalized timelines",
+    "forbidden_raw_values_checked": 18,
+    "forbidden_raw_values_found": 0,
+    "forbidden_raw_values_denominator": "0 of 18 checked values present, covering the account identifier, every resource identifier, region literals, credential patterns, machine local paths, tracebacks, request keys, caller identity and the narration prose",
+    "sanitization_note": "Telemetry is sanitized at the source. The pinned model revision travels as a digest in the private record and never raw, and that digest is not published either."
+  },
+  "serving": {
+    "status_200": 4,
+    "status_500": 0,
+    "denominator": "4 of 4 invocation requests in the window answered 200, with 0 five hundreds",
+    "health_check_note": "The health path returned 200 throughout the window."
+  },
+  "unsigned_probe_denials": {
+    "probes": 4,
+    "denied": 4,
+    "denominator": "4 of 4 unsigned probes denied, 3 against one private surface and 1 against the other",
+    "http_status": 403,
+    "note": "Every denial was identifiably produced by the service's own request signing gate rather than being a bare 403, and all four probes were made before any signed call."
+  },
+  "local_golden_run": {
+    "note": "A separate local offline measurement. It is not transferred to the cloud, and no local figure here is claimed to hold in the cloud or to have been reproduced there.",
+    "cases": 5,
+    "cases_passing": 5,
+    "cases_passing_denominator": "5 of 5 cases",
+    "frozen_criteria_held": 7,
+    "frozen_criteria_denominator": "7 of 7 criteria, frozen before the run",
+    "conditions": ["with receipts", "without receipts"],
+    "complete_pairs": 10,
+    "complete_pairs_denominator": "10 of 10 pairs complete, from 5 cases across 2 conditions",
+    "terminal_episodes": 20,
+    "real_selector_calls": 40,
+    "real_selector_calls_denominator": "40 real selector calls across 20 terminal episodes",
+    "stored_receipts": 15,
+    "largest_selector_payload_characters": 5162,
+    "selector_payload_bound_characters": 8000,
+    "payload_denominator": "5162 characters against an 8000 character bound, 0 of 40 calls over the bound",
+    "false_blocks": 0,
+    "false_blocks_denominator": "0 of 40 real selector calls",
+    "regressions": 0,
+    "malformed_answers": 0,
+    "provider_failures": 0,
+    "timeouts": 0,
+    "bound_violations": 0,
+    "zero_counts_denominator": "each of the preceding five counts is 0 across 20 terminal episodes and 40 real selector calls",
+    "without_receipts_repeated_read": 5,
+    "without_receipts_denominator": "the without receipts comparison requested no history and repeated the read on 5 of 5 cases",
+    "reported_confidence_min": 0.1946,
+    "reported_confidence_max": 0.6676,
+    "reported_confidence_denominator": "range over 40 real selector calls",
+    "confidence_floor_note": "Every accepted selection was below the product's default 0.80 confidence floor. This is reported confidence only. No claim is made that these confidences are calibrated."
+  },
+  "failed_first_cloud_attempt": {
+    "kept_note": "This failure stays in the record. It is reported here rather than removed or softened.",
+    "status": "unresolved",
+    "reason_code": "provider_error_decider",
+    "invocations": 2,
+    "invocations_denominator": "2 of 2 invocations ended unresolved",
+    "diagnostic_reads": 0,
+    "diagnostic_reads_denominator": "0 of a bound of 2 diagnostic reads per incident, on both invocations",
+    "measured_cause": {
+      "selector_payload_characters": 3321,
+      "options_in_payload": 4,
+      "measured_provider_latency_ms": [23588.8, 23384.3],
+      "latency_availability": "measured",
+      "budget_in_force_ms": 20000,
+      "denominator": "2 of 2 measured provider answers exceeded the product's own 20000 ms budget",
+      "note": "The real 3321 character four option payload took 23588.8 ms and 23384.3 ms against the product's own 20000 ms budget. Latency rises roughly linearly with state size on that instance."
+    },
+    "refused_exits": [
+      "raising a number so that a run would pass",
+      "shrinking the state text",
+      "escalating the instance"
+    ],
+    "resolution": "The owner made both budgets deployment inputs. No default moved: both still ship at 20000 ms."
+  },
+  "budgets": {
+    "shipped_default_ms": 20000,
+    "shipped_default_applies_to": ["controller", "model server"],
+    "shipped_default_denominator": "20000 ms on 2 of 2 components, unchanged",
+    "injected_for_this_deployment_ms": 60000,
+    "deployment_input_ceiling_controller_ms": 60000,
+    "deployment_input_ceiling_serving_ms": 120000,
+    "reason_for_injection": "The instance serving this checkpoint answers this state size in roughly 23500 ms, which exceeds the 20000 ms default.",
+    "note": "Widening the cap does not remove the cap. An answer that arrives past the configured value is still a reason coded refusal, at 60000 ms exactly as it was at 20000 ms."
+  },
+  "not_claimed": [
+    "Any statement about Decider 2B's general accuracy.",
+    "That the reported confidences are calibrated, in either acceptance tier.",
+    "Statistical significance, or any rate derived from the cloud pair.",
+    "A latency benefit or a cost benefit. The hackathon's bonus is not claimed.",
+    "A cost saving. Observed spend is not published as a saving, because no surfaced charge is not the same as a free endpoint.",
+    "Production readiness, availability, or throughput.",
+    "Novelty or prior art superiority.",
+    "Compliance with any regime.",
+    "An achieved rubric score or a predicted judge outcome.",
+    "That the cloud run reproduced the local measurements, or that the local figures transfer to the cloud.",
+    "Any figure summed across components measured under different conditions, including an end to end latency.",
+    "Anything about the held out corpus. It was not read and not run."
+  ]
+}

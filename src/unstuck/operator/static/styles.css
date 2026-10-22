@@ -1,0 +1,201 @@
+/* Unstuck operator surface.
+ *
+ * An archival finding-aid world for an operational product: a cool white
+ * working field, deep indigo navigation, oxidized teal for verified evidence,
+ * amber for pending, restrained red for blocked and error. State is always
+ * carried by text as well as colour, so none of these hues is load-bearing.
+ *
+ * Production visual tokens are not committed (refined mockups, Assumptions).
+ * These are the named palette roles only.
+ */
+
+:root {
+  --field: #fbfcfd;
+  --ink: #16181d;
+  --ink-soft: #4a5160;
+  --navy: #1f2a52;
+  --navy-ink: #f4f6fb;
+  --line: #d3d8e2;
+  --verified: #0f6f6a;
+  --pending: #8a5a00;
+  --blocked: #9b2223;
+  --focus: #1f52c8;
+  --step: 0.5rem;
+}
+
+* { box-sizing: border-box; }
+
+html { font-size: 100%; }
+
+body {
+  margin: 0;
+  display: grid;
+  grid-template-areas: "masthead masthead" "sidebar main" "footer footer";
+  grid-template-columns: minmax(10rem, 14rem) 1fr;
+  grid-template-rows: auto 1fr auto;
+  min-height: 100vh;
+  background: var(--field);
+  color: var(--ink);
+  font: 1rem/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+.skip {
+  position: absolute;
+  left: -100vw;
+}
+.skip:focus {
+  left: var(--step);
+  top: var(--step);
+  z-index: 2;
+  background: #fff;
+  padding: var(--step);
+}
+
+:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.masthead {
+  grid-area: masthead;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--step);
+  align-items: baseline;
+  padding: var(--step) calc(var(--step) * 2);
+  background: var(--navy);
+  color: var(--navy-ink);
+}
+.product { font-weight: 700; letter-spacing: 0.08em; margin: 0; }
+.badge {
+  margin: 0;
+  border: 1px solid currentColor;
+  border-radius: 2px;
+  padding: 0 0.4rem;
+  font-size: 0.8125rem;
+}
+
+.sidebar { grid-area: sidebar; border-right: 1px solid var(--line); padding: var(--step); }
+.sidebar ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+.nav {
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: 1px solid transparent;
+  padding: 0.4rem var(--step);
+  font: inherit;
+  color: var(--ink);
+  cursor: pointer;
+}
+.nav[aria-current="page"] { border-color: var(--line); background: #eef1f7; font-weight: 600; }
+
+.main { grid-area: main; padding: calc(var(--step) * 2); max-width: 80rem; }
+.footer {
+  grid-area: footer;
+  border-top: 1px solid var(--line);
+  padding: var(--step) calc(var(--step) * 2);
+  color: var(--ink-soft);
+  font-size: 0.875rem;
+}
+.footer p { margin: 0; }
+
+h1 { font-size: 1.5rem; margin: 0 0 var(--step); }
+h2 { font-size: 1.125rem; margin: calc(var(--step) * 2) 0 var(--step); }
+
+.status { min-height: 1.5rem; margin: 0 0 var(--step); color: var(--ink-soft); }
+.note { border-left: 3px solid var(--pending); padding-left: var(--step); color: var(--ink-soft); }
+.hint { color: var(--ink-soft); font-size: 0.875rem; margin: 0.25rem 0 0; }
+.error { color: var(--blocked); font-weight: 600; }
+
+.field { display: grid; gap: 0.25rem; margin-bottom: calc(var(--step) * 2); max-width: 32rem; }
+fieldset.field { border: 1px solid var(--line); padding: var(--step); }
+label { font-weight: 600; }
+fieldset.field label { font-weight: 400; display: block; }
+input, select {
+  font: inherit;
+  padding: 0.4rem;
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  background: #fff;
+  color: inherit;
+}
+.primary {
+  font: inherit;
+  font-weight: 600;
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--navy);
+  border-radius: 2px;
+  background: var(--navy);
+  color: var(--navy-ink);
+  cursor: pointer;
+}
+.primary[disabled] { opacity: 0.6; cursor: not-allowed; }
+
+.summary { display: grid; grid-template-columns: auto 1fr; gap: 0.25rem var(--step); margin: 0 0 var(--step); }
+.summary dt { font-weight: 600; color: var(--ink-soft); }
+.summary dd { margin: 0; }
+
+.split { display: grid; grid-template-columns: 2fr 3fr; gap: calc(var(--step) * 2); align-items: start; }
+
+.spine { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+.spine-node {
+  width: 100%;
+  text-align: left;
+  font: inherit;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-left-width: 4px;
+  padding: 0.4rem var(--step);
+  cursor: pointer;
+}
+.spine-node[aria-pressed="true"] { background: #eef1f7; font-weight: 600; }
+.spine-node .state { display: block; font-size: 0.8125rem; color: var(--ink-soft); }
+.spine-node[data-state="verified"] { border-left-color: var(--verified); }
+.spine-node[data-state="pending"] { border-left-color: var(--pending); }
+.spine-node[data-state="blocked"],
+.spine-node[data-state="error"],
+.spine-node[data-state="unresolved"] { border-left-color: var(--blocked); }
+.spine-node[data-state="skipped"] { border-left-color: var(--line); color: var(--ink-soft); }
+
+.tabs { display: flex; gap: 2px; margin-bottom: var(--step); flex-wrap: wrap; }
+.tabs button {
+  font: inherit;
+  padding: 0.3rem var(--step);
+  border: 1px solid var(--line);
+  background: #fff;
+  cursor: pointer;
+}
+.tabs button[aria-selected="true"] { background: var(--navy); color: var(--navy-ink); font-weight: 600; }
+pre {
+  margin: 0;
+  padding: var(--step);
+  border: 1px solid var(--line);
+  background: #fff;
+  overflow: auto;
+  max-height: 28rem;
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-size: 0.875rem;
+}
+
+.grid { border-collapse: collapse; width: 100%; }
+.grid caption { text-align: left; color: var(--ink-soft); padding-bottom: var(--step); }
+.grid th, .grid td { border: 1px solid var(--line); padding: 0.3rem var(--step); text-align: left; }
+.grid thead th { background: #eef1f7; }
+
+.checklist { padding-left: 1.2rem; }
+
+@media (max-width: 60rem) {
+  body { grid-template-areas: "masthead" "sidebar" "main" "footer"; grid-template-columns: 1fr; }
+  .sidebar { border-right: 0; border-bottom: 1px solid var(--line); }
+  .sidebar ul { grid-auto-flow: column; grid-auto-columns: max-content; overflow-x: auto; }
+  .split { grid-template-columns: 1fr; }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .spine-node { transition: background-color 120ms ease-out; }
+}
+
+@media (prefers-contrast: more) {
+  .spine-node, .grid th, .grid td, pre { border-color: var(--ink); }
+}

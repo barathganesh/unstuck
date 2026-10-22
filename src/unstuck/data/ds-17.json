@@ -1,0 +1,22 @@
+{
+  "classification": "synthetic",
+  "dataset_id": "ds-17",
+  "dataset_version": "v17",
+  "order_date_utc": "2026-10-18",
+  "job_state": "complete",
+  "scope_complete": true,
+  "metadata_complete": true,
+  "scope_covered": true,
+  "orders_key_encoding": "plain",
+  "countries_key_encoding": "country_prefix",
+  "approved_join_modes": ["literal", "strip_country_prefix"],
+  "orders": [
+    {"order_id": "o1", "country_id": "US", "order_date_utc": "2026-10-18", "units": 2},
+    {"order_id": "o2", "country_id": "US", "order_date_utc": "2026-10-18", "units": 3},
+    {"order_id": "o3", "country_id": "IN", "order_date_utc": "2026-10-18", "units": 4}
+  ],
+  "countries": [
+    {"country_id": "country:US", "country_code": "US", "country_name": "United States"},
+    {"country_id": "country:IN", "country_code": "IN", "country_name": "India"}
+  ]
+}

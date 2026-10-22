@@ -1,0 +1,67 @@
+# Base image and wheel-index deployment inputs for the x86_64 SageMaker
+# Decider model-server image.
+#
+# Status: Resolved 2026-10-21 for a device=cpu deployment. The base digest
+# below comes from one `docker buildx imagetools inspect` of
+# public.ecr.aws/docker/library/python:3.12-slim-bookworm, run on the x86_64
+# build host; the raw manifest is recorded alongside the build evidence.
+#
+# TORCH_INDEX_URL is recorded below and is required even for device=cpu. A
+# first build without it produced an image whose `import torch` failed with
+# `OSError: libcudart.so.13: cannot open shared object file`, because the
+# default index's linux x86_64 `torch` wheel is the CUDA build and --no-deps
+# leaves its `nvidia-*` runtime dependencies out. The CPU index serves the same
+# pin as `2.14.1+cpu`, which PEP 440 sorts above the plain release, so
+# --extra-index-url selects it deterministically.
+#
+# STRANDS_DECIDER_INDEX_URL stays unrecorded: strands-decider 0.2.0 is served
+# by the default index as strands_decider-0.2.0-py3-none-any.whl, so no extra
+# index is needed.
+#
+# deployment/sagemaker/Dockerfile declares BASE_IMAGE_REPOSITORY and
+# BASE_IMAGE_DIGEST without defaults, so it refuses to build until both are
+# supplied and an unpinned image cannot ship.
+#
+# BASE_IMAGE_REPOSITORY, BASE_IMAGE_DIGEST
+#   The single linux/amd64 manifest digest of the chosen base, not an index
+#   digest, so the shipped image cannot drift to another architecture. Resolve
+#   both from the same tag and verify the entry's platform reads linux/amd64
+#   before recording it:
+#
+#     docker buildx imagetools inspect <repository>:<tag> \
+#       --format '{{json .Manifest}}'
+#
+#   Which base to choose is the operator's decision and is recorded here
+#   rather than guessed. The paved path for a GPU SageMaker endpoint is an AWS
+#   Deep Learning Container for PyTorch inference, which lives in a
+#   Region-specific AWS-owned ECR repository; this unit does not spell that
+#   repository, account, or tag, because none of them is verifiable from here
+#   and a wrong one would be an unpinned guess about somebody else's Region.
+#   A plain python base is the other option and is correct for a device=cpu
+#   deployment.
+#
+#   If the chosen base already carries torch at the pinned version, the
+#   requirements install is a no-op for that line; if it carries a different
+#   version, resolve the conflict before building rather than at serving time.
+#
+# TORCH_INDEX_URL
+#   The wheel index serving the CUDA build of torch==2.14.1 for linux x86_64.
+#   Required for a device=cuda deployment and omitted for device=cpu, because
+#   the default index serves the CPU-only wheel, which is the correct closure
+#   for cpu and the wrong one for cuda. The Dockerfile passes it as an extra
+#   index only when it is supplied.
+#
+# STRANDS_DECIDER_INDEX_URL
+#   The index serving strands-decider==0.2.0. The version is transcribed from
+#   the resolved local environment at .venv/decider-pf12/env, so the pin is
+#   evidence; where that distribution is fetched from in a build environment is
+#   not, so it stays an input. Supply it as an additional --extra-index-url
+#   argument if the default index does not serve it.
+#
+# The recorded entry's platform was verified to read
+# `os: linux, architecture: amd64` before being recorded. A plain python base
+# is the correct choice for this device=cpu deployment, as the note above
+# states; no AWS Deep Learning Container is involved.
+BASE_IMAGE_REPOSITORY=public.ecr.aws/docker/library/python
+BASE_IMAGE_DIGEST=sha256:57d96f71de145a98e7ceca18ee4ade77bba4103a33a72dfaea026b23625c6bf0
+TORCH_INDEX_URL=https://download.pytorch.org/whl/cpu

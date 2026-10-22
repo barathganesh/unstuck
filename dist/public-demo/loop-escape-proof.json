@@ -1,0 +1,515 @@
+{
+  "schema_version": "2",
+  "classification": "synthetic",
+  "what_this_is": "The minimum causal facts from three private records on one declared synthetic repairable case, each proof run once, under a diagnostic read bound of one read per call. A memoryless control chose the same unproductive diagnostic on every call and stayed unresolved 3 of 3. With Decision Receipts, Run 1 made that same choice, spent its one read, stayed unresolved, and the verifier stored a Decision Receipt for the dead end. Run 2 is a new call on the same problem: the controller matched that receipt and precluded only the proven dead end before the first Decider request, Decider 2B then made one fresh choice over the three remaining diagnostics, the call spent one read, applied the repair and verified it. No second Decider call was made.",
+  "what_this_is_not": "Not a rate, a benchmark, a statistical result, an accuracy figure or a cost claim: n = 1 case, and one sequence per proof. Not model learning: the checkpoint is unchanged between calls, and it chose the dead end on its first exposure to the full option set. Not an infinite loop: every call is bounded at one read and at most two Decider choices, and the observed Run 2 used one. No generalization to any other case, fixture, endpoint, model or workload. Each elapsed-time comparison recorded here is one observation at n = 1, not a general latency improvement claim.",
+  "identifiers_note": "Generated from the private records through an allowlist. No account, resource, runtime, endpoint, session, request, decision, call or receipt identifier, no hash or digest, no model revision, no version, no path, no timestamp and no raw model output is carried.",
+  "scope": {
+    "cases": {
+      "value": 1,
+      "denominator": "one declared synthetic repairable case"
+    },
+    "runs_of_each_proof": {
+      "value": 1,
+      "denominator": "each proof was run once"
+    },
+    "diagnostic_read_bound": {
+      "value": 1,
+      "denominator": "read per call, configured below the absolute ceiling of 2"
+    },
+    "decider_choice_bound": {
+      "value": 2,
+      "denominator": "per call, a first choice and one optional re-choice"
+    },
+    "first_call_options": {
+      "value": 4,
+      "denominator": "diagnostics offered before any dead end is proven"
+    },
+    "options_after_preclusion": {
+      "value": 3,
+      "denominator": "diagnostics left once the one proven dead end of 4 is precluded"
+    }
+  },
+  "hosted_decider_proof": {
+    "where": "An experiment harness called one pinned Strands Decider 2B checkpoint on a private Amazon SageMaker endpoint.",
+    "verdict": "PASS",
+    "checks_passed": {
+      "value": 13,
+      "denominator": "of 13 checks"
+    },
+    "hosted_decider_choices": {
+      "value": 5,
+      "denominator": "signed hosted choices across 5 calls"
+    },
+    "without_receipts_control": {
+      "independent_calls": {
+        "value": 3,
+        "denominator": "memoryless calls"
+      },
+      "same_first_choice": {
+        "value": 3,
+        "denominator": "of 3 calls chose inspect_pipeline"
+      },
+      "unresolved": {
+        "value": 3,
+        "denominator": "of 3 calls"
+      },
+      "calls": [
+        {
+          "call": "Control 1",
+          "decision_history": "not_requested",
+          "receipt_match": "not_requested",
+          "dead_end_precluded": false,
+          "precluded_before_selection": null,
+          "precluded_before_any_read": null,
+          "options_offered": {
+            "value": 4,
+            "denominator": "diagnostics offered to the Decider"
+          },
+          "decider_choice": "inspect_pipeline",
+          "re_decision_d2": null,
+          "decider_choices": {
+            "value": 1,
+            "denominator": "of a bound of 2 per call"
+          },
+          "diagnostic_reads": {
+            "value": 1,
+            "denominator": "of a bound of 1 read per call"
+          },
+          "executed": [
+            "inspect_pipeline"
+          ],
+          "repair_applied": false,
+          "verified": false,
+          "terminal_status": "unresolved",
+          "terminal_reason": "diagnostic_reads_exhausted",
+          "receipts_stored": []
+        },
+        {
+          "call": "Control 2",
+          "decision_history": "not_requested",
+          "receipt_match": "not_requested",
+          "dead_end_precluded": false,
+          "precluded_before_selection": null,
+          "precluded_before_any_read": null,
+          "options_offered": {
+            "value": 4,
+            "denominator": "diagnostics offered to the Decider"
+          },
+          "decider_choice": "inspect_pipeline",
+          "re_decision_d2": null,
+          "decider_choices": {
+            "value": 1,
+            "denominator": "of a bound of 2 per call"
+          },
+          "diagnostic_reads": {
+            "value": 1,
+            "denominator": "of a bound of 1 read per call"
+          },
+          "executed": [
+            "inspect_pipeline"
+          ],
+          "repair_applied": false,
+          "verified": false,
+          "terminal_status": "unresolved",
+          "terminal_reason": "diagnostic_reads_exhausted",
+          "receipts_stored": []
+        },
+        {
+          "call": "Control 3",
+          "decision_history": "not_requested",
+          "receipt_match": "not_requested",
+          "dead_end_precluded": false,
+          "precluded_before_selection": null,
+          "precluded_before_any_read": null,
+          "options_offered": {
+            "value": 4,
+            "denominator": "diagnostics offered to the Decider"
+          },
+          "decider_choice": "inspect_pipeline",
+          "re_decision_d2": null,
+          "decider_choices": {
+            "value": 1,
+            "denominator": "of a bound of 2 per call"
+          },
+          "diagnostic_reads": {
+            "value": 1,
+            "denominator": "of a bound of 1 read per call"
+          },
+          "executed": [
+            "inspect_pipeline"
+          ],
+          "repair_applied": false,
+          "verified": false,
+          "terminal_status": "unresolved",
+          "terminal_reason": "diagnostic_reads_exhausted",
+          "receipts_stored": []
+        }
+      ]
+    },
+    "with_receipts": [
+      {
+        "call": "Run 1",
+        "decision_history": "empty",
+        "receipt_match": "no_match",
+        "dead_end_precluded": false,
+        "precluded_before_selection": null,
+        "precluded_before_any_read": null,
+        "options_offered": {
+          "value": 4,
+          "denominator": "diagnostics offered to the Decider"
+        },
+        "decider_choice": "inspect_pipeline",
+        "re_decision_d2": null,
+        "decider_choices": {
+          "value": 1,
+          "denominator": "of a bound of 2 per call"
+        },
+        "diagnostic_reads": {
+          "value": 1,
+          "denominator": "of a bound of 1 read per call"
+        },
+        "executed": [
+          "inspect_pipeline"
+        ],
+        "repair_applied": false,
+        "verified": false,
+        "terminal_status": "unresolved",
+        "terminal_reason": "diagnostic_reads_exhausted",
+        "receipts_stored": [
+          {
+            "tool": "inspect_pipeline",
+            "outcome_class": "disposition_unchanged"
+          }
+        ]
+      },
+      {
+        "call": "Run 2",
+        "decision_history": "matched",
+        "receipt_match": "exact",
+        "dead_end_precluded": true,
+        "precluded_before_selection": true,
+        "precluded_before_any_read": true,
+        "options_offered": {
+          "value": 3,
+          "denominator": "diagnostics offered to the Decider"
+        },
+        "decider_choice": "inspect_schema_keys",
+        "re_decision_d2": null,
+        "decider_choices": {
+          "value": 1,
+          "denominator": "of a bound of 2 per call"
+        },
+        "diagnostic_reads": {
+          "value": 1,
+          "denominator": "of a bound of 1 read per call"
+        },
+        "executed": [
+          "inspect_schema_keys"
+        ],
+        "repair_applied": true,
+        "verified": true,
+        "terminal_status": "completed",
+        "terminal_reason": "populated_after_repair",
+        "receipts_stored": [
+          {
+            "tool": "inspect_schema_keys",
+            "outcome_class": "useful_evidence"
+          }
+        ]
+      }
+    ],
+    "linkage": {
+      "run_1_receipt_cites_run_1_decider_choice": true,
+      "run_2_preclusion_cites_run_1_receipt": true,
+      "run_2_preclusion_precedes_any_read": true,
+      "run_2_preclusion_precedes_first_decider_call": true,
+      "run_2_decider_choice_differs_from_precluded_dead_end": true
+    },
+    "preclusions": {
+      "value": 1,
+      "denominator": "across 5 calls"
+    },
+    "false_preclusions": {
+      "value": 0,
+      "denominator": "of 1 preclusion in the observed sequence of 5 Decider choices"
+    }
+  },
+  "agentcore_proof": {
+    "where": "The controller on a private Amazon Bedrock AgentCore Runtime, calling the same private Decider 2B endpoint.",
+    "verdict": "PASS",
+    "checks_passed": {
+      "value": 25,
+      "denominator": "of 25 checks"
+    },
+    "calls": [
+      {
+        "call": "Run 1",
+        "decision_history": "empty",
+        "dead_end_precluded": false,
+        "preclusion_precedes_first_decider_call": null,
+        "preclusion_precedes_first_read": null,
+        "decider_choice": "inspect_pipeline",
+        "final_choice": "inspect_pipeline",
+        "second_decider_call": false,
+        "diagnostic_reads": {
+          "value": 1,
+          "denominator": "of a bound of 1 read per call"
+        },
+        "repairs": {
+          "value": 0,
+          "denominator": "of a bound of 1 repair per call"
+        },
+        "terminal_status": "unresolved",
+        "terminal_reason": "diagnostic_reads_exhausted",
+        "narration": "unavailable",
+        "telemetry_events": {
+          "value": 15,
+          "denominator": "events in this call's timeline"
+        }
+      },
+      {
+        "call": "Run 2",
+        "decision_history": "matched",
+        "dead_end_precluded": true,
+        "preclusion_precedes_first_decider_call": true,
+        "preclusion_precedes_first_read": true,
+        "decider_choice": "inspect_schema_keys",
+        "final_choice": "inspect_schema_keys",
+        "second_decider_call": false,
+        "diagnostic_reads": {
+          "value": 1,
+          "denominator": "of a bound of 1 read per call"
+        },
+        "repairs": {
+          "value": 1,
+          "denominator": "of a bound of 1 repair per call"
+        },
+        "terminal_status": "completed",
+        "terminal_reason": "populated_after_repair",
+        "narration": "narrated",
+        "telemetry_events": {
+          "value": 21,
+          "denominator": "events in this call's timeline"
+        }
+      }
+    ],
+    "decider_answers_served": {
+      "value": 2,
+      "denominator": "answers, one per call, every one accepted with HTTP 200"
+    },
+    "preclusions": {
+      "value": 1,
+      "denominator": "across 2 calls"
+    },
+    "false_preclusions": {
+      "value": 0,
+      "denominator": "of 1 preclusion in the observed sequence"
+    },
+    "narration_rule": {
+      "run_1_narration_not_permitted": true,
+      "run_2_narrated_after_completion_only": true
+    },
+    "telemetry_timelines": [
+      {
+        "events": {
+          "value": 15,
+          "denominator": "events emitted"
+        },
+        "expected": {
+          "value": 15,
+          "denominator": "events"
+        },
+        "finalized": true,
+        "dropped": {
+          "value": 0,
+          "denominator": "of 15"
+        },
+        "refused": {
+          "value": 0,
+          "denominator": "of 15"
+        }
+      },
+      {
+        "events": {
+          "value": 21,
+          "denominator": "events emitted"
+        },
+        "expected": {
+          "value": 21,
+          "denominator": "events"
+        },
+        "finalized": true,
+        "dropped": {
+          "value": 0,
+          "denominator": "of 21"
+        },
+        "refused": {
+          "value": 0,
+          "denominator": "of 21"
+        }
+      }
+    ]
+  },
+  "measured_latency": {
+    "what_this_measures": "One comparison per surface between the superseded post-D1 flow and the pre-selection flow on the same synthetic case. Client time is the caller's wall time for one runtime invocation. Selector time is the measured Decider inference time, summed over the inferences a call made.",
+    "basis": "n = 1: the same synthetic case, each proof run once; the superseded post-D1 Run 2 is a separate earlier run of the superseded flow on the same endpoint",
+    "run_1_is_not_saved": "Run 1 pays the learning cost once and is unchanged by the pre-selection block: one Decider inference, one read, unresolved, receipt stored. Run 1 is never presented as a saving, and no saving is claimed for it.",
+    "no_dollar_saving": "No dollar or cost saving is measured and none is claimed: the Decider is served by a real-time endpoint billed by instance uptime, not per request. What the pair shows is one fewer inference, less occupied model time, and a lower observed Run 2 elapsed time on this one case, at n = 1.",
+    "agentcore_client_time": {
+      "run_1_learning": {
+        "elapsed": {
+          "value": 21635.7,
+          "unit": "ms",
+          "denominator": "n = 1: the same synthetic case, each proof run once; the superseded post-D1 Run 2 is a separate earlier run of the superseded flow on the same endpoint"
+        },
+        "decider_inferences": {
+          "value": 1,
+          "unit": "inferences",
+          "denominator": "n = 1: the same synthetic case, each proof run once; the superseded post-D1 Run 2 is a separate earlier run of the superseded flow on the same endpoint"
+        }
+      },
+      "superseded_run_2_post_d1": {
+        "elapsed": {
+          "value": 54795.9,
+          "unit": "ms",
+          "denominator": "n = 1: the same synthetic case, each proof run once; the superseded post-D1 Run 2 is a separate earlier run of the superseded flow on the same endpoint"
+        },
+        "decider_inferences": {
+          "value": 2,
+          "unit": "inferences",
+          "denominator": "n = 1: the same synthetic case, each proof run once; the superseded post-D1 Run 2 is a separate earlier run of the superseded flow on the same endpoint"
+        }
+      },
+      "optimized_run_2_preselection": {
+        "elapsed": {
+          "value": 26622.5,
+          "unit": "ms",
+          "denominator": "n = 1: the same synthetic case, each proof run once; the superseded post-D1 Run 2 is a separate earlier run of the superseded flow on the same endpoint"
+        },
+        "decider_inferences": {
+          "value": 1,
+          "unit": "inferences",
+          "denominator": "n = 1: the same synthetic case, each proof run once; the superseded post-D1 Run 2 is a separate earlier run of the superseded flow on the same endpoint"
+        }
+      },
+      "difference": {
+        "absolute": {
+          "value": 28173.4,
+          "unit": "ms below the superseded Run 2 elapsed time",
+          "denominator": "n = 1: the same synthetic case, each proof run once; the superseded post-D1 Run 2 is a separate earlier run of the superseded flow on the same endpoint"
+        },
+        "relative": {
+          "value": 51.4,
+          "unit": "percent below the superseded Run 2 elapsed time",
+          "denominator": "n = 1: the same synthetic case, each proof run once; the superseded post-D1 Run 2 is a separate earlier run of the superseded flow on the same endpoint"
+        },
+        "decider_inferences": {
+          "value": 1,
+          "unit": "fewer inference",
+          "denominator": "n = 1: the same synthetic case, each proof run once; the superseded post-D1 Run 2 is a separate earlier run of the superseded flow on the same endpoint"
+        }
+      }
+    },
+    "agentcore_selector_time": {
+      "superseded_run_2_post_d1": {
+        "elapsed": {
+          "value": 52263.79,
+          "unit": "ms",
+          "denominator": "n = 1: the same synthetic case, each proof run once; the superseded post-D1 Run 2 is a separate earlier run of the superseded flow on the same endpoint"
+        },
+        "decider_inferences": {
+          "value": 2,
+          "unit": "inferences",
+          "denominator": "n = 1: the same synthetic case, each proof run once; the superseded post-D1 Run 2 is a separate earlier run of the superseded flow on the same endpoint"
+        }
+      },
+      "optimized_run_2_preselection": {
+        "elapsed": {
+          "value": 24781.65,
+          "unit": "ms",
+          "denominator": "n = 1: the same synthetic case, each proof run once; the superseded post-D1 Run 2 is a separate earlier run of the superseded flow on the same endpoint"
+        },
+        "decider_inferences": {
+          "value": 1,
+          "unit": "inferences",
+          "denominator": "n = 1: the same synthetic case, each proof run once; the superseded post-D1 Run 2 is a separate earlier run of the superseded flow on the same endpoint"
+        }
+      },
+      "difference": {
+        "absolute": {
+          "value": 27482.14,
+          "unit": "ms below the superseded Run 2 selector time",
+          "denominator": "n = 1: the same synthetic case, each proof run once; the superseded post-D1 Run 2 is a separate earlier run of the superseded flow on the same endpoint"
+        },
+        "relative": {
+          "value": 52.6,
+          "unit": "percent below the superseded Run 2 selector time",
+          "denominator": "n = 1: the same synthetic case, each proof run once; the superseded post-D1 Run 2 is a separate earlier run of the superseded flow on the same endpoint"
+        }
+      }
+    },
+    "hosted_selector_time": {
+      "run_1_learning": {
+        "elapsed": {
+          "value": 20651.01,
+          "unit": "ms",
+          "denominator": "n = 1: the same synthetic case, each proof run once; the superseded post-D1 Run 2 is a separate earlier run of the superseded flow on the same endpoint"
+        },
+        "decider_inferences": {
+          "value": 1,
+          "unit": "inferences",
+          "denominator": "n = 1: the same synthetic case, each proof run once; the superseded post-D1 Run 2 is a separate earlier run of the superseded flow on the same endpoint"
+        }
+      },
+      "superseded_run_2_post_d1": {
+        "elapsed": {
+          "value": 53957.49,
+          "unit": "ms",
+          "denominator": "n = 1: the same synthetic case, each proof run once; the superseded post-D1 Run 2 is a separate earlier run of the superseded flow on the same endpoint"
+        },
+        "decider_inferences": {
+          "value": 2,
+          "unit": "inferences",
+          "denominator": "n = 1: the same synthetic case, each proof run once; the superseded post-D1 Run 2 is a separate earlier run of the superseded flow on the same endpoint"
+        }
+      },
+      "optimized_run_2_preselection": {
+        "elapsed": {
+          "value": 25229.29,
+          "unit": "ms",
+          "denominator": "n = 1: the same synthetic case, each proof run once; the superseded post-D1 Run 2 is a separate earlier run of the superseded flow on the same endpoint"
+        },
+        "decider_inferences": {
+          "value": 1,
+          "unit": "inferences",
+          "denominator": "n = 1: the same synthetic case, each proof run once; the superseded post-D1 Run 2 is a separate earlier run of the superseded flow on the same endpoint"
+        }
+      },
+      "difference": {
+        "absolute": {
+          "value": 28728.2,
+          "unit": "ms below the superseded Run 2 selector time",
+          "denominator": "n = 1: the same synthetic case, each proof run once; the superseded post-D1 Run 2 is a separate earlier run of the superseded flow on the same endpoint"
+        },
+        "relative": {
+          "value": 53.2,
+          "unit": "percent below the superseded Run 2 selector time",
+          "denominator": "n = 1: the same synthetic case, each proof run once; the superseded post-D1 Run 2 is a separate earlier run of the superseded flow on the same endpoint"
+        }
+      }
+    }
+  },
+  "earlier_evidence": "Two earlier results stand and are superseded as the lead claim, not erased. The post-D1 proof ran the same case through the superseded flow: Decider 2B was offered the full option set, repeated the proven dead end, the controller refused that exact repeat before any read, and a second Decider call chose inspect_schema_keys, so Run 2 there spent two inferences instead of one. Before that, a two-read cloud pair showed one fewer read on a single pair once the bound allowed two reads, which is efficiency only and cannot show an escape.",
+  "not_claimed": [
+    "nothing beyond the calls recorded here",
+    "a rate or statistical significance",
+    "accuracy or calibration",
+    "model learning: the checkpoint is not changed between calls",
+    "a literal infinite loop",
+    "generalization beyond this case, fixture, endpoint and checkpoint",
+    "production readiness or novelty",
+    "a dollar or cost saving",
+    "a latency claim beyond this one observed n = 1 comparison"
+  ]
+}

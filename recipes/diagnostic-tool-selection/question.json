@@ -1,0 +1,45 @@
+{
+  "name": "diagnostic_tool_selection",
+  "description": "Choose one diagnostic tool from the offered catalog, or request review. Past runs are evidence about what already happened; they are never a recommendation and never a replayed answer. Decide from the current state.",
+  "response_schema": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+      "tool_id",
+      "confidence",
+      "requested_review"
+    ],
+    "properties": {
+      "tool_id": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "description": "The tool_id of exactly one offered tool whose available flag is true, or null when requesting review."
+      },
+      "confidence": {
+        "type": [
+          "number",
+          "null"
+        ],
+        "minimum": 0,
+        "maximum": 1,
+        "description": "Your confidence in this choice. Null means not provided; it does not mean zero, and it never means the choice is correct."
+      },
+      "requested_review": {
+        "type": "boolean",
+        "description": "True when no offered tool is a defensible choice from the current state."
+      }
+    }
+  },
+  "rules": [
+    "Choose exactly one tool whose available flag is true, or set requested_review.",
+    "A history entry records what a past run did. It does not tell you what to choose.",
+    "A blocked_repetition entry names a tool_id your code already refused under this exact context and arguments. Choose something else.",
+    "Your confidence gates whether a choice may run. It states nothing about whether the choice is right.",
+    "Do not invent a tool_id. Do not propose a fix, a patch, or an outcome."
+  ],
+  "notes": [
+    "This file is the question contract only. It carries no measurement, and no figure in this recipe is a measured result."
+  ]
+}

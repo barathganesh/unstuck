@@ -1,0 +1,223 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Current-plus-history selector input",
+  "description": "What the model is handed before each decision: the current authoritative state, the offered tools, and a bounded set of labelled past runs. The current state is the state at that decision, so a second decision taken after a read describes the state that read left behind. Operational identity (run id, request id, timestamps, retry counts) is deliberately absent, so a new attempt is not a new problem.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "current_state",
+    "tools",
+    "history",
+    "rules"
+  ],
+  "properties": {
+    "current_state": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "problem_id",
+        "task",
+        "arguments",
+        "versions",
+        "evidence_count",
+        "already_used"
+      ],
+      "properties": {
+        "problem_id": {
+          "type": "string"
+        },
+        "task": {
+          "type": "string",
+          "description": "A digest of the immutable task."
+        },
+        "arguments": {
+          "type": "string",
+          "description": "A digest of the arguments the next read would run with. One half of the execution key; a receipt recorded for other arguments refuses nothing here."
+        },
+        "versions": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "data_version",
+            "model_revision",
+            "catalog_version",
+            "policy_version",
+            "data_schema_version",
+            "tool_contract_version"
+          ],
+          "properties": {
+            "data_version": {
+              "type": "string"
+            },
+            "model_revision": {
+              "type": "string"
+            },
+            "catalog_version": {
+              "type": "string"
+            },
+            "policy_version": {
+              "type": "string"
+            },
+            "data_schema_version": {
+              "type": "string",
+              "description": "The schema the state and the receipts are written under."
+            },
+            "tool_contract_version": {
+              "type": "string",
+              "description": "The contract version the published cards were described under."
+            }
+          }
+        },
+        "evidence_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "already_used": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "The executions that already ran, as public tool identifiers, or as an opaque execution key for anything the catalog does not publish. The internal capability is never present here."
+        }
+      }
+    },
+    "tools": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "tool_id",
+          "description",
+          "observable",
+          "preconditions",
+          "input_schema",
+          "cost_class",
+          "contract_version",
+          "available"
+        ],
+        "properties": {
+          "tool_id": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "observable": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "preconditions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "What must already hold for this read to be worth running, as observable conditions. Not advice about what to choose."
+          },
+          "input_schema": {
+            "type": "string",
+            "description": "The shape of the arguments this read takes."
+          },
+          "cost_class": {
+            "type": "string"
+          },
+          "contract_version": {
+            "type": "string",
+            "description": "The contract version this card was published under."
+          },
+          "available": {
+            "type": "boolean"
+          }
+        }
+      },
+      "description": "The public card for each tool: what it observes, what must hold before it is worth running, the shape of its input, its cost class, and the contract version it was published under. The internal capability is never present here, so renaming a tool cannot reset a budget or evade a block."
+    },
+    "history": {
+      "type": "array",
+      "maxItems": 4,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "match",
+          "tool_id",
+          "execution_key",
+          "what_happened",
+          "reason",
+          "note"
+        ],
+        "properties": {
+          "match": {
+            "enum": [
+              "exact",
+              "compatible"
+            ]
+          },
+          "tool_id": {
+            "type": "string",
+            "description": "The public identifier of the tool that ran. The internal capability is never present."
+          },
+          "execution_key": {
+            "type": "string",
+            "description": "An opaque digest of the capability and arguments that ran. Two entries for the same internal execution match; none of them reveals the capability."
+          },
+          "what_happened": {
+            "enum": [
+              "useful_evidence",
+              "disposition_unchanged",
+              "no_progress",
+              "provider_error",
+              "invalid_evidence"
+            ]
+          },
+          "reason": {
+            "type": "string"
+          },
+          "note": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "Bounded past runs, verifier-owned. Each entry is evidence about one past run and carries no recommendation."
+    },
+    "blocked_repetition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tool_id",
+        "execution_key",
+        "why"
+      ],
+      "properties": {
+        "tool_id": {
+          "type": "string"
+        },
+        "execution_key": {
+          "type": "string"
+        },
+        "what_happened": {
+          "enum": [
+            "useful_evidence",
+            "disposition_unchanged",
+            "no_progress",
+            "provider_error",
+            "invalid_evidence"
+          ]
+        },
+        "why": {
+          "type": "string"
+        }
+      },
+      "description": "Present only on a second decision, after your code refused an exact repetition that an earlier verified read proved moved no gate, or recorded a read that ran and moved no gate. Choose something else."
+    },
+    "rules": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

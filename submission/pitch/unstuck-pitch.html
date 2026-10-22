@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Unstuck gets Decider 2B out of a decision loop. A pitch in eight plates.</title>
+<meta name="description" content="Decider 2B makes tool decisions, but a new call can repeat a decision already proven useless. Unstuck turns that verified dead end into a Decision Receipt, so the same Decider chooses a new path, without a larger model taking over.">
+<style>
+/* ===========================================================
+   UNSTUCK PITCH
+   A field-note plate deck. Near-white paper, ink, one ember.
+   Self contained: no network, no external asset, no web font.
+   All type and geometry is sized in cqw against a fixed 16:9
+   stage, so the composition at a 1280 x 720 viewport is the
+   composition everywhere, in print, and in the exported frames.
+   At that size 1 cqw is 12.8 px, and 1 pt is 1.333 px.
+   =========================================================== */
+
+:root{
+  --field:#FCFBF7;
+  --plate:#F4F0E6;
+  --ember-plate:#F6E3D8;
+  --ink:#17150F;
+  --ink-2:#6E6859;
+  --ember:#C14A16;
+  /* the accent, tinted down for small text sitting on the accent's own
+     tint, where the full-strength ember only reaches 4.0:1 */
+  --ember-deep:#9E3A0F;
+  --hair:#CFC8B6;
+
+  --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+
+  /* type scale, in points at the 1280 x 720 frame */
+  --fs-display:4.58cqw;  /* 44 pt, the opening title and the one focal figure */
+  --fs-title:4.2cqw;     /* 40 pt, every slide title */
+  --fs-second:3.75cqw;   /* 36 pt, a second display line and ledger figures */
+  --fs-body-lg:1.875cqw; /* 18 pt, tool names and the primary row text */
+  --fs-body:1.72cqw;     /* 16.5 pt, body */
+  --fs-small:1.5cqw;     /* 14.4 pt, supporting body */
+  --fs-cap:1.25cqw;      /* 12 pt, labels and captions */
+
+  /* spacing scale */
+  --s1:.5cqw;
+  --s2:1cqw;
+  --s3:1.5cqw;
+  --s4:2.25cqw;
+  --s5:3.25cqw;
+
+  /* the 0.5 inch frame margin is 3.75 cqw */
+  --pad-y:3.75cqw;
+  --pad-x:5cqw;
+
+  --ease-out:cubic-bezier(.16,1,.3,1);
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+html{background:var(--ink);-webkit-text-size-adjust:100%}
+
+body{
+  background:var(--ink);
+  color:var(--ink);
+  font-family:var(--serif);
+  font-variant-numeric:tabular-nums;
+  min-height:100vh;
+  display:grid;
+  place-items:center;
+  overflow:hidden;
+  caret-color:var(--ember);
+}
+
+/* browser surfaces belong to the design, not to the browser */
+::selection{background:var(--ember);color:var(--field)}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-track{background:var(--plate)}
+::-webkit-scrollbar-thumb{background:var(--ink-2);border:2px solid var(--plate)}
+::-webkit-scrollbar-thumb:hover{background:var(--ember)}
+*{scrollbar-color:var(--ink-2) var(--plate);scrollbar-width:thin}
+:focus-visible{outline:2px solid var(--ember);outline-offset:3px}
+a{color:var(--ember);text-decoration-thickness:1px;text-underline-offset:.22em}
+
+.vh{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+
+/* ---------------- the stage ---------------- */
+
+#deck{
+  width:min(100vw, calc(100vh * 16 / 9));
+  aspect-ratio:16/9;
+  position:relative;
+  background:var(--field);
+  container-type:inline-size;
+  box-shadow:0 1.4cqw 5cqw rgba(23,21,15,.45);
+}
+
+.slide{
+  position:absolute;
+  inset:0;
+  display:grid;
+  grid-template-rows:auto minmax(0,1fr) auto;
+  padding:var(--pad-y) var(--pad-x);
+  background:var(--field);
+}
+.slide[hidden]{display:none}
+
+.body{
+  display:grid;
+  grid-template-rows:auto minmax(0,1fr) auto;
+  gap:var(--s4);
+  padding:var(--s4) 0 var(--s3);
+  min-height:0;
+}
+
+/* ---------------- type ---------------- */
+
+.h-xl,.h,.h-2{
+  font-family:var(--serif);
+  font-weight:400;
+  text-wrap:balance;
+}
+.h-xl{font-size:var(--fs-display);line-height:1.02;letter-spacing:-.025em}
+.h{font-size:var(--fs-title);line-height:1.04;letter-spacing:-.024em}
+.h-2{font-size:var(--fs-second);line-height:1.06;letter-spacing:-.02em}
+.em{color:var(--ember)}
+.quiet{color:var(--ink-2)}
+
+.lead{
+  font-size:var(--fs-body);
+  line-height:1.5;
+  color:var(--ink-2);
+  max-width:58cqw;
+}
+.lead strong{color:var(--ink);font-weight:600}
+
+.prose{
+  font-size:var(--fs-small);
+  line-height:1.5;
+  color:var(--ink-2);
+  max-width:62cqw;
+}
+.prose strong{color:var(--ink);font-weight:600}
+
+.lbl{
+  font-family:var(--mono);
+  font-size:var(--fs-cap);
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--ink-2);
+  line-height:1.5;
+  font-weight:400;
+}
+.lbl-ink{color:var(--ink)}
+.lbl-em{color:var(--ember-deep)}
+
+/* tool names and recorded values, the only things set in mono */
+.code{
+  font-family:var(--mono);
+  font-size:var(--fs-body-lg);
+  letter-spacing:-.005em;
+  line-height:1.3;
+  color:var(--ink);
+}
+.code-sm{
+  font-family:var(--mono);
+  font-size:var(--fs-small);
+  line-height:1.35;
+  color:var(--ink);
+}
+.unres{color:var(--ink-2)}
+
+.note{
+  font-family:var(--serif);
+  font-size:var(--fs-cap);
+  line-height:1.5;
+  color:var(--ink-2);
+}
+
+/* ---------------- chrome ---------------- */
+
+.masthead{
+  display:flex;
+  align-items:baseline;
+  justify-content:space-between;
+  gap:var(--s4);
+  padding-bottom:var(--s2);
+  border-bottom:1px solid var(--ink);
+}
+.wordmark{
+  font-family:var(--mono);
+  font-size:var(--fs-cap);
+  letter-spacing:.34em;
+  text-transform:uppercase;
+  color:var(--ink);
+}
+.masthead .counter{
+  font-family:var(--mono);
+  font-size:var(--fs-cap);
+  letter-spacing:.2em;
+  color:var(--ink-2);
+}
+.masthead .counter b{color:var(--ember);font-weight:400}
+
+.foot{
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap:var(--s4);
+  padding-top:var(--s2);
+  border-top:1px solid var(--hair);
+}
+.foot .tags{
+  font-family:var(--mono);
+  font-size:var(--fs-cap);
+  letter-spacing:.14em;
+  color:var(--ember);
+  white-space:nowrap;
+}
+
+/* marks: drawn, one stroke, one weight */
+.mk{display:inline-block;width:1.4cqw;height:1.4cqw;vertical-align:-.12cqw;margin-right:var(--s2);flex:none}
+.mk svg{width:100%;height:100%;display:block}
+
+/* stage controls live outside the printed page */
+#controls{
+  position:absolute;
+  right:1.3cqw;
+  bottom:1.3cqw;
+  display:flex;
+  gap:.5cqw;
+  z-index:5;
+}
+#controls button{
+  width:max(24px,2.5cqw);height:max(24px,2.5cqw);
+  display:grid;place-items:center;
+  background:transparent;
+  border:1px solid var(--hair);
+  color:var(--ink-2);
+  cursor:pointer;
+  transition:color .18s var(--ease-out),border-color .18s var(--ease-out);
+}
+#controls button:hover:not(:disabled){color:var(--ember);border-color:var(--ember)}
+#controls button:disabled{opacity:.35;cursor:default}
+#controls svg{width:1.1cqw;height:1.1cqw;display:block}
+
+#progress{
+  position:absolute;
+  left:0;bottom:0;width:100%;
+  height:.28cqw;
+  background:var(--ember);
+  z-index:6;
+  transform-origin:left center;
+  transform:scaleX(0);
+  transition:transform .34s var(--ease-out);
+}
+
+/* ---------------- shared ledger ---------------- */
+
+table.ledger{width:100%;border-collapse:collapse}
+table.ledger th{
+  text-align:left;
+  padding:0 var(--s3) var(--s1) 0;
+  border-bottom:1px solid var(--ink);
+}
+table.ledger td{
+  padding:var(--s3) var(--s3) var(--s3) 0;
+  border-bottom:1px solid var(--hair);
+  vertical-align:baseline;
+}
+table.ledger tbody th{
+  padding:var(--s3) var(--s3) var(--s3) 0;
+  border-bottom:1px solid var(--hair);
+  vertical-align:baseline;
+}
+table.ledger tr:last-child td,table.ledger tr:last-child th{border-bottom:1px solid var(--ink)}
+table.ledger .name{font-size:var(--fs-body);font-weight:400;text-align:left;color:var(--ink);white-space:nowrap}
+
+/* the receipt: the deck's one stamped object */
+.stamp{
+  border:1px solid var(--ember);
+  outline:1px solid var(--ember);
+  outline-offset:.42cqw;
+  background:var(--ember-plate);
+  padding:var(--s4) var(--s4) var(--s3);
+  transform:rotate(-1.6deg);
+}
+.stamp .k{font-family:var(--mono);font-size:var(--fs-cap);letter-spacing:.2em;text-transform:uppercase;color:var(--ember-deep)}
+.stamp .v{font-family:var(--serif);font-size:var(--fs-second);line-height:1;letter-spacing:-.022em;margin:var(--s2) 0 var(--s3);color:var(--ink)}
+.stamp .r{font-size:var(--fs-small);line-height:1.4;color:var(--ink);border-top:1px solid var(--ember);padding-top:var(--s2)}
+.stamp .r .code-sm{color:var(--ember-deep)}
+
+/* =========================================================
+   SLIDE 1, the hook
+   ========================================================= */
+
+#s1 .body{grid-template-rows:minmax(0,1fr) auto auto;padding-top:var(--s5)}
+#s1 .h-xl{max-width:72cqw;align-self:end}
+#s1 .h-2{color:var(--ink-2);max-width:80cqw}
+#s1 .h-2 .em{color:var(--ember)}
+#s1 .close{
+  border-top:1px solid var(--ink);
+  margin-top:var(--s4);
+  padding-top:var(--s3);
+}
+
+/* =========================================================
+   SLIDE 2, the control
+   ========================================================= */
+
+#s2 .split{display:grid;grid-template-columns:minmax(0,1fr) 21cqw;gap:var(--s5);align-items:center}
+#s2 .verdict{border-left:1px solid var(--ink);padding:var(--s2) 0 var(--s2) var(--s4)}
+#s2 .verdict .fig{font-family:var(--serif);font-size:var(--fs-display);line-height:.95;letter-spacing:-.03em}
+#s2 .verdict .lbl{margin-top:var(--s2)}
+#s2 .verdict .sub{font-size:var(--fs-body);color:var(--ink);margin-top:var(--s3);padding-top:var(--s2);border-top:1px solid var(--hair)}
+
+/* =========================================================
+   SLIDE 3, Run 1 learns
+   ========================================================= */
+
+#s3 .split{display:grid;grid-template-columns:minmax(0,1fr) 29cqw;gap:var(--s5);align-items:center}
+#s3 .rows{display:grid}
+#s3 .row{
+  display:grid;
+  grid-template-columns:13cqw 1fr;
+  gap:var(--s3);
+  align-items:baseline;
+  padding:var(--s2) 0;
+  border-bottom:1px solid var(--hair);
+}
+#s3 .row:first-child{border-top:1px solid var(--ink)}
+#s3 .row:last-child{border-bottom:1px solid var(--ink)}
+#s3 .row .val{font-size:var(--fs-body);line-height:1.35}
+
+/* =========================================================
+   SLIDE 4, Run 2 escapes
+   ========================================================= */
+
+#s4 .steps{display:grid;align-content:center}
+#s4 .step{
+  display:grid;
+  grid-template-columns:17cqw minmax(0,1fr) 14cqw;
+  gap:var(--s3);
+  align-items:baseline;
+  padding:var(--s3) 0;
+  border-bottom:1px solid var(--hair);
+}
+#s4 .step:first-child{border-top:1px solid var(--ink)}
+#s4 .step:last-child{border-bottom:1px solid var(--ink)}
+#s4 .step .what{display:flex;align-items:baseline;flex-wrap:nowrap;gap:var(--s2)}
+#s4 .step .out{font-size:var(--fs-body-lg);text-align:right;white-space:nowrap}
+#s4 .step.block .out{color:var(--ember)}
+#s4 .done{font-size:var(--fs-body);line-height:1.35;color:var(--ink)}
+#s4 .struck{
+  color:var(--ember);
+  text-decoration:line-through;
+  text-decoration-color:var(--ember);
+  text-decoration-thickness:.16cqw;
+}
+#s4 .head{display:block}
+#s4 .h{max-width:80cqw}
+
+.blockstamp{
+  display:inline-block;
+  margin-left:var(--s1);
+  border:1px solid var(--ember);
+  color:var(--ember-deep);
+  background:var(--ember-plate);
+  font-family:var(--mono);
+  font-size:var(--fs-cap);
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  padding:.3cqw .62cqw .26cqw;
+  transform:rotate(-2deg);
+  transform-origin:left center;
+  white-space:nowrap;
+}
+.slide.is-live .blockstamp{animation:stamp-settle .56s var(--ease-out) both}
+@keyframes stamp-settle{
+  from{transform:rotate(-7deg) scale(1.1);opacity:.1}
+  to{transform:rotate(-2deg) scale(1);opacity:1}
+}
+
+/* =========================================================
+   SLIDE 5, the proof
+   ========================================================= */
+
+#s5 .proofs{display:grid;grid-template-columns:1fr 1fr;gap:var(--s5);align-content:center}
+#s5 .measurement{border-top:1px solid var(--ink);padding-top:var(--s3)}
+#s5 .elapsed{font-size:var(--fs-display);line-height:1.1;margin:var(--s2) 0}
+#s5 .elapsed small{font-size:var(--fs-body);color:var(--ink-2)}
+#s5 .inferences{font-size:var(--fs-body-lg);border-bottom:1px solid var(--hair);padding-bottom:var(--s3)}
+#s5 .scope{border-top:1px solid var(--ink);padding-top:var(--s3)}
+#s5 .scope .h-2{margin-bottom:var(--s2)}
+
+/* =========================================================
+   SLIDE 6, the AWS path
+   ========================================================= */
+
+#s6 .path{display:grid;align-content:center;gap:var(--s3)}
+#s6 .zones{display:grid;grid-template-columns:3fr 1fr;gap:var(--s3)}
+#s6 .zone{padding-top:var(--s1);border-top:1px solid var(--ink)}
+#s6 .zone.after{border-top-color:var(--hair)}
+#s6 .hops{display:grid;grid-template-columns:repeat(4,1fr)}
+#s6 .hop{display:grid;align-content:start;gap:var(--s1);padding:0 var(--s4);border-left:1px solid var(--hair);position:relative}
+#s6 .hop:first-child{padding-left:0;border-left:0}
+#s6 .hop .who{font-size:var(--fs-body-lg);line-height:1.15;letter-spacing:-.01em}
+#s6 .hop .svc{font-size:var(--fs-small);line-height:1.35;color:var(--ink-2)}
+#s6 .hop .arrow{position:absolute;right:-1.1cqw;top:.1cqw;width:2.2cqw;height:2.2cqw;background:var(--field)}
+#s6 .hop .arrow svg{width:100%;height:100%;display:block}
+#s6 .outbound{
+  margin-top:var(--s2);
+  border-top:1px solid var(--ember);
+  padding-top:var(--s1);
+  display:flex;align-items:center;gap:var(--s1);
+}
+#s6 .outbound .lbl{color:var(--ember)}
+#s6 .guards{display:grid;grid-template-columns:1fr 1fr;gap:var(--s5);border-top:1px solid var(--ink);padding-top:var(--s3)}
+
+/* =========================================================
+   SLIDE 7, the pattern
+   ========================================================= */
+
+#s7 .parts{display:grid;align-content:center}
+#s7 .part{
+  display:grid;
+  grid-template-columns:3.5cqw 26cqw 1fr;
+  gap:var(--s3);
+  align-items:baseline;
+  padding:var(--s3) 0;
+  border-bottom:1px solid var(--hair);
+}
+#s7 .part:first-child{border-top:1px solid var(--ink)}
+#s7 .part:last-child{border-bottom:1px solid var(--ink)}
+#s7 .part .i{font-family:var(--mono);font-size:var(--fs-cap);letter-spacing:.1em;color:var(--ink-2)}
+#s7 .part .n{font-size:var(--fs-body-lg);line-height:1.2;color:var(--ink)}
+#s7 .part.gate .n,#s7 .part.gate .i{color:var(--ember)}
+#s7 .part .d{font-size:var(--fs-body);line-height:1.3;color:var(--ink-2)}
+#s7 .close{display:grid;grid-template-columns:auto 1fr;gap:var(--s5);align-items:end}
+
+/* =========================================================
+   SLIDE 8, the boundary
+   ========================================================= */
+
+#s8 .boundaries{display:grid;align-content:center}
+#s8 .boundary{
+  display:grid;
+  grid-template-columns:29cqw 1fr;
+  gap:var(--s3);
+  align-items:baseline;
+  padding:var(--s3) 0;
+  border-bottom:1px solid var(--hair);
+}
+#s8 .boundary:first-child{border-top:1px solid var(--ember)}
+#s8 .boundary:last-child{border-bottom:1px solid var(--ink)}
+#s8 .boundary dt{font-size:var(--fs-body-lg);line-height:1.4}
+#s8 .boundary dd{font-size:var(--fs-body);line-height:1.4;color:var(--ink-2)}
+
+/* =========================================================
+   reduced motion, and print
+   ========================================================= */
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  .slide.is-live .blockstamp{animation:none!important}
+}
+
+@media print{
+  @page{size:1280px 720px;margin:0}
+  html,body{background:#fff}
+  body{display:block;overflow:visible;min-height:0}
+  #controls,#progress{display:none!important}
+  #deck{
+    width:1280px;height:720px;aspect-ratio:auto;
+    box-shadow:none;position:static;
+  }
+  .slide,.slide[hidden]{
+    display:grid!important;
+    position:static;
+    width:1280px;height:720px;
+    break-after:page;page-break-after:always;
+    -webkit-print-color-adjust:exact;print-color-adjust:exact;
+  }
+  .slide:last-of-type{break-after:auto;page-break-after:auto}
+}
+</style>
+</head>
+<body>
+
+<svg class="vh" aria-hidden="true" focusable="false"><defs>
+  <symbol id="m-read" viewBox="0 0 20 20">
+    <rect x="3" y="3" width="14" height="14" fill="#17150F" stroke="#17150F" stroke-width="1.4" vector-effect="non-scaling-stroke"/>
+  </symbol>
+  <symbol id="m-blocked" viewBox="0 0 20 20">
+    <rect x="3" y="3" width="14" height="14" fill="none" stroke="#C14A16" stroke-width="1.4" vector-effect="non-scaling-stroke"/>
+    <path d="M5 15 L15 5" fill="none" stroke="#C14A16" stroke-width="1.4" vector-effect="non-scaling-stroke"/>
+  </symbol>
+  <symbol id="m-open" viewBox="0 0 20 20">
+    <rect x="3" y="3" width="14" height="14" fill="none" stroke="#6E6859" stroke-width="1.4" vector-effect="non-scaling-stroke"/>
+  </symbol>
+  <symbol id="m-arrow" viewBox="0 0 20 20">
+    <path d="M2 10 H15.2" fill="none" stroke="#17150F" stroke-width="1.4" vector-effect="non-scaling-stroke"/>
+    <path d="M11.4 6.4 L15.6 10 L11.4 13.6" fill="none" stroke="#17150F" stroke-width="1.4" vector-effect="non-scaling-stroke"/>
+  </symbol>
+  <symbol id="m-prev" viewBox="0 0 20 20">
+    <path d="M12.6 3.8 L5.4 10 L12.6 16.2" fill="none" stroke="currentColor" stroke-width="1.6" vector-effect="non-scaling-stroke"/>
+  </symbol>
+  <symbol id="m-next" viewBox="0 0 20 20">
+    <path d="M7.4 3.8 L14.6 10 L7.4 16.2" fill="none" stroke="currentColor" stroke-width="1.6" vector-effect="non-scaling-stroke"/>
+  </symbol>
+  <symbol id="m-full" viewBox="0 0 20 20">
+    <path d="M2.6 7 V2.6 H7 M13 2.6 H17.4 V7 M17.4 13 V17.4 H13 M7 17.4 H2.6 V13" fill="none" stroke="currentColor" stroke-width="1.6" vector-effect="non-scaling-stroke"/>
+  </symbol>
+</defs></svg>
+
+<main id="deck" aria-roledescription="slide deck" aria-label="Unstuck pitch, eight slides">
+
+<p class="vh" id="live" role="status" aria-live="polite"></p>
+
+<!-- ============================ 1 ============================ -->
+<section class="slide" id="s1" aria-roledescription="slide" aria-label="Slide 1 of 8. Unstuck gets Decider 2B out of a decision loop.">
+  <header class="masthead">
+    <span class="wordmark">Unstuck</span>
+    <span class="counter"><b>01</b> / 08</span>
+  </header>
+
+  <div class="body">
+    <h1 class="h-xl">Unstuck gets Decider 2B out of a <span class="em">decision loop</span>.</h1>
+
+    <p class="h-2">Run 1 pays once.<br>Run 2 uses the receipt <span class="em">before selection</span>.</p>
+
+    <div class="close">
+      <p class="lead">Decider 2B makes tool decisions, but a new call can repeat a decision already proven useless. Unstuck turns that verified dead end into a <strong>Decision Receipt</strong>, so the same Decider chooses a new path, without a larger model taking over.</p>
+    </div>
+  </div>
+
+  <footer class="foot">
+    <span class="note">One declared synthetic case. Real hosted Decider 2B choices. n = 1.</span>
+    <span class="tags">#strands-decider-2b&nbsp;&nbsp;#tool-selection</span>
+  </footer>
+</section>
+
+<!-- ============================ 2 ============================ -->
+<section class="slide" id="s2" aria-roledescription="slide" aria-label="Slide 2 of 8. A new call can repeat a decision already proven useless.">
+  <header class="masthead">
+    <span class="wordmark">Unstuck</span>
+    <span class="counter"><b>02</b> / 08</span>
+  </header>
+
+  <div class="body">
+    <h2 class="h">A new call can repeat a decision <span class="em">already proven useless</span>.</h2>
+
+    <div class="split">
+      <table class="ledger">
+        <caption class="vh">The memoryless control, three independent calls without Decision Receipts</caption>
+        <thead>
+          <tr>
+            <th scope="col" class="lbl">Memoryless call</th>
+            <th scope="col" class="lbl">Decider D1 chose</th>
+            <th scope="col" class="lbl">Reads</th>
+            <th scope="col" class="lbl">Result</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row" class="name">Control 1</th>
+            <td><span class="mk" aria-hidden="true"><svg><use href="#m-read"></use></svg></span><span class="code">inspect_pipeline</span></td>
+            <td class="code-sm">1 of 1</td>
+            <td class="code-sm unres">unresolved</td>
+          </tr>
+          <tr>
+            <th scope="row" class="name">Control 2</th>
+            <td><span class="mk" aria-hidden="true"><svg><use href="#m-read"></use></svg></span><span class="code">inspect_pipeline</span></td>
+            <td class="code-sm">1 of 1</td>
+            <td class="code-sm unres">unresolved</td>
+          </tr>
+          <tr>
+            <th scope="row" class="name">Control 3</th>
+            <td><span class="mk" aria-hidden="true"><svg><use href="#m-read"></use></svg></span><span class="code">inspect_pipeline</span></td>
+            <td class="code-sm">1 of 1</td>
+            <td class="code-sm unres">unresolved</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="verdict">
+        <div class="fig">3 of 3</div>
+        <div class="lbl lbl-ink">unresolved</div>
+        <div class="sub">0 of 3 completed</div>
+      </div>
+    </div>
+
+    <p class="prose">The read returns real data: the partition arrived. True, and it settles nothing, because this incident turns on how the two sides of a join spell their keys. With one read per call, nothing is left for a second choice.</p>
+  </div>
+
+  <footer class="foot">
+    <span class="note">Three independent calls without receipts. Four options offered to D1, one diagnostic read allowed per call.</span>
+    <span class="tags">#strands-decider-2b&nbsp;&nbsp;#tool-selection</span>
+  </footer>
+</section>
+
+<!-- ============================ 3 ============================ -->
+<section class="slide" id="s3" aria-roledescription="slide" aria-label="Slide 3 of 8. Run 1 pays the learning cost once.">
+  <header class="masthead">
+    <span class="wordmark">Unstuck</span>
+    <span class="counter"><b>03</b> / 08</span>
+  </header>
+
+  <div class="body">
+    <h2 class="h">Run 1 pays the learning cost <span class="em">once</span>.</h2>
+
+    <div class="split">
+      <div class="rows">
+        <div class="row"><span class="lbl">History</span><span class="val">empty, the first call with receipts</span></div>
+        <div class="row"><span class="lbl">Decider D1</span><span class="val"><span class="mk" aria-hidden="true"><svg><use href="#m-read"></use></svg></span><span class="code">inspect_pipeline</span></span></div>
+        <div class="row"><span class="lbl">The one read</span><span class="val">1 of 1, real data, moved no disposition</span></div>
+        <div class="row"><span class="lbl">Client time</span><span class="val">21.6 s, 1 inference</span></div>
+        <div class="row"><span class="lbl">Result</span><span class="val"><span class="code-sm unres">unresolved</span></span></div>
+      </div>
+
+      <div class="stamp">
+        <div class="k">Decision Receipt</div>
+        <div class="v">disposition<br>unchanged</div>
+        <div class="r">Receipt stored by the deterministic verifier.</div>
+      </div>
+    </div>
+
+    <p class="prose"><strong>Run 1 is not saved.</strong> One inference, one read, unresolved. The model is unchanged. The verifier records a fact that can preclude one identical execution later.</p>
+  </div>
+
+  <footer class="foot">
+    <span class="note">Receipt outcome_class: disposition_unchanged. Exact negative authority only.</span>
+    <span class="tags">#strands-decider-2b&nbsp;&nbsp;#tool-selection</span>
+  </footer>
+</section>
+
+<!-- ============================ 4 ============================ -->
+<section class="slide" id="s4" aria-roledescription="slide" aria-label="Slide 4 of 8. Run 2 uses the receipt before selection.">
+  <header class="masthead">
+    <span class="wordmark">Unstuck</span>
+    <span class="counter"><b>04</b> / 08</span>
+  </header>
+
+  <div class="body">
+    <div class="head">
+      <h2 class="h">Run 2 uses the receipt <span class="em">before selection</span>.</h2>
+    </div>
+
+    <div class="steps">
+      <div class="step block">
+        <span class="lbl lbl-em">Exact match</span>
+        <span class="what"><span class="mk" aria-hidden="true"><svg><use href="#m-blocked"></use></svg></span><span class="code struck">inspect_pipeline</span><span class="blockstamp">precluded</span></span>
+        <span class="out">0 inferences</span>
+      </div>
+      <div class="step">
+        <span class="lbl">Remaining offer</span>
+        <span class="done">3 diagnostics, in original order</span>
+        <span class="out quiet">0 reads</span>
+      </div>
+      <div class="step">
+        <span class="lbl lbl-ink">One Decider choice</span>
+        <span class="what"><span class="mk" aria-hidden="true"><svg><use href="#m-read"></use></svg></span><span class="code">inspect_schema_keys</span></span>
+        <span class="out">1 of 1 read</span>
+      </div>
+      <div class="step">
+        <span class="lbl lbl-ink">Verifier</span>
+        <span class="what"><span class="done">repair applied, verification passed</span></span>
+        <span class="out">26.6 s client</span>
+      </div>
+    </div>
+
+    <p class="prose">The dead end is precluded before the first Decider request and before any read. The same Decider makes one fresh choice. <strong>One inference, one read, completed.</strong></p>
+  </div>
+
+  <footer class="foot">
+    <span class="note">No second Decider call. The receipt chooses nothing. The verifier owns truth.</span>
+    <span class="tags">#strands-decider-2b&nbsp;&nbsp;#tool-selection</span>
+  </footer>
+</section>
+
+<!-- ============================ 5 ============================ -->
+<section class="slide" id="s5" aria-roledescription="slide" aria-label="Slide 5 of 8. Measured Run 2 improvement.">
+  <header class="masthead">
+    <span class="wordmark">Unstuck</span>
+    <span class="counter"><b>05</b> / 08</span>
+  </header>
+
+  <div class="body">
+    <h2 class="h">Measured Run 2 <span class="em">improvement</span>.</h2>
+
+    <div class="proofs">
+      <div class="measurement">
+        <h3 class="lbl lbl-ink">Old Run 2, superseded post-choice</h3>
+        <p class="elapsed">54.8 s <small>client time</small></p>
+        <p class="inferences">2 inferences</p>
+      </div>
+      <div class="measurement">
+        <h3 class="lbl lbl-ink">Optimized Run 2, pre-selection</h3>
+        <p class="elapsed em">26.6 s <small>client time</small></p>
+        <p class="inferences">1 inference</p>
+      </div>
+    </div>
+
+    <div class="scope">
+      <p class="h-2"><span class="em">28.2 s less.</span> 51.4% lower.</p>
+      <p class="prose">Observed Run 2 client latency. n = 1, same synthetic case, each proof once. Old Run 2 is a separate earlier run, not the control.</p>
+    </div>
+  </div>
+
+  <footer class="foot">
+    <span class="note">No dollar savings measured. No rate, significance or guaranteed benefit.</span>
+    <span class="tags">#strands-decider-2b&nbsp;&nbsp;#tool-selection</span>
+  </footer>
+</section>
+
+<!-- ============================ 6 ============================ -->
+<section class="slide" id="s6" aria-roledescription="slide" aria-label="Slide 6 of 8. The private AWS execution path.">
+  <header class="masthead">
+    <span class="wordmark">Unstuck</span>
+    <span class="counter"><b>06</b> / 08</span>
+  </header>
+
+  <div class="body">
+    <h2 class="h">The <span class="em">private</span> AWS execution path.</h2>
+
+    <div class="path">
+      <div class="zones">
+        <div class="zone"><span class="lbl lbl-ink">Private, signed model calls</span></div>
+        <div class="zone after"><span class="lbl">After completion only</span></div>
+      </div>
+      <div class="hops">
+        <div class="hop">
+          <div class="who">Controller</div>
+          <div class="svc">Amazon Bedrock AgentCore Runtime</div>
+          <div class="svc">executes every read</div>
+          <span class="arrow" aria-hidden="true"><svg><use href="#m-arrow"></use></svg></span>
+        </div>
+        <div class="hop">
+          <div class="who em">Decider 2B</div>
+          <div class="svc">private Amazon SageMaker endpoint</div>
+          <div class="svc">chooses, and only chooses</div>
+          <div class="outbound"><span class="mk" aria-hidden="true"><svg><use href="#m-blocked"></use></svg></span><span class="lbl">Outbound: nothing</span></div>
+          <span class="arrow" aria-hidden="true"><svg><use href="#m-arrow"></use></svg></span>
+        </div>
+        <div class="hop">
+          <div class="who">Verifier and repair</div>
+          <div class="svc">deterministic code</div>
+          <div class="svc">owns outcome, receipt, repair</div>
+          <span class="arrow" aria-hidden="true"><svg><use href="#m-arrow"></use></svg></span>
+        </div>
+        <div class="hop">
+          <div class="who">Narration</div>
+          <div class="svc">Amazon Bedrock Nova Lite</div>
+          <div class="svc">after the result is fixed</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="guards">
+      <p class="prose">Network isolation on, private subnets, no address translation gateway and no internet gateway. Each signed call is bounded to one action on one resource.</p>
+      <p class="prose">Narration holds no authority. It is refused on a result that was never verified, which is what happened to Run 1.</p>
+    </div>
+  </div>
+
+  <footer class="foot">
+    <span class="note">No account, resource, or Region identifier is published. Nothing in the repository deploys or spends.</span>
+    <span class="tags">#strands-decider-2b&nbsp;&nbsp;#tool-selection</span>
+  </footer>
+</section>
+
+<!-- ============================ 7 ============================ -->
+<section class="slide" id="s7" aria-roledescription="slide" aria-label="Slide 7 of 8. The reusable pattern.">
+  <header class="masthead">
+    <span class="wordmark">Unstuck</span>
+    <span class="counter"><b>07</b> / 08</span>
+  </header>
+
+  <div class="body">
+    <h2 class="h">The reusable <span class="em">pattern</span>.</h2>
+
+    <div class="parts">
+      <div class="part"><span class="i">01</span><span class="n">Match current context</span><span class="d">the verifier's receipt must match the exact execution</span></div>
+      <div class="part gate"><span class="i">02</span><span class="n">Preclude before selection</span><span class="d">withhold only the proven dead end before the first request</span></div>
+      <div class="part"><span class="i">03</span><span class="n">Preserve the remaining offer</span><span class="d">original order, no ranking, no replacement selected</span></div>
+      <div class="part"><span class="i">04</span><span class="n">Let Decider choose</span><span class="d">one fresh choice in the observed Run 2</span></div>
+      <div class="part"><span class="i">05</span><span class="n">Verified outcome</span><span class="d">deterministic code decides what the read found and applies the repair</span></div>
+    </div>
+
+    <div class="close">
+      <p class="h-2">No second model selector.</p>
+      <p class="prose">The recipe in the repository runs on the standard library only, with no import from the application it came out of.</p>
+    </div>
+  </div>
+
+  <footer class="foot">
+    <span class="note">Observed Run 2: one inference, one read. No second Decider call.</span>
+    <span class="tags">#strands-decider-2b&nbsp;&nbsp;#tool-selection</span>
+  </footer>
+</section>
+
+<!-- ============================ 8 ============================ -->
+<section class="slide" id="s8" aria-roledescription="slide" aria-label="Slide 8 of 8. One failed decision becomes a boundary.">
+  <header class="masthead">
+    <span class="wordmark">Unstuck</span>
+    <span class="counter"><b>08</b> / 08</span>
+  </header>
+
+  <div class="body">
+    <h2 class="h">One failed decision becomes a <span class="em">boundary</span>.</h2>
+
+    <dl class="boundaries">
+      <div class="boundary"><dt class="em">Exact negative authority</dt><dd>One proven execution, under one identical context, is withheld.</dd></div>
+      <div class="boundary"><dt>Decider still chooses</dt><dd>The receipt cannot select the next tool.</dd></div>
+      <div class="boundary"><dt>The verifier owns truth</dt><dd>Observed evidence determines the result and the repair.</dd></div>
+    </dl>
+
+    <p class="h-2">A reusable pattern.<br>The choice stays with Decider.</p>
+  </div>
+
+  <footer class="foot">
+    <span class="note">One synthetic case, each proof once. The model is unchanged.</span>
+    <span class="tags">#strands-decider-2b&nbsp;&nbsp;#tool-selection</span>
+  </footer>
+</section>
+
+<div id="controls">
+  <button type="button" id="prev" aria-label="Previous slide"><svg aria-hidden="true"><use href="#m-prev"></use></svg></button>
+  <button type="button" id="next" aria-label="Next slide"><svg aria-hidden="true"><use href="#m-next"></use></svg></button>
+  <button type="button" id="full" aria-label="Toggle full screen"><svg aria-hidden="true"><use href="#m-full"></use></svg></button>
+</div>
+<div id="progress" aria-hidden="true"></div>
+
+</main>
+
+<script type="application/json" id="speaker-notes">
+[
+  "Unstuck gets Decider 2B out of a decision loop. Decider 2B makes tool decisions, but a new call can repeat a decision already proven useless. Unstuck turns that verified dead end into a Decision Receipt. Run 1 pays the learning cost once. Run 2 uses the receipt before selection. The memoryless control stays stuck. No larger model takes over.",
+  "Here is the problem. A synthetic report returns zero rows. Decider 2B is offered four read-only diagnostics and picks inspect_pipeline. The read returns real data, the partition arrived, and it settles nothing, because this incident turns on how the two sides of a join spell their keys. Each call may spend one diagnostic read, so the call ends unresolved. Ask again on a new call without receipts and it picks the same tool again. Three memoryless calls, three of three unresolved, zero of three completed.",
+  "Run 1 pays the learning cost once. Empty history, four diagnostics offered, one Decider choice: inspect_pipeline. One inference, 21.6 s client time, one read, unresolved. The deterministic verifier stores a disposition_unchanged Decision Receipt. Run 1 is not saved. The model is unchanged. The system records a verified fact. Source: curated loop-escape proof, Run 1 learning observation.",
+  "Run 2 is a new call about the same incident, and the receipt matches exactly. Before the first Decider request and before any read, the controller precludes only inspect_pipeline. The three remaining diagnostics retain their original order. The same Decider 2B makes one fresh choice, inspect_schema_keys. One inference, one read, a verified repair, completed in 26.6 s client time. No second Decider call. The receipt chooses nothing. The verifier owns truth. Source: curated loop-escape proof, optimized Run 2 observation.",
+  "Measured Run 2 improvement. The old Run 2 is the superseded post-choice flow, a separate earlier run on the same endpoint, not the memoryless control. Old Run 2: 54.8 s client time and 2 inferences. Optimized Run 2: 26.6 s and 1 inference. Observed Run 2 client latency fell 28.2 s, or 51.4%, with one fewer inference. n = 1, same synthetic case, each proof once. No dollar savings measured. No rate, significance or guaranteed benefit. Source: curated loop-escape proof, AgentCore client time comparison.",
+  "The execution path is private. The controller runs on Amazon Bedrock AgentCore Runtime and executes every read. Decider 2B serves from a private Amazon SageMaker endpoint with network isolation and no outbound route. Model calls are signed. The deterministic verifier decides what the read found, writes the receipt, and authorizes the repair. Amazon Bedrock Nova Lite narrates only after the result is complete, holds no authority, and was refused on Run 1 because nothing was verified.",
+  "The reusable pattern matches current context against the verifier's receipt, precludes only the proven exact execution before selection, preserves the remaining offer in original order, and lets Decider choose. Deterministic code verifies the result. In the observed Run 2 there is one inference, no second Decider call, and no second model selector. The recipe uses the standard library only.",
+  "One failed decision becomes a boundary. Exact negative authority can withhold one proven execution under one identical context. It cannot select the next tool. Decider still chooses. The verifier owns truth and authorizes repair from evidence. This is a reusable pattern. The model is unchanged. One synthetic case, each proof once."
+]
+</script>
+
+<script>
+(function(){
+  "use strict";
+
+  var slides = Array.prototype.slice.call(document.querySelectorAll(".slide"));
+  var total  = slides.length;
+  var live   = document.getElementById("live");
+  var bar    = document.getElementById("progress");
+  var prevB  = document.getElementById("prev");
+  var nextB  = document.getElementById("next");
+  var fullB  = document.getElementById("full");
+  var deck   = document.getElementById("deck");
+  var i      = 0;
+
+  function show(n, announce){
+    n = Math.max(0, Math.min(total - 1, n));
+    i = n;
+    for (var k = 0; k < total; k++){
+      var on = (k === n);
+      slides[k].hidden = !on;
+      slides[k].classList.toggle("is-live", on);
+    }
+    bar.style.transform = "scaleX(" + ((n + 1) / total) + ")";
+    prevB.disabled = (n === 0);
+    nextB.disabled = (n === total - 1);
+    if (announce){
+      live.textContent = slides[n].getAttribute("aria-label");
+    }
+    if (location.hash !== "#" + (n + 1)){
+      history.replaceState(null, "", "#" + (n + 1));
+    }
+  }
+
+  function go(d){ show(i + d, true); }
+
+  document.addEventListener("keydown", function(e){
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    var t = e.target;
+    if (t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA" || t.isContentEditable)) return;
+    if (t && t.tagName === "BUTTON" && (e.key === " " || e.key === "Enter")) return;
+
+    switch (e.key){
+      case "ArrowRight": case "ArrowDown": case "PageDown": case " ": case "Enter":
+        e.preventDefault(); go(1); break;
+      case "ArrowLeft": case "ArrowUp": case "PageUp": case "Backspace":
+        e.preventDefault(); go(-1); break;
+      case "Home":
+        e.preventDefault(); show(0, true); break;
+      case "End":
+        e.preventDefault(); show(total - 1, true); break;
+      case "f": case "F":
+        e.preventDefault(); toggleFull(); break;
+      default:
+        if (/^[1-8]$/.test(e.key)){ e.preventDefault(); show(parseInt(e.key, 10) - 1, true); }
+    }
+  });
+
+  prevB.addEventListener("click", function(){ go(-1); });
+  nextB.addEventListener("click", function(){ go(1); });
+  fullB.addEventListener("click", toggleFull);
+
+  function toggleFull(){
+    if (document.fullscreenElement){
+      if (document.exitFullscreen) document.exitFullscreen();
+    } else if (deck.requestFullscreen){
+      deck.requestFullscreen().catch(function(){});
+    }
+  }
+
+  window.addEventListener("hashchange", function(){
+    var n = parseInt((location.hash || "").slice(1), 10);
+    if (n >= 1 && n <= total && (n - 1) !== i) show(n - 1, true);
+  });
+
+  var start = parseInt((location.hash || "").slice(1), 10);
+  show((start >= 1 && start <= total) ? start - 1 : 0, false);
+})();
+</script>
+
+</body>
+</html>

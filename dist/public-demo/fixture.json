@@ -1,0 +1,134 @@
+{
+  "schema_version": "2",
+  "what_this_is": "A curated, judge facing record of the three signed invocations made in one connected cloud window. One row per invocation, carrying the facts, the choices and the outcomes and nothing else. Every identifier has been removed on purpose: there are no run, request, session, decision, diagnostic, evidence or receipt identifiers here, and no hashes or digests of any kind.",
+  "what_this_is_not": "Not a benchmark, not a rate, not a statistical result, and not a latency claim or a cost claim. The read difference between the first and the second call is a single pair, n = 1, and is an existence result rather than a measured rate.",
+  "classification": "synthetic",
+  "evidence_note": "Every call reasoned over a declared synthetic fixture. A real provider answered questions about synthetic evidence.",
+  "bounds": {
+    "selector_calls_per_incident": 2,
+    "diagnostic_reads_per_incident": 2,
+    "deterministic_repairs_per_incident": 1
+  },
+  "calls": [
+    {
+      "call": 1,
+      "invocation": "new",
+      "history": "none",
+      "receipts_consulted": 0,
+      "first_decision": {
+        "by": "Strands Decider 2B",
+        "choice": "inspect_pipeline",
+        "reported_confidence": 0.3067,
+        "executed": true
+      },
+      "repeated_choice_blocked": false,
+      "repeated_choice_blocked_note": "There was no history to match, so nothing was refused before execution. The first choice ran, its read admitted real evidence and moved no supported disposition, and the verifier recorded that tool as eligible to block an identical later context. This is why this call spends 2 reads and the next spends 1.",
+      "second_decision": {
+        "by": "Strands Decider 2B",
+        "choice": "inspect_schema_keys",
+        "reported_confidence": 0.4746
+      },
+      "diagnostic_reads": 2,
+      "repairs": 1,
+      "terminal_result": "completed",
+      "terminal_reason": "populated_after_repair",
+      "disposition": "CONTINUE",
+      "verification": "passed",
+      "aggregated_rows": [
+        { "country_code": "IN", "units": 4 },
+        { "country_code": "US", "units": 5 }
+      ],
+      "narration": {
+        "by": "Amazon Bedrock Nova Lite",
+        "status": "narrated",
+        "latency_ms": 970,
+        "latency_availability": "measured",
+        "note": "Narration ran after the terminal result was already fixed and was handed counted facts. It holds no authority and no result object carries a narration field."
+      }
+    },
+    {
+      "call": 2,
+      "invocation": "new",
+      "history": "matched",
+      "receipts_consulted": 2,
+      "receipts_consulted_note": "Both receipts were written by call 1.",
+      "first_decision": {
+        "by": "Strands Decider 2B",
+        "choice": "inspect_pipeline",
+        "reported_confidence": 0.2158,
+        "executed": false
+      },
+      "repeated_choice_blocked": true,
+      "repeated_choice_blocked_reason": "insufficient_evidence",
+      "repeated_choice_blocked_note": "Controller validation matched the exact context receipt and refused this identical repetition before the tool executed. A refused execution costs zero diagnostic reads, which is why this call spends 1 read and not 2.",
+      "second_decision": {
+        "by": "Strands Decider 2B",
+        "choice": "inspect_schema_keys",
+        "reported_confidence": 0.6498
+      },
+      "diagnostic_reads": 1,
+      "repairs": 1,
+      "terminal_result": "completed",
+      "terminal_reason": "populated_after_repair",
+      "disposition": "CONTINUE",
+      "verification": "passed",
+      "aggregated_rows": [
+        { "country_code": "IN", "units": 4 },
+        { "country_code": "US", "units": 5 }
+      ],
+      "narration": {
+        "by": "Amazon Bedrock Nova Lite",
+        "status": "narrated",
+        "latency_ms": 790,
+        "latency_availability": "measured"
+      }
+    },
+    {
+      "call": 3,
+      "invocation": "duplicate",
+      "invocation_note": "An exact repeat of call 2's request key. It returned the stored result unchanged, executed nothing, took no new decision and no new read, and emitted no second telemetry timeline. This records duplicate handling and is not a third piece of evidence about the mechanism.",
+      "history": "matched",
+      "receipts_consulted": 2,
+      "receipts_consulted_note": "Carried on the resumed result rather than looked up again.",
+      "first_decision": {
+        "by": "none, the stored result was returned",
+        "choice": "inspect_pipeline",
+        "reported_confidence": 0.2158,
+        "executed": false
+      },
+      "repeated_choice_blocked": true,
+      "repeated_choice_blocked_reason": "insufficient_evidence",
+      "second_decision": {
+        "by": "none, the stored result was returned",
+        "choice": "inspect_schema_keys",
+        "reported_confidence": 0.6498
+      },
+      "new_selector_calls": 0,
+      "new_diagnostic_reads": 0,
+      "diagnostic_reads": 1,
+      "repairs": 1,
+      "terminal_result": "duplicate",
+      "terminal_reason": "populated_after_repair",
+      "disposition": "CONTINUE",
+      "verification": "passed",
+      "aggregated_rows": [
+        { "country_code": "IN", "units": 4 },
+        { "country_code": "US", "units": 5 }
+      ],
+      "observed_latency_ms": 1030,
+      "observed_latency_availability": "measured",
+      "narration": {
+        "by": "Amazon Bedrock Nova Lite",
+        "status": "narrated",
+        "latency_ms": 820,
+        "latency_availability": "measured",
+        "note": "A narration block accompanied the duplicate response. The underlying result was the stored one and nothing was re-executed to produce it."
+      }
+    }
+  ],
+  "cost": {
+    "availability": "not_measured",
+    "value": null,
+    "note": "Cost was not measured. An observed spend of zero would be evidence that no charge has surfaced yet and not evidence that the endpoint is free, so no cost figure is published."
+  }
+}
