@@ -1,13 +1,13 @@
 {
   "manifest_version": 1,
   "description": "Integrity manifest of public files only. Sorted relative paths, SHA-256 of file bytes, byte counts and aggregate totals. Excludes itself, repository metadata and local environments.",
-  "file_count": 262,
-  "total_bytes": 10289471,
+  "file_count": 299,
+  "total_bytes": 11833604,
   "files": [
     {
       "path": ".gitignore",
-      "sha256": "db7450a13304e5bb52e7939b8d32873fdb0a5364f6be7b568449bfb82b8602c7",
-      "bytes": 1361
+      "sha256": "c454805e543fc5bbfec6dc6b38b4fb397146d50d01711a85934bafc4d952c660",
+      "bytes": 1442
     },
     {
       "path": "LICENSE",
@@ -21,13 +21,13 @@
     },
     {
       "path": "PUBLIC-VALIDATION.md",
-      "sha256": "b6e410e40e693994645f7112ebbeb5d52050526cb7286eca215200189c06fcfe",
-      "bytes": 18319
+      "sha256": "06a2c30f9c126c057456861e7522f4f472dd920e898549d7af8c3fabb411af4e",
+      "bytes": 18689
     },
     {
       "path": "README.md",
-      "sha256": "043b3a7b24d615736e9fc2edaab25e2e414da74304c899f5299b4b7d1eb8573f",
-      "bytes": 20257
+      "sha256": "68289692a19d29d3032e8a97009ddb10f7b2fc1b0698d049b8116e39abdbc311",
+      "bytes": 13149
     },
     {
       "path": "deployment/Dockerfile",
@@ -105,6 +105,21 @@
       "bytes": 15275
     },
     {
+      "path": "dist/public-demo/decider-finetune-baseline-v1.json",
+      "sha256": "22406cb649f56ce818a2045337547627d73c936fddfb9553641b3d41023ecb61",
+      "bytes": 1691
+    },
+    {
+      "path": "dist/public-demo/decider-finetune-head-only-v1.json",
+      "sha256": "b1e49d5625877c4dd6c2704876fe97e2a42691ecb68292ad79627c470ae7a9f5",
+      "bytes": 1928
+    },
+    {
+      "path": "dist/public-demo/decider-finetune-lora-head-v1.json",
+      "sha256": "3f64f259e600b1ea20e0e1bd992ff4913dfca3949776cb6f8b7e423e690f4f78",
+      "bytes": 3177
+    },
+    {
       "path": "dist/public-demo/final-golden-summary.json",
       "sha256": "273cdb4fa7c07d490ad97bac15ba22162f724954d0c25b40e3fbfb6cbe16a007",
       "bytes": 16921
@@ -126,18 +141,18 @@
     },
     {
       "path": "dist/video/README.md",
-      "sha256": "4d3840099d65fbe3e3b9ef5b9435d7c7ab3491508fb8e5cab96435564b9a17d3",
-      "bytes": 5343
+      "sha256": "47ba7af5d8ea6119b481b7bec17bcaadc3d3fd45552fa31318a134796ce70b33",
+      "bytes": 8721
     },
     {
       "path": "dist/video/unstuck-demo.mp4",
-      "sha256": "9b4954df4b5461e0eb79bbd385c97fb7eda1b57f40f9d290993e97d791b91843",
-      "bytes": 5226808
+      "sha256": "3f321234dc188561080a32cb98533bff74df1cba189230565bf33e87670aa68e",
+      "bytes": 6416193
     },
     {
       "path": "dist/video/validation.json",
-      "sha256": "cfc53f446284a07ea6d4e68c88c5366629a70aa9df717f67c74c04c24aba6495",
-      "bytes": 2915
+      "sha256": "c6ed997dfb26ca226f6ce9e38d3010804cf7a0ab8c09a5ed07c37fea82a0b4fa",
+      "bytes": 3260
     },
     {
       "path": "docs/architecture.svg",
@@ -151,8 +166,8 @@
     },
     {
       "path": "docs/claim-register.md",
-      "sha256": "4b7afece2388914cbff0579c3fa5c2131471dc6f4829bd68cbba59c8a14d97b1",
-      "bytes": 34994
+      "sha256": "078c7c05e605ff1f65989de785ac627de3d456496e4469eedc734ceb19cbf7af",
+      "bytes": 39665
     },
     {
       "path": "docs/demo.html",
@@ -161,13 +176,18 @@
     },
     {
       "path": "docs/hackathon-validation.md",
-      "sha256": "dadec46cfff2f05038dc1cb81804bf84a3d1daad129b958ee842727bd2565d3a",
-      "bytes": 54939
+      "sha256": "732c6e09e1e6dca74665a8678c2f5a52f1b72a2c28dc1e86d7064a4052ae5bbc",
+      "bytes": 57499
     },
     {
       "path": "docs/public-scrub-policy.md",
       "sha256": "d67f2e3b5763347fce9ed966c9744296b6f23a4fc5fdc62ce7331119eb01ac50",
       "bytes": 13109
+    },
+    {
+      "path": "docs/research/decider-adaptation-findings.md",
+      "sha256": "0cda66d768cd62408ab32b8f9331b111519b9c7588dde0f177b38e9af985730c",
+      "bytes": 9328
     },
     {
       "path": "docs/submission-checklist.md",
@@ -180,9 +200,114 @@
       "bytes": 46831
     },
     {
+      "path": "docs/unstuck-ml-addon-flow.svg",
+      "sha256": "32d4978ebae8e92c7a622e004f4270015ab943e5eae912b32af5ebe8ddefb9eb",
+      "bytes": 11595
+    },
+    {
       "path": "docs/video-script.md",
-      "sha256": "94b1aac5abd34c083f9858c8573382f09471c8011349ce795c211ca1e516d0a2",
-      "bytes": 7119
+      "sha256": "b9b7f96700c8b16fa3d69d94207e3c0f8dd1888c10f9cb8563009c168803ff41",
+      "bytes": 17265
+    },
+    {
+      "path": "experiments/__init__.py",
+      "sha256": "acb0015da465e30251581b2cb57d5bafcdcf0e777e9eb5303764ab7a3293338c",
+      "bytes": 89
+    },
+    {
+      "path": "experiments/decider_finetune/README.md",
+      "sha256": "457a1e9e873951ab96e4cd3bdbd42c5557bbdc96abb306fb38596eff455fbd7f",
+      "bytes": 8214
+    },
+    {
+      "path": "experiments/decider_finetune/__init__.py",
+      "sha256": "fd6aef68804aa073633f8fec3051791fa60c44b84b876b7ed7d74ea0074d1074",
+      "bytes": 479
+    },
+    {
+      "path": "experiments/decider_finetune/configs/head-only.yaml",
+      "sha256": "71b2b8c3233722eda3c339851d2b2940fba59a2453fb8e04d8f3072a2f634cb2",
+      "bytes": 2576
+    },
+    {
+      "path": "experiments/decider_finetune/configs/lora-head-fallback.yaml",
+      "sha256": "4bf0d2a8551abf601f0193d689ad1fa7175b7eb84b17cbd20c67e1d91663d004",
+      "bytes": 1486
+    },
+    {
+      "path": "experiments/decider_finetune/corpus.py",
+      "sha256": "35516488e31ad92394da55c15ebb7b1b5735b02a86dce1cb4c444c63a68b1551",
+      "bytes": 32970
+    },
+    {
+      "path": "experiments/decider_finetune/device_parity/FINDINGS.md",
+      "sha256": "aaee6e725fc520388dd779b4a9c83e764e061c287bd2c168746eaca33bf8688a",
+      "bytes": 3526
+    },
+    {
+      "path": "experiments/decider_finetune/device_parity/device-parity-cpu-v1.json",
+      "sha256": "96b184d6a66816bf4ec0e58bbd9973fcd3b00b298d957672c54ba843c01a0da2",
+      "bytes": 9071
+    },
+    {
+      "path": "experiments/decider_finetune/evaluate.py",
+      "sha256": "483a6a721fe948ab4aa352c60bd53a68ab4eb3076eba8b4c7a5e89098d0392e2",
+      "bytes": 24714
+    },
+    {
+      "path": "experiments/decider_finetune/identity.py",
+      "sha256": "6e336853b84ffc4f9af2942dfe7c8388b3786c3cd117429107e0d01591d56775",
+      "bytes": 1859
+    },
+    {
+      "path": "experiments/decider_finetune/infer.py",
+      "sha256": "1351f183e4892ee611ba3dd05bf012f670cf6399f9d8af42d5e978a6b24cce14",
+      "bytes": 6544
+    },
+    {
+      "path": "experiments/decider_finetune/oracle.py",
+      "sha256": "c766442e3ba83989942dae34cf2f4fbd83bbfc7ab9ac882430d4c0bcdc2317fb",
+      "bytes": 18221
+    },
+    {
+      "path": "experiments/decider_finetune/scenarios.py",
+      "sha256": "8021540a16600007170985c97cba46da2000fb5d3183e502d6c0138b19e3b271",
+      "bytes": 19164
+    },
+    {
+      "path": "experiments/decider_finetune_v2/NEXT-EXPERIMENT.md",
+      "sha256": "d8801398af6c0a8d5d92de2f8fd565b78530ced8ee959d38fe88ee292661e0fc",
+      "bytes": 7490
+    },
+    {
+      "path": "experiments/decider_finetune_v2/PREREGISTRATION.md",
+      "sha256": "fb591286c83141c87b1f18166a26e45caae5fc1b79a914518e574836824adff4",
+      "bytes": 13368
+    },
+    {
+      "path": "experiments/decider_finetune_v2/__init__.py",
+      "sha256": "970e56d4318d403689764de10ce536fe293af4e416a0fec08da871b01d37dde0",
+      "bytes": 82
+    },
+    {
+      "path": "experiments/decider_finetune_v2/receipt-states-report.json",
+      "sha256": "24b50fa24f12f235c02b2a565ec0609f04120b2e9bcb509752369d778a1d1c56",
+      "bytes": 3057
+    },
+    {
+      "path": "experiments/decider_finetune_v2/receipt_states.py",
+      "sha256": "4b37871bd7851d930ebc51ad4dbe84e3310a31e65634655ba449ae0a8d64c699",
+      "bytes": 15292
+    },
+    {
+      "path": "experiments/decider_finetune_v2/viability-report.json",
+      "sha256": "85e2cc63229d662bb2b039c3f145ba41ef785807a64d8ef90ffbd4ef1ffec134",
+      "bytes": 1211
+    },
+    {
+      "path": "experiments/decider_finetune_v2/viability.py",
+      "sha256": "bc2942481f628b82e92925fb1ee79e1a89ba4e2bc15f43d2f4df6669999549bf",
+      "bytes": 17589
     },
     {
       "path": "infra/__init__.py",
@@ -1015,6 +1140,51 @@
       "bytes": 8937
     },
     {
+      "path": "tests/decider_finetune/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "tests/decider_finetune/conftest.py",
+      "sha256": "66ef9f7d7b1d83c2ed11e3d7e7cb57768b2689c7e51c20f940cd8d25962758d8",
+      "bytes": 615
+    },
+    {
+      "path": "tests/decider_finetune/helpers.py",
+      "sha256": "005ec81765576c32b6b0ef4bd935aa97549194b2a595aa8a97937bf8d35a2760",
+      "bytes": 4958
+    },
+    {
+      "path": "tests/decider_finetune/test_configs_and_scenarios.py",
+      "sha256": "956d2a5d7d0004ea74663d9c4e842cc1e275067c5e8757574211fd1563a6cbf5",
+      "bytes": 9343
+    },
+    {
+      "path": "tests/decider_finetune/test_corpus_and_harness.py",
+      "sha256": "0d128f597a80c827a55bcec736d929292e42da909249fd8f3c2ecaa852e6f00a",
+      "bytes": 14895
+    },
+    {
+      "path": "tests/decider_finetune/test_device_parity_evidence.py",
+      "sha256": "4340b7005fe3e3f2e0c14bcd806d55db012e401b12b00c5cd898aea4586e6837",
+      "bytes": 8335
+    },
+    {
+      "path": "tests/decider_finetune/test_research_record.py",
+      "sha256": "facb393364cf871edc8bdfcd1785692faa28f185e36ce4942086149610b19e6d",
+      "bytes": 15439
+    },
+    {
+      "path": "tests/decider_finetune_v2/test_receipt_states.py",
+      "sha256": "0c61aa0c114f3131fc0242cb08447ccd495f3dac24cea76f1edc3721adf5425e",
+      "bytes": 9375
+    },
+    {
+      "path": "tests/decider_finetune_v2/test_viability.py",
+      "sha256": "9c389a0aa00760b5c3ea51f9dac18c5cb9dbf18163c2991e790cd980a8e27882",
+      "bytes": 11942
+    },
+    {
       "path": "tests/operator_experience/__init__.py",
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
       "bytes": 0
@@ -1145,6 +1315,11 @@
       "bytes": 5030
     },
     {
+      "path": "tests/public_deliverables/test_ml_addon_flow.py",
+      "sha256": "c8d0cb84f3e014416c395ddb20f99291b3896425e67535f3a144e63e01550d27",
+      "bytes": 38165
+    },
+    {
       "path": "tests/public_deliverables/test_notices.py",
       "sha256": "2eb6f08734900f0802c6563f8757abd86878ae3ba8db148be7ff38059a9ca1d5",
       "bytes": 5264
@@ -1166,8 +1341,8 @@
     },
     {
       "path": "tests/public_deliverables/test_public_story.py",
-      "sha256": "cd8cbcdb5aa0a7c94100c217130c8c60f0f7aacf1414e3df98df1f53ba94ba89",
-      "bytes": 48935
+      "sha256": "d9c900f061681b84bd9d12b314b8764795060bc3e3d661d8c9d3be133d174c21",
+      "bytes": 48936
     },
     {
       "path": "tests/public_deliverables/test_public_visuals.py",
@@ -1203,6 +1378,16 @@
       "path": "tests/public_deliverables/test_telemetry_publication_evidence.py",
       "sha256": "4421657e4e734db97d924adadf969315d574c6de8acac7c825de52c56283301f",
       "bytes": 9303
+    },
+    {
+      "path": "tests/public_deliverables/test_video_artifact.py",
+      "sha256": "ec2a080701f5c2123f243e3fff5d4c1092c8ac4c3c3e8ba22a0b7cc5dd3e08f5",
+      "bytes": 3094
+    },
+    {
+      "path": "tests/public_deliverables/test_video_contract.py",
+      "sha256": "039c4339125e710fe49da7707ff02d82b447e69e5648b683b9f0b97faef34a3a",
+      "bytes": 9422
     },
     {
       "path": "tests/telemetry/__init__.py",

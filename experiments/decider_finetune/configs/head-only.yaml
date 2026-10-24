@@ -1,0 +1,59 @@
+# Decider 2B domain fine-tune, head only. TEMPLATE: nothing in this repository runs it.
+#
+# Read by the official trainer at upstream commit
+# d942e5515db750f80a51032629ec312455a87976 (`python -m training.train --config ...`,
+# run from the upstream repository root). Paths are relative to that root.
+#
+# init_from is the pinned released checkpoint, downloaded to a local directory at its
+# immutable revision, so the run cannot silently start from a newer upload:
+#   hf download StrandsAgents/strands-decider-2B-hobson-v19 \
+#     --revision bb282d786bc251fd4e3068de3ada9ddbb38127cd --local-dir checkpoints/hobson-v19-bb282d78
+#
+# The checkpoint fixes the architecture. base_model, num_slots, head_type, pointer_dim,
+# head_hidden, use_lora, lora_r, lora_alpha, lora_targets and force_bos are deliberately
+# absent: the trainer refuses a config that sets any of them, even at its default.
+# max_length is absent too, so the checkpoint's own serving window is kept.
+#
+# Data: copy the frozen corpus files in unchanged (check them against manifest.json):
+#   data/unstuck/train.jsonl        <- <corpus>/train.jsonl
+# Calibration and test files are NOT training inputs and are never listed here.
+# Validation is a held-back slice of the train families only (val_fraction).
+#
+# After training, temperatures are reset to 1 by init_from. Calibrate before any
+# evaluation, on the calibration partition only, using all of it:
+#   python -m training.evaluate calibrate checkpoints/unstuck-head-s0 \
+#     --data data/unstuck/calibration.jsonl --split all
+
+init_from: "checkpoints/hobson-v19-bb282d78"
+train_files: ["data/unstuck/train.jsonl"]
+val_fraction: 0.05
+val_split_seed: 0
+
+# Train the trained head alone, on the checkpoint's frozen adapter.
+freeze_torso: true
+head_init: "random"          # required with init_from: the trained head is kept
+
+# Anchor to the checkpoint's own answers so unrelated behaviour does not drift.
+kl_frozen_weight: 0.3
+kl_frozen_reference: "checkpoints/hobson-v19-bb282d78"
+precompute_frozen_kl: true   # required by kl_frozen_reference
+group_by_length: true        # required by precompute_frozen_kl
+
+# Option order is reshuffled on every epoch, on top of the corpus's own catalog orders.
+shuffle_options: true
+
+epochs: 2
+micro_batch_size: 8
+grad_accum: 4
+head_lr: 0.0002              # the head starts trained, so a smaller step than 1e-3
+weight_decay: 0.01
+warmup_ratio: 0.03
+max_grad_norm: 1.0
+head_dropout: 0.05
+
+# One bounded seed. No soup, no sweep.
+seed: 0
+max_steps: 0
+output_dir: "checkpoints/unstuck-head-s0"
+log_every: 20
+eval_every: 200

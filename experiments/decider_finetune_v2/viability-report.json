@@ -1,0 +1,52 @@
+{
+  "canonical_partition_signature_counts": {
+    "calibration": 15,
+    "test": 20,
+    "train": 20
+  },
+  "canonical_train_test_intersection": 20,
+  "component_family_counts": [
+    2,
+    3,
+    4,
+    4
+  ],
+  "excluded": {
+    "absent": 0,
+    "ambiguous": 0,
+    "no_productive": 0
+  },
+  "existing_unseen_test_signatures": 0,
+  "families": 13,
+  "fixed_seeds": [
+    17,
+    29,
+    43
+  ],
+  "independent_components": 4,
+  "legacy_partition_signature_counts": {
+    "calibration": 15,
+    "test": 20,
+    "train": 20
+  },
+  "legacy_signature_count": 20,
+  "legacy_train_test_intersection": 20,
+  "limitation": "No admissible family/component holdout in this inventory; no claim about new observable states.",
+  "model_inference_executed": false,
+  "productive_capabilities": [
+    "inspect_pipeline",
+    "inspect_schema_keys"
+  ],
+  "productive_capability_counts": {
+    "inspect_pipeline": 120,
+    "inspect_schema_keys": 270
+  },
+  "proposed_v2_split": null,
+  "rows": 390,
+  "safety_claim": false,
+  "scope": "assigned_v1_inventory_six_variants_production_catalog",
+  "signature_count": 20,
+  "test_experiment_opened": false,
+  "training_executed": false,
+  "verdict": "STOP_INSUFFICIENT_HOLDOUT"
+}

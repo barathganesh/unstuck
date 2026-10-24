@@ -367,6 +367,16 @@ order, the same frozen pilot thresholds, the same denominators, and the same
 predeclared pass and fail criteria. No threshold was moved, no case was added
 or dropped, and no criterion was changed after a result was seen.
 
+## The Decider fine-tune experiment
+
+The versioned evidence records [`decider-finetune-baseline-v1.json`](../dist/public-demo/decider-finetune-baseline-v1.json), [`decider-finetune-head-only-v1.json`](../dist/public-demo/decider-finetune-head-only-v1.json), and [`decider-finetune-lora-head-v1.json`](../dist/public-demo/decider-finetune-lora-head-v1.json) preserve the measured comparison. This was an offline synthetic test of controlled variation, in-distribution, with one seed, four test scenario families, 160 choice rows, and 64 integrated calls that replay 64 of those row answers through the controller. The test families are disjoint from training by name and fixture, but all 20 model-visible test situations occur in training. The 80 rows under a renamed tool catalog that never appears in training or calibration are the only new surface.
+
+The baseline scored 97/160 first-choice correctness, 20/64 integrated wasted first reads, and 44/64 verified completions. Head-only moved correctness to 107/160 but left wasted first reads at 20/64, so the harness refused it on that criterion.
+
+LoRA-plus-head moved correctness to 129/160, with 26 of the 32 gains on production-catalog rows that differ from training prompts only in dataset identity; on the renamed-catalog slice it moved from 64/80 to 70/80. Integrated wasted first reads moved from 20/64 to 15/64: five improved calls and none worse, one seed, four of the five in one family, exact paired p = 0.0625. Verified completions moved from 44/64 to 49/64 on the same five calls, with zero paired completion regressions. False repairs and false preclusions were 0 for the baseline and for LoRA-plus-head, but those errors were structurally unreachable in these families, so the zeros are not safety evidence. ECE, measured with the project's normalized confidence, is descriptive only and no calibration gate was applied: 0.165 baseline, 0.408 head-only, 0.166 LoRA-plus-head. NLL moved from 0.930 to 0.373. Decision Receipts remain the deterministic hard boundary and Decider 2B remains the only model tool selector.
+
+These results do not claim production behavior, hosted latency, or dollar improvement. A private hosted canary was run later and missed its pre-registered exact-choice parity gate, so no hosted result is claimed. The full research record, including the audit limitations and the later viability stop, is [`docs/research/decider-adaptation-findings.md`](research/decider-adaptation-findings.md).
+
 ## The second run: what it measured
 
 Same denominators as the first run, with one fewer selector call because more
@@ -898,8 +908,9 @@ arrived inside the 60 s cap it was measured against.
   deployment input precisely so that measurement is not an image rebuild.
 * The run was made on CPU. No GPU and no larger instance was used, so nothing
   here says what the latency would be on either.
-* Both local and cloud runs use the same pinned checkpoint revision, which is
-  private and is not published, raw or digested. Nothing was retrained, refitted,
+* Both local and cloud runs use the same pinned checkpoint revision. Which
+  revision that is, raw or digested, is private deployment identity, and no
+  public file states it. Nothing was retrained, refitted,
   or re-thresholded for the cloud, and the golden framing, acceptance tier and
   receipt semantics are unchanged from the local runs.
 
@@ -938,7 +949,8 @@ Running it needs the `strands-decider` package and a local snapshot of the
 pinned checkpoint, which are deliberately not dependencies of the shipped
 wheel. The five-case golden run was produced through this adapter against one
 immutable revision of Strands Decider 2B, on one machine, in one process,
-offline. The revision value is private and is not published.
+offline. Which revision it was is private deployment identity, and no public
+file states it.
 
 The checkpoint was chosen **because** it exhibits a repeatable blind spot on
 this fixture, not because it performed well.

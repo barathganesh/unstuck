@@ -8,13 +8,13 @@
   {
     "gate": "ssml-lint",
     "status": "PASS",
-    "detail": "8 segments clean",
+    "detail": "10 segments clean",
     "evidence": []
   },
   {
     "gate": "prerender-data",
     "status": "PASS",
-    "detail": "narration, visual sources and deck XML content clean; eight exact embedded images",
+    "detail": "ten narrations and visual sources clean; eight exact embedded pitch images and two early ML frames",
     "evidence": []
   },
   {
@@ -23,13 +23,15 @@
     "detail": "all segments within thresholds",
     "evidence": [
       "01-hook: 26.9s, 154 wpm, worst gap 0.0s",
-      "02-control-stays-stuck: 14.9s, 145 wpm, worst gap 0.0s",
-      "03-run-1-pays-once: 19.4s, 124 wpm, worst gap 0.0s",
-      "04-run-2-escapes: 23.6s, 140 wpm, worst gap 0.0s",
-      "05-proof: 24.9s, 130 wpm, worst gap 0.0s",
-      "06-private-aws-path: 17.0s, 134 wpm, worst gap 0.0s",
-      "07-reusable-pattern: 13.4s, 143 wpm, worst gap 0.0s",
-      "08-boundary: 13.8s, 139 wpm, worst gap 0.0s"
+      "02-ml-process: 13.8s, 130 wpm, worst gap 0.0s",
+      "03-ml-validation: 18.9s, 117 wpm, worst gap 0.0s",
+      "04-control-stays-stuck: 14.9s, 145 wpm, worst gap 0.0s",
+      "05-run-1-pays-once: 19.4s, 124 wpm, worst gap 0.0s",
+      "06-run-2-escapes: 23.6s, 140 wpm, worst gap 0.0s",
+      "07-proof: 24.9s, 130 wpm, worst gap 0.0s",
+      "08-private-aws-path: 17.0s, 134 wpm, worst gap 0.0s",
+      "09-reusable-pattern: 13.4s, 143 wpm, worst gap 0.0s",
+      "10-boundary: 13.8s, 139 wpm, worst gap 0.0s"
     ]
   },
   {
@@ -38,19 +40,21 @@
     "detail": "narration matches intent",
     "evidence": [
       "01-hook: 98% match (41 tokens)",
-      "02-control-stays-stuck: 91% match (23 tokens)",
-      "03-run-1-pays-once: 100% match (25 tokens)",
-      "04-run-2-escapes: 97% match (36 tokens)",
-      "05-proof: 97% match (33 tokens)",
-      "06-private-aws-path: 92% match (25 tokens)",
-      "07-reusable-pattern: 100% match (23 tokens)",
-      "08-boundary: 100% match (23 tokens)"
+      "02-ml-process: 95% match (21 tokens)",
+      "03-ml-validation: 100% match (27 tokens)",
+      "04-control-stays-stuck: 91% match (23 tokens)",
+      "05-run-1-pays-once: 100% match (25 tokens)",
+      "06-run-2-escapes: 97% match (36 tokens)",
+      "07-proof: 97% match (33 tokens)",
+      "08-private-aws-path: 92% match (25 tokens)",
+      "09-reusable-pattern: 100% match (23 tokens)",
+      "10-boundary: 100% match (23 tokens)"
     ]
   },
   {
     "gate": "stream-uniformity",
     "status": "PASS",
-    "detail": "all 8 segments: 1280,720,yuv420p,30/1,0/0",
+    "detail": "all 10 segments: 1280,720,yuv420p,30/1,0/0",
     "evidence": []
   },
   {
@@ -62,15 +66,15 @@
   {
     "gate": "ocr-leak",
     "status": "PASS",
-    "detail": "74 frames sampled, clean",
+    "detail": "89 frames sampled, clean",
     "evidence": []
   },
   {
     "gate": "joined-timing",
     "status": "PASS",
-    "detail": "no dead air >= 1.0s across 7 joins; 4427 frames at 30/1",
+    "detail": "no dead air >= 1.0s across 9 joins; 5356 frames at 30/1",
     "evidence": [
-      "longest silence anywhere in the joined file: 0.79s"
+      "longest silence anywhere in the joined file: 0.78s"
     ]
   },
   {
@@ -78,18 +82,20 @@
     "status": "PASS",
     "detail": "finished MP4 independently decoded, transcribed and visually sampled",
     "evidence": [
-      "147.567s; 1280x720; 30 fps; yuv420p; uniform audio and video",
-      "8 narrated segments; 8 current pitch frames; 10 labelled replay steps",
-      "92 OCR samples clean; full decode and timestamps clean",
+      "178.533s; 1280x720; 30 fps; yuv420p; uniform audio and video",
+      "10 narrated segments; 8 current pitch frames; 2 early ML frames; 10 labelled replay steps",
+      "109 OCR samples clean; full decode and timestamps clean",
       "no black span over 0.4s; no dead air at or above 1.0s",
       "01-hook: 98% match (41 tokens)",
-      "02-control-stays-stuck: 91% match (23 tokens)",
-      "03-run-1-pays-once: 100% match (25 tokens)",
-      "04-run-2-escapes: 97% match (36 tokens)",
-      "05-proof: 97% match (33 tokens)",
-      "06-private-aws-path: 92% match (25 tokens)",
-      "07-reusable-pattern: 100% match (23 tokens)",
-      "08-boundary: 100% match (23 tokens)"
+      "02-ml-process: 90% match (21 tokens)",
+      "03-ml-validation: 100% match (27 tokens)",
+      "04-control-stays-stuck: 91% match (23 tokens)",
+      "05-run-1-pays-once: 100% match (25 tokens)",
+      "06-run-2-escapes: 97% match (36 tokens)",
+      "07-proof: 97% match (33 tokens)",
+      "08-private-aws-path: 92% match (25 tokens)",
+      "09-reusable-pattern: 100% match (23 tokens)",
+      "10-boundary: 100% match (23 tokens)"
     ]
   }
 ]

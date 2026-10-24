@@ -1,0 +1,298 @@
+{
+  "evidence_version": "decider-finetune-device-parity-v1",
+  "classification": "same-device cpu replay of the offline synthetic holdout",
+  "question": "Does the adapted checkpoint's improvement over the baseline hold when both are served on the same cpu device?",
+  "baseline_checkpoint_hash_base64": "cTiC9Oexe3Rzm8KUSdipoh4LCWvhY9HdVpJR8uJip4Y=",
+  "adapted_checkpoint_hash_base64": "QZwDgi3tCobYDGORe9a1F2SigseoZj2gVrGNdoMO9U8=",
+  "hosting": {
+    "service": "Amazon SageMaker real-time inference",
+    "device": "cpu",
+    "instances_per_checkpoint": 1,
+    "same_for_both_checkpoints": [
+      "pinned server image",
+      "instance type",
+      "private network placement",
+      "network isolation",
+      "serving environment",
+      "serving revision label"
+    ],
+    "invocation_authentication": "AWS Identity and Access Management (IAM) signed requests only",
+    "public_listener_created": false,
+    "existing_endpoint": "unchanged, and receives no parity traffic"
+  },
+  "sample_sizes": {
+    "choice_rows": 160,
+    "integrated_calls": 64,
+    "scenario_families": 4
+  },
+  "replay": {
+    "requests_answered_per_checkpoint": "160/160",
+    "successful_sends_per_row": 1,
+    "sdk_retries": "disabled",
+    "frozen_request_set_unchanged": true
+  },
+  "same_device_comparison": {
+    "devices": [
+      "cpu",
+      "cpu"
+    ],
+    "baseline": {
+      "device": "cpu",
+      "first_choice_correct": "96/160",
+      "row_wasted_first_reads": "64/160",
+      "row_no_read_choices": "0/160",
+      "row_false_repairs": 0,
+      "integrated_wasted_first_reads": "20/64",
+      "integrated_verified_completions": "44/64",
+      "integrated_first_choice_correct": "44/64",
+      "integrated_false_repairs": 0,
+      "integrated_false_preclusions": 0,
+      "nll": 0.9322296,
+      "ece_normalized_confidence": 0.172228,
+      "ece_top_label": 0.171845
+    },
+    "adapted": {
+      "device": "cpu",
+      "first_choice_correct": "132/160",
+      "row_wasted_first_reads": "28/160",
+      "row_no_read_choices": "0/160",
+      "row_false_repairs": 0,
+      "integrated_wasted_first_reads": "14/64",
+      "integrated_verified_completions": "50/64",
+      "integrated_first_choice_correct": "50/64",
+      "integrated_false_repairs": 0,
+      "integrated_false_preclusions": 0,
+      "nll": 0.37396,
+      "ece_normalized_confidence": 0.1962222,
+      "ece_top_label": 0.1269737
+    },
+    "adapted_minus_baseline": {
+      "nll": -0.5582697,
+      "ece_normalized_confidence": 0.0239942,
+      "ece_top_label": -0.0448712
+    },
+    "paired_rows": {
+      "corrections": 36,
+      "regressions": 0
+    },
+    "paired_integrated": {
+      "wasted_first_reads": "20/64 to 14/64",
+      "verified_completions": "44/64 to 50/64",
+      "completion_regressions": 0
+    },
+    "frozen_criteria": {
+      "G13_wasted_first_reads_reduced_20pct": "met",
+      "G14_no_completion_regression": "met",
+      "G15_zero_false_repairs": "met",
+      "G15_zero_false_preclusions": "met"
+    },
+    "frozen_harness_verdict": "promotion_eligible"
+  },
+  "offline_reference": {
+    "devices": [
+      "mps",
+      "cuda"
+    ],
+    "baseline": {
+      "device": "mps",
+      "first_choice_correct": "97/160",
+      "row_wasted_first_reads": "63/160",
+      "row_no_read_choices": "0/160",
+      "row_false_repairs": 0,
+      "integrated_wasted_first_reads": "20/64",
+      "integrated_verified_completions": "44/64",
+      "integrated_first_choice_correct": "44/64",
+      "integrated_false_repairs": 0,
+      "integrated_false_preclusions": 0,
+      "nll": 0.9295832,
+      "ece_normalized_confidence": 0.1646646,
+      "ece_top_label": 0.1589188
+    },
+    "adapted": {
+      "device": "cuda",
+      "first_choice_correct": "129/160",
+      "row_wasted_first_reads": "31/160",
+      "row_no_read_choices": "0/160",
+      "row_false_repairs": 0,
+      "integrated_wasted_first_reads": "15/64",
+      "integrated_verified_completions": "49/64",
+      "integrated_first_choice_correct": "49/64",
+      "integrated_false_repairs": 0,
+      "integrated_false_preclusions": 0,
+      "nll": 0.372847,
+      "ece_normalized_confidence": 0.1657981,
+      "ece_top_label": 0.1075794
+    },
+    "adapted_minus_baseline": {
+      "nll": -0.5567362,
+      "ece_normalized_confidence": 0.0011335,
+      "ece_top_label": -0.0513394
+    },
+    "frozen_harness_verdict": "promotion_eligible"
+  },
+  "device_variance": {
+    "adapted_cpu_versus_adapted_cuda": {
+      "choice_agreement": "157/160",
+      "rows_with_identical_probabilities": "1/160",
+      "max_absolute_probability_difference": 0.0301,
+      "mean_absolute_probability_difference": 0.00261,
+      "disagreeing_rows": [
+        {
+          "row": 18,
+          "first": {
+            "choice": "query_arrival_watermark",
+            "top_two": [
+              [
+                "query_arrival_watermark",
+                0.5061
+              ],
+              [
+                "query_key_shapes",
+                0.4929
+              ]
+            ],
+            "correct": true
+          },
+          "second": {
+            "choice": "query_key_shapes",
+            "top_two": [
+              [
+                "query_key_shapes",
+                0.5096
+              ],
+              [
+                "query_arrival_watermark",
+                0.4894
+              ]
+            ],
+            "correct": false
+          }
+        },
+        {
+          "row": 38,
+          "first": {
+            "choice": "query_arrival_watermark",
+            "top_two": [
+              [
+                "query_arrival_watermark",
+                0.5111
+              ],
+              [
+                "query_key_shapes",
+                0.4878
+              ]
+            ],
+            "correct": true
+          },
+          "second": {
+            "choice": "query_key_shapes",
+            "top_two": [
+              [
+                "query_key_shapes",
+                0.5003
+              ],
+              [
+                "query_arrival_watermark",
+                0.4986
+              ]
+            ],
+            "correct": false
+          }
+        },
+        {
+          "row": 120,
+          "first": {
+            "choice": "inspect_schema_keys",
+            "top_two": [
+              [
+                "inspect_schema_keys",
+                0.4865
+              ],
+              [
+                "inspect_pipeline",
+                0.4828
+              ]
+            ],
+            "correct": true
+          },
+          "second": {
+            "choice": "inspect_pipeline",
+            "top_two": [
+              [
+                "inspect_pipeline",
+                0.5073
+              ],
+              [
+                "inspect_schema_keys",
+                0.4629
+              ]
+            ],
+            "correct": false
+          }
+        }
+      ],
+      "integrated_calls_differing": "1/64"
+    },
+    "adapted_cpu_versus_earlier_adapted_cpu_replay": {
+      "choice_agreement": "160/160",
+      "rows_with_identical_probabilities": "160/160",
+      "max_absolute_probability_difference": 0.0,
+      "mean_absolute_probability_difference": 0.0,
+      "disagreeing_rows": [],
+      "integrated_calls_differing": "0/64"
+    },
+    "baseline_cpu_versus_baseline_offline_accelerator": {
+      "choice_agreement": "159/160",
+      "rows_with_identical_probabilities": "0/160",
+      "max_absolute_probability_difference": 0.0104,
+      "mean_absolute_probability_difference": 0.00166,
+      "disagreeing_rows": [
+        {
+          "row": 83,
+          "first": {
+            "choice": "inspect_pipeline",
+            "top_two": [
+              [
+                "inspect_pipeline",
+                0.3641
+              ],
+              [
+                "inspect_schema_keys",
+                0.3571
+              ]
+            ],
+            "correct": false
+          },
+          "second": {
+            "choice": "inspect_schema_keys",
+            "top_two": [
+              [
+                "inspect_schema_keys",
+                0.3656
+              ],
+              [
+                "inspect_pipeline",
+                0.3576
+              ]
+            ],
+            "correct": true
+          }
+        }
+      ],
+      "integrated_calls_differing": "0/64"
+    }
+  },
+  "metric_definitions": {
+    "ece_normalized_confidence": "the harness's ECE: confidence is the library's normalized max probability, (n * max - 1) / (n - 1), 10 equal-width bins",
+    "ece_top_label": "standard top-label ECE: confidence is the max probability, 10 equal-width bins",
+    "nll": "mean negative log probability of the verifier label"
+  },
+  "limitations": [
+    "Decision Receipts remain the deterministic hard boundary.",
+    "Decider 2B remains the only model tool selector.",
+    "The holdout is offline synthetic: one seed, four held-out scenario families.",
+    "Thresholds are the frozen harness's own; none was changed for this study.",
+    "Parity endpoints serve no production traffic and the existing endpoint was not changed.",
+    "No latency benefit, cost benefit or cost saving is claimed."
+  ]
+}

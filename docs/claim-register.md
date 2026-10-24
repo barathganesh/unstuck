@@ -107,6 +107,30 @@ shown alongside them.
 | T6 | No dollar or cost saving is measured and none is claimed. The Decider is served by a SageMaker real-time endpoint billed per instance-hour of uptime rather than per request, so one fewer inference does not by itself lower the bill. | Supported | `loop-escape-proof.json` `measured_latency.no_dollar_saving` |
 | T7 | Run 1 has no saving and is never presented as one. It pays the learning cost once, and the pre-selection preclusion leaves it unchanged: one inference, one read, unresolved, receipt stored. | Supported | `loop-escape-proof.json` `measured_latency.run_1_is_not_saved` |
 
+## Decider fine-tune evidence, offline synthetic, in-distribution
+
+These claims are backed by the versioned sanitized records in `dist/public-demo/`.
+The test partition is controlled variation of the training distribution: its
+four scenario families are disjoint from training by name and fixture, but all
+20 model-visible test situations occur in training. One seed, 160 choice rows,
+and 64 integrated calls that replay 64 of those row answers through the
+controller. A private hosted canary was run later and missed its
+pre-registered exact-choice parity gate, so no hosted result is claimed. No
+latency or cost claim is supported. The research record is
+`docs/research/decider-adaptation-findings.md`.
+
+| # | Claim | Status | Evidence |
+| --- | --- | --- | --- |
+| FT1 | Baseline first-choice correctness was 97/160, with 20/64 integrated wasted first reads and 44/64 integrated verified completions. | Supported, scope-bound | `decider-finetune-baseline-v1.json`; measured baseline report hash |
+| FT2 | Head-only moved first-choice correctness from 97/160 to 107/160 but left integrated wasted first reads at 20/64, so the harness refused it on the wasted-first-read criterion. Its normalized-confidence ECE of 0.408 is recorded descriptively and was not a refusal criterion. | Supported negative experiment | `decider-finetune-head-only-v1.json`; measured comparison report hash |
+| FT3 | LoRA-plus-head moved first-choice correctness from 97/160 to 129/160, 32 rows corrected and none broken. 26 of the 32 are production-catalog rows that differ from training prompts only in dataset identity. | Supported, scope-bound | `decider-finetune-lora-head-v1.json`; measured comparison report hash |
+| FT4 | On the renamed-catalog slice, 80 rows under a tool catalog that never appears in training or calibration, first-choice correctness moved from 64/80 to 70/80. This is the only new surface in the test partition, and its situations still occur in training. | Supported, scope-bound | `decider-finetune-lora-head-v1.json`; the independent audit recomputation (not published) |
+| FT5 | LoRA-plus-head moved integrated wasted first reads from 20/64 to 15/64: five improved calls and none worse, one seed, four of the five in one family, exact paired p = 0.0625. Verified completions moved from 44/64 to 49/64 on the same five calls, with zero paired completion regressions. | Supported, scope-bound | `decider-finetune-lora-head-v1.json`; measured comparison report hash |
+| FT6 | False repairs and false preclusions were 0 for the baseline and for LoRA-plus-head. Those errors were structurally unreachable in these families, so the zeros are not safety evidence. | Supported, scope-bound | `decider-finetune-lora-head-v1.json`; the independent audit recomputation (not published) |
+| FT7 | ECE and NLL are descriptive measurements, not gates. ECE uses the project's normalized confidence: 0.165 baseline and 0.166 LoRA-plus-head. NLL moved from 0.930 to 0.373. No calibration gate was applied, and the harness verdict does not check calibration. | Supported, descriptive | `decider-finetune-lora-head-v1.json`; experiment README |
+| FT8 | Decision Receipts remain the deterministic hard boundary, and Decider 2B remains the only model tool selector. | Supported mechanism boundary | `decider-finetune-lora-head-v1.json`; experiment README |
+| FT9 | A private hosted canary was run later and missed its pre-registered exact-choice parity gate, so no hosted result is claimed. No hosted metric or identifier is published. | Supported | the private canary record (not published) |
+
 ## The superseded post-D1 Run 2, kept as labelled history
 
 **Superseded as the lead claim, not erased.** These rows describe an earlier run
@@ -189,8 +213,9 @@ responses stay private.
 | D5 | The published guidance is to confirm or ask a person below a confidence of 0.9, and to measure calibration on your own traffic before relying on a threshold. | Supported | `github.com/strands-labs/strands-decider`; the upstream model card's limitations section |
 | D6 | The model card names long multi-step documents as the weak spot and says question phrasing matters because questions are read less closely than documents. | Supported | the upstream Decider 2B model card on `huggingface.co/StrandsAgents` |
 | D7 | The hackathon describes Decider 2B as an innovation and experimentation starter, not a production product. | Supported | Hackathon about tab |
-| D8 | This project pinned one immutable checkpoint revision of Strands Decider 2B and used that same revision for both the local and the cloud work, throughout. The revision value is not published. | Supported | `docs/hackathon-validation.md`, section "Running the real model locally"; `dist/public-demo/final-golden-summary.json` |
+| D8 | This project pinned one immutable checkpoint revision of Strands Decider 2B for the local golden run and for the cloud proofs recorded in this register. Which revision a private deployment serves, raw or digested, is private deployment identity, and no public file states it. | Supported | `docs/hackathon-validation.md`, section "Running the real model locally"; `dist/public-demo/final-golden-summary.json` |
 | D9 | The pinned checkpoint is described upstream as an earlier model that is still published. The current reference 2B model is a different identifier. | Supported | `github.com/strands-labs/strands-decider` |
+| D10 | The offline fine-tune config templates under `experiments/decider_finetune/configs/` name the public upstream open-model release they start from, so the offline experiment can be reproduced. That is public open-model provenance, and it states nothing about what any private deployment serves. | Supported | `experiments/decider_finetune/configs/`; the upstream Decider 2B model card on `huggingface.co/StrandsAgents` |
 
 ## Submission requirements, from the official page
 
@@ -256,6 +281,8 @@ responses stay private.
 | X17 | Any generalization of the loop-escape result beyond one synthetic case, one fixture and one pinned checkpoint, each proof run once. |
 | X18 | That the observed Run 2 first chose the proven dead end and then re-decided. That sequence belongs only to the superseded post-D1 flow, rows H1 to H3, and is labelled superseded wherever it appears. |
 | X19 | That the drawn artifacts or the video are current. They show the superseded post-D1 flow and are pending a rebuild. |
+| X20 | That the fine-tune result shows behaviour on unseen or new model-visible situations, or any generalization beyond the 20 situations it trained on. |
+| X21 | Any hosted fine-tune result or metric, a calibration gate that was not applied, or zero false repairs and false preclusions as safety evidence. |
 
 ## Sanitization rules for every public file
 
@@ -268,8 +295,11 @@ Never present, in any public file:
 - Run, session, request, incident, decision, evidence, receipt or verification
   identifiers
 - Idempotency keys
-- Model revisions, raw or digested. Neither the revision nor a digest of it is
-  published
+- Private deployment identity: which model revision or checkpoint a private
+  deployment serves, raw or digested, and any digest of a private or adapted
+  checkpoint. The one exception is public open-model provenance: the offline
+  fine-tune config templates name the public upstream release they start
+  from (row D10) and say nothing about any deployment
 - Raw model replies, prompt bodies, selector payloads, state text
 - Evaluator truth, expected answers or held-out material
 - Machine-local paths, and any path under a local virtual environment

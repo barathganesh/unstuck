@@ -2,7 +2,8 @@
 
 This is an offline validation of the current public export. Paths in this
 document are relative to the export root. Nothing was published or uploaded.
-The animated README was finalized on 2026-10-22. Current tests, scanner checks
+The animated README was finalized on 2026-10-22; the ten-scene video with
+the early LoRA explanation was integrated on 2026-10-23. Current tests, scanner checks
 and integrity checks are distinguished below from retained media validation.
 
 ## Current story and measurement boundary
@@ -31,11 +32,11 @@ inference does not itself lower its bill.
 
 ## Exact inventory and integrity
 
-- Public files: **263**, including this report and the manifest.
-- Manifest entries: **262**, every public file except the manifest itself.
-- Bytes covered by the manifest: **10289471**.
-- Manifest bytes: **45007**.
-- Total public bytes, including the manifest: **10334478**.
+- Public files: **300**, including this report and the manifest.
+- Manifest entries: **299**, every public file except the manifest itself.
+- Bytes covered by the manifest: **11833604**.
+- Manifest bytes: **51682**.
+- Total public bytes, including the manifest: **11885286**.
 - Missing entries, extra public files, duplicate paths, size mismatches and
   digest mismatches: **0** each.
 
@@ -44,42 +45,67 @@ SHA-256 values calculated only from public file bytes, and aggregate totals.
 This report is included in the manifest. The manifest does not hash itself.
 Environment and repository-metadata directories are outside the public set.
 Every entry was re-read from disk and verified after both files were written.
-The public path set exactly matches the prior validated export plus
-`docs/unstuck-flow.svg` and `tests/public_deliverables/test_readme_flow.py`.
-The approved README changed; all other pre-existing public files except this
-report and its manifest retain their prior bytes. No stray distribution
-ignore file, audit scratch or cache is included.
+The public path set is the 300 Git-tracked files in this run under the
+listed exclusions, and it equals the manifest path set plus the manifest
+itself. It includes the earlier animation additions, `docs/unstuck-flow.svg`
+and `tests/public_deliverables/test_readme_flow.py`, and the decider
+fine-tuning ML additions: 11 files under `experiments/`, 5 files under
+`tests/decider_finetune/` and the three
+`dist/public-demo/decider-finetune-*-v1.json` result files. The
+verifier-trained adaptation research adds
+`docs/research/decider-adaptation-findings.md`, 7 files under
+`experiments/decider_finetune_v2/`, the 2 CPU parity evidence files under
+`experiments/decider_finetune/device_parity/`, 2 tests under
+`tests/decider_finetune/` and 2 under `tests/decider_finetune_v2/`. The
+integrated video and README update adds `docs/unstuck-ml-addon-flow.svg`,
+`tests/public_deliverables/test_ml_addon_flow.py`,
+`tests/public_deliverables/test_video_contract.py` and
+`tests/public_deliverables/test_video_artifact.py`. Byte retention of
+earlier files was not re-measured against a prior export in this run. No stray
+distribution ignore file, audit scratch or cache is included.
 
 | Top-level entry | Public files |
 | --- | ---: |
 | Root files | 7 |
 | `src/` | 72 |
-| `tests/` | 119 |
+| `tests/` | 131 |
+| `experiments/` | 20 |
 | `deployment/` | 15 |
 | `infra/` | 7 |
 | `publishing/` | 8 |
-| `docs/` | 9 |
-| `dist/` | 7 |
+| `docs/` | 11 |
+| `dist/` | 10 |
 | `recipes/` | 5 |
 | `submission/` | 14 |
-| Total | 263 |
+| Total | 300 |
 
 ## Complete test results
 
-The complete configured export suite collected **2,607** cases:
-**2,563 passed, 2 skipped, 42 deselected, 0 failed, 0 errors**.
-It ran serially with network access and source-checkout access denied before
-this report and manifest were regenerated. The configured selections and
-thresholds are unchanged. Only this report and manifest changed afterward;
-manifest integrity, scanner, links, XML lint and targeted tests were then rerun.
-There was one dependency deprecation warning about the test client's HTTP
-transport. It is not a product failure or a dependency-security assessment.
+The complete configured export suite, run once in the preceding integration
+run after the ten-scene video, README and ML flow were integrated:
+**2,705 passed, 2 skipped, 42 deselected, 0 failed, 0 errors** in 181.65 s.
+The configured selections and thresholds are unchanged. There were two
+Starlette/httpx test-client deprecation warnings; they are not product failures
+or a dependency-security assessment. In that run `mypy --strict` found no
+issues in the 10 source files of `experiments/decider_finetune` and
+`experiments/decider_finetune_v2`, and `uv build` built the sdist and wheel.
+The full suite was not rerun for this finalization.
 
-The targeted animation, README/story, scanner and link regression run passed
-before and after regeneration: **196 passed, 1 skipped, 33 deselected,
-0 failed, 0 errors**. This is a subset of the complete suite, not additional
-cases to add to its total. Its skip and deselections are the same existing
-private-proof and nonshipping-document boundaries described below.
+The only `ruff check .` finding in that run was import ordering (I001) in
+`tests/public_deliverables/test_video_contract.py`. It was fixed with the
+pinned Ruff import fix only; no assertion or other line changed. `ruff check .`
+then passed and the video contract test passed: **18 passed**.
+`ruff format --check .` reports three files that would be reformatted
+(`publishing/loop_escape_evidence.py`,
+`tests/public_deliverables/test_video_artifact.py`,
+`tests/public_deliverables/test_video_contract.py`); they were deliberately
+not reformatted, to keep this finalization free of non-import test changes.
+
+After this report and the manifest were regenerated, `tests/public_deliverables`
+was rerun: **712 passed, 1 skipped, 37 deselected, 0 failed**. The skip is the
+existing private-proof record check. The README is 115 lines; Decision
+Receipts and LoRA are its two core mechanisms, and the new ML SVG and its three
+new public tests are Git-tracked and in the manifest.
 
 Commands, run with bytecode disabled and network/source access denied:
 
@@ -241,45 +267,30 @@ Each slide embeds exactly the bytes of its corresponding shipped frame.
 All **8 frames** are **1280 x 720** and passed OCR and private-pattern checks.
 The final slide and its notes contain no rubric or self-scoring claims.
 
-`dist/video/unstuck-demo.mp4` is **147.567 seconds** to three decimal places.
-The exact ffprobe duration is **147.566667 seconds**, matching **4,427 decoded
-video frames at 30 fps**. File size is **5,226,808 bytes**. Video is H.264,
-1280 x 720, yuv420p; audio is mono AAC at 48 kHz.
+`dist/video/unstuck-demo.mp4` is the integrated **ten-scene** cut, including
+the two early LoRA scenes. Its ffprobe duration is **178.533333 seconds**,
+matching **5,356 decoded video frames at 30 fps**, under the approved
+**190-second** ceiling. File size is **6,416,193 bytes**. Video is H.264,
+1280 x 720; audio is AAC.
 
-All **10/10 video gates** remain PASS in both the shipped validation report
-and the retained independent offline audit record. They were run during the
-prior pre-animation validation, not rerun for this README-only finalization.
-The MP4, PPTX and shipped validation-report sizes and SHA-256 values exactly
-match the prior public manifest. The video and all **12 public visual and
-narration inputs** also match the retained audit copies byte-for-byte.
-No new transcription, synthesis or expensive video-gate run was performed.
-PPTX XML, embedded frames, frame OCR and local video metadata/frame count were
-checked again; the table below records the retained ten-gate results.
+All **10/10 video gates** are PASS in the shipped
+`dist/video/validation.json`. They were not rerun for this finalization;
+duration, size and frame count were re-read locally.
 
 | Gate | Result |
 | --- | --- |
 | Preflight | PASS |
-| SSML lint | PASS, 8 narrated segments |
-| Prerender data | PASS, narration parity, current sources, XML and embedded frames |
-| Timing | PASS, 110-190 words/minute bounds retained |
-| Speech roundtrip | PASS, prior local transcription; 80% minimum retained |
-| Stream uniformity | PASS, all 8 segments |
+| SSML lint | PASS, 10 segments |
+| Prerender data | PASS, ten narrations; eight embedded pitch images and two early ML frames |
+| Timing | PASS, all 10 segments within thresholds |
+| Speech roundtrip | PASS, 91-100% match per segment |
+| Stream uniformity | PASS, all 10 segments 1280 x 720, yuv420p, 30 fps |
 | Black-frame detection | PASS, no black span longer than 0.4 s |
-| OCR leakage | PASS, 74 samples at two-second intervals |
-| Joined timing | PASS, 7 joins; no dead air at or above 1.0 s |
-| Final artifact | PASS, full decode, timestamps, transcription, visual comparison and 92 OCR samples |
+| OCR leakage | PASS, 89 frames sampled |
+| Joined timing | PASS, 9 joins; no dead air at or above 1.0 s; longest silence 0.78 s |
+| Final artifact | PASS, full decode, timestamps, transcription and 109 OCR samples |
 
-The retained independent final-artifact check includes 18 visual-window samples and
-74 interval samples, 8 narrated segments and 10 labelled recorded-replay steps.
-Minimum visual similarity to the corresponding current sources is **0.989873**,
-above the unchanged 0.92 threshold. Longest detected silence is **0.79 s**.
-All **54 merged video patterns** remain active. Gate code and thresholds were
-not weakened. Nonshipping validation inputs and tools were copied read-only
-into local audit scratch. The gates ran there with network access and source
-checkout access denied, and copies of public inputs were compared byte-for-byte
-to the export before and after that prior validation. Current hash and
-byte-equality checks confirm these records still apply to the unchanged media.
-No video was synthesized or rebuilt.
+No video was synthesized or rebuilt during this finalization.
 
 ## Other intentional omissions and limitations
 

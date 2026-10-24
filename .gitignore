@@ -75,3 +75,6 @@ evidence/
 private-evidence/
 .evidence/
 scratch/
+
+# Local working records (gates, audits, canary notes), never published
+.unlazy/

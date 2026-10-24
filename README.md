@@ -1,17 +1,10 @@
 # Unstuck
 
-Run 1 happens once: 1 inference, 21.6 s client time, unresolved, receipt stored.
-Run 1 is not saved. Optimized Run 2 exact-matches that receipt before selection,
-precludes only the proven dead end, and lets Decider make one fresh choice
-from remaining tools: 1 inference, 26.6 s, completed.
+Run 1 happens once: Unstuck turns a tool choice that Decider 2B has proven useless into a Decision Receipt, so Run 2 removes that dead end before selection and the same model makes a fresh choice.
 
-Superseded Run 2 used 2 inferences, 54.8 s. Observed Run 2 delta: 28.2 s,
-51.4% lower client latency. n = 1, same synthetic case, each proof once.
+Run 1: 1 inference, 21.6 s, unresolved, receipt stored. Run 2: 1 inference, 26.6 s, completed. The superseded Run 2 took 2 inferences and 54.8 s, so observed Run 2 client time is 28.2 s, 51.4% lower. n = 1, one synthetic case, each proof run once.
 
-**Decider 2B makes tool decisions, but a new call can repeat a decision
-already proven useless. Unstuck turns that verified dead end into a Decision
-Receipt, forcing the same Decider to choose a new path and escape the decision
-loop, without a larger model taking over.**
+Unstuck has two core mechanisms. Decision Receipts stop a new call from repeating a tool choice already proven useless. A LoRA-adapted Decider 2B then ranks the tools that remain, so the productive read comes first more often. That adapted checkpoint is experimental and is not the currently deployed runtime selector.
 
 Tags: `#strands-decider-2b` `#tool-selection`
 
@@ -19,183 +12,62 @@ Tags: `#strands-decider-2b` `#tool-selection`
 
 Run 1 records the dead end; Run 2 uses it before selection.
 
-Run 1 pays the learning cost once. Run 2 uses the receipt before selection. The
-memoryless control stays stuck.
-
-No dollar savings are claimed. The always-on SageMaker endpoint is billed by
-uptime, not per request. One fewer inference does not itself lower the bill.
-The measurements come from
-[`dist/public-demo/loop-escape-proof.json`](dist/public-demo/loop-escape-proof.json).
-
 ## The thirty second version
 
-**The problem.** A synthetic order report returns zero rows. Decider 2B picks
-`inspect_pipeline`. The read returns real data: the partition arrived. That is
-true and it settles nothing, because this incident turns on how the two sides
-of a join spell their keys. Each call may spend one diagnostic read, so the
-call ends unresolved. A new call about the same incident starts fresh, and
-Decider 2B picks `inspect_pipeline` again.
+A synthetic order report returns zero rows. Decider 2B picks `inspect_pipeline`. The read returns real data (the partition arrived) and settles nothing, because this incident turns on how the two sides of a join spell their keys. Each call may spend one diagnostic read, so three memoryless calls make the same choice and end unresolved, 3 of 3.
 
-**The solution.** The deterministic verifier writes down what that read proved:
-real data, no change to any decision the system may act on. That record is a
-Decision Receipt. It never picks a tool. Its one power is negative: on a later
-call with the identical context, the controller takes that identical execution
-out of the offer before the first Decider request, and Decider 2B chooses from
-what is left.
+**Decider 2B makes tool decisions, but a new call can repeat a decision already proven useless. Unstuck turns that verified dead end into a Decision Receipt, forcing the same Decider to choose a new path and escape the decision loop, without a larger model taking over.**
 
-**The proof**, on one synthetic case, with real hosted Decider 2B choices:
+Run 1 spends its one read on `inspect_pipeline` and ends unresolved. The deterministic verifier stores a `disposition_unchanged` Decision Receipt: real data, no change to any decision the system may act on. Run 2 is a new call on the same problem. The controller exact-matches that receipt and precludes only that execution before the first Decider request. Decider 2B, the only model that selects a tool, picks `inspect_schema_keys` from the three remaining diagnostics in their original order. One read, verified repair, `completed`.
 
-1. **The memoryless control stays stuck.** Three independent calls without
-   receipts. Each was offered four diagnostics, picked `inspect_pipeline`,
-   spent its one read, and ended unresolved. 3 of 3.
-2. **Run 1 pays the learning cost once.** With receipts, the first call had an
-   empty decision history, was offered the same four diagnostics, made the same
-   choice, spent its one read, and ended unresolved on
-   `diagnostic_reads_exhausted`. The verifier stored a Decision Receipt for
-   that dead end. One inference. Run 1 is the learning call, not a saving, and
-   is never presented as one.
-3. **Run 2 uses the receipt before selection.** A new call on the same problem.
-   The controller matched the Run 1 receipt exactly and precluded only that
-   proven dead end, before the first Decider request and before any read.
-   Decider 2B was offered the three remaining diagnostics in their original
-   order and made one fresh choice, `inspect_schema_keys`. One read, the repair
-   applied, verification passed, `completed` on `populated_after_repair`. One
-   inference, and no second Decider call. 1 of 1.
+Run 1 pays the learning cost once. Run 2 uses the receipt before selection. The memoryless control stays stuck.
 
-A preclusion spends no read and no inference, so the call's one read goes to a
-path nothing has proven useless. That is what separates Run 2 from the control.
+Run 1 is not saved: it is the learning call. No dollar saving is claimed, because the always-on SageMaker endpoint is billed by uptime, not per request. Record: [`dist/public-demo/loop-escape-proof.json`](dist/public-demo/loop-escape-proof.json).
 
-## The evidence
+## Why receipts need learned ranking
 
-Two separate proofs, each on the same declared synthetic fixture, each run
-once. Every count sits next to its denominator. These are existence results on
-one case, not rates.
+A receipt removes one proven dead end. After that, several valid tools usually remain, and a receipt cannot tell Decider 2B which of them is most productive. A weak ranking spends the call's one read on a path that moves nothing.
 
-### Real hosted Decider 2B, five choices
+LoRA was added to improve that ranking without adding a second selector. Decider 2B stays the only model that selects a tool, and the adapted weights hold no authority over receipts, repairs or truth.
 
-The experiment harness called one pinned Decider 2B checkpoint on a private
-Amazon SageMaker endpoint. Verdict **PASS**, 13 of 13 checks.
+**What we trained.** Offline and once, every diagnostic offered in a frozen synthetic corpus was executed, and the deterministic verifier labelled which read moved the supported disposition. Those labels trained LoRA adapters plus the Decider choice head. The checkpoint was then frozen and replayed through the same controller path.
 
-| | Control, without receipts | Run 1, with receipts | Run 2, with receipts |
+**Where it acts.** Exact receipts filter the offer first. The base or adapted Decider 2B ranks what remains. The controller executes the chosen read, and the verifier decides the outcome and writes the next receipt. Nothing learns at runtime.
+
+![Receipts constrain. LoRA ranks what remains. Why: a new call can repeat a choice already proven useless, and a Decision Receipt precludes only that exact repeat; several valid tools then remain, and a receipt cannot rank them. Offline training, once, before any run: a frozen synthetic corpus, every offered read executed, the verifier labels which read moved the disposition, LoRA adapters and the choice head are trained, and the checkpoint is frozen and replayed through the same controller path. Only the frozen checkpoint crosses into runtime; nothing flows back. Runtime decision, every call: the Decision Receipt filters the offer, the remaining tools keep their original order, Decider 2B with the base or adapted checkpoint ranks them, the controller executes the chosen read, and the verifier decides the outcome and writes the next receipt. The animation plays once: the productive read moves from second to first while the receipt, offer and verifier stay fixed; the order is schematic. Offline result, synthetic, one seed: correct first choices 60.6% to 80.6%, wasted first reads 31.3% to 23.4%, verified completions 68.8% to 76.6%; head-only training was rejected because wasted reads did not fall.](docs/unstuck-ml-addon-flow.svg)
+
+Receipts constrain before ranking; the verifier decides after it.
+
+Offline replay on synthetic data, one seed: 160 first-choice decisions, then 64 full calls that replay those choices through the controller. Fewer wasted reads is better.
+
+| Measure | Base Decider 2B | LoRA plus head | Change |
 | --- | --- | --- | --- |
-| Calls | 3 independent | 1 | 1, a new call |
-| Decision history | not requested | empty | matched, exact receipt |
-| Diagnostics offered | 4 | 4 | 3, the proven dead end precluded |
-| Precluded before the first Decider request | not applicable | no receipt yet | **yes** |
-| Decider choice (D1) | `inspect_pipeline`, 3 of 3 | `inspect_pipeline` | **`inspect_schema_keys`** |
-| Second Decider call (D2) | none | none | none |
-| Decider inferences | 1 of a bound of 2, each call | 1 of a bound of 2 | 1 of a bound of 2 |
-| Diagnostic reads | 1 of 1 allowed, each call | 1 of 1 allowed | 1 of 1 allowed |
-| Receipt written | not stored | `disposition_unchanged`, stored | `useful_evidence`, stored |
-| Terminal result | `unresolved`, 3 of 3 | `unresolved` | **`completed` / `populated_after_repair`** |
+| Correct first choices | 97 of 160 decisions (60.6%) | **129 of 160 decisions (80.6%)** | 32 more decisions |
+| Wasted first reads | 20 of 64 full calls (31.3%) | **15 of 64 full calls (23.4%)** | 5 fewer calls, 25% fewer |
+| Verified completions | 44 of 64 calls (68.8%) | **49 of 64 calls (76.6%)** | 5 more calls |
 
-Five Decider 2B answers in all: the 3 control choices, Run 1's choice and Run
-2's choice. One preclusion, and it cited the receipt Run 1 wrote. **0 false
-preclusions** in the observed sequence of 5 choices.
-
-### The controller on Amazon Bedrock AgentCore Runtime
-
-The same pair, run through the hosted controller on a private AgentCore
-Runtime under the same one-read bound. Verdict **PASS**, 25 of 25 checks.
-
-- Run 1: history empty, `inspect_pipeline`, one inference, 1 read, a
-  `disposition_unchanged` receipt, `unresolved`. Narration was refused, because
-  nothing was verified.
-- Run 2: history matched the exact receipt Run 1 wrote, and the preclusion
-  landed before the first Decider request and before any read. One fresh
-  choice, `inspect_schema_keys`, one inference, 1 read, 1 repair, `completed`.
-  Amazon Bedrock Nova Lite narrated only after the deterministic result was
-  fixed.
-- 2 Decider answers for the pair, one per call, each accepted with HTTP 200.
-  1 preclusion, 0 false preclusions.
-- Two telemetry timelines of 15 and 21 events, both finalized, 0 dropped and
-  0 refused.
-
-### The one measured comparison
-
-Basis for every row: n = 1, the same synthetic case, each proof run once. The
-superseded post-choice Run 2 is a separate earlier run of the superseded flow
-on the same endpoint. Client time is the caller's wall time for one runtime
-invocation; selector time is the measured Decider inference time, summed over
-the inferences a call made.
-
-| Measured | Run 1, the learning call | Superseded Run 2, precluded after the choice | Run 2, precluded before selection | Difference |
-| --- | --- | --- | --- | --- |
-| AgentCore client time | 21,635.7 ms (21.6 s), 1 inference | 54,795.9 ms (54.8 s), 2 inferences | 26,622.5 ms (26.6 s), 1 inference | 28,173.4 ms (28.2 s), 51.4% lower, one fewer inference |
-| AgentCore selector time | not compared | 52,263.79 ms (52.3 s), 2 inferences | 24,781.65 ms (24.8 s), 1 inference | 27,482.14 ms (27.5 s), 52.6% lower |
-| Hosted selector time | 20,651.01 ms (20.7 s), 1 inference | 53,957.49 ms (54.0 s), 2 inferences | 25,229.29 ms (25.2 s), 1 inference | 28,728.20 ms (28.7 s), 53.2% lower |
-
-Run 1 is unchanged by the pre-selection preclusion, because nothing was
-precluded on it: one inference, one read, unresolved, receipt stored. It has no
-saving and is never presented as one. What the pair shows is one fewer
-inference, less occupied model time, and a lower observed Run 2 elapsed time on
-this one case, at n = 1. Nothing here is a rate, and a second run of either
-flow could land elsewhere.
-
-The curated machine-readable record is
-[`dist/public-demo/loop-escape-proof.json`](dist/public-demo/loop-escape-proof.json).
-It carries no operational identifier, hash, version or timestamp.
+Head-only training reached 107 correct first choices out of 160 (66.9%), but wasted reads stayed at 20 of 64 calls, so it was rejected. A separate same-device CPU replay of both checkpoints moved correct first choices to 132 of 160 (82.5%), up from 96 (60.0%); wasted first reads to 14 of 64, down from 20; and completions to 50 of 64, up from 44. CPU and CUDA differed on 3 of 160 near-tie decisions ([`FINDINGS.md`](experiments/decider_finetune/device_parity/FINDINGS.md)). Scope, caveats and both stopped follow-up studies: [`docs/research/decider-adaptation-findings.md`](docs/research/decider-adaptation-findings.md) and [the audit record below](#the-offline-fine-tune-evidence).
 
 ## A Decision Receipt is not memory, and it is not a cache
 
-A cache answers the question for you. Memory nudges you. A receipt tells the
-system what already happened and then makes the model decide again.
+A cache answers the question for you. Memory nudges you. A receipt records what already happened and makes the model decide again.
 
-The model still chooses, every time. A receipt never selects a tool, never
-changes a probability, never scores a candidate, never authorizes a repair, and
-never decides what is true. In Run 2 the receipt removed one proven execution
-from the offer and nothing else: the three diagnostics that remained kept their
-original order, and the choice among them came from Decider 2B.
-
-Precluding takes an exact match on three things: the same capability, the same
-arguments, and the same decision context, which binds the task, the query, the
-admissible evidence, candidate membership and every pinned version. Any of those
-moving turns the receipt into advisory history that prohibits nothing.
-
-Two outcome classes are eligible to preclude, and no others. `no_progress`,
-where the read admitted nothing, and `disposition_unchanged`, where the read
-returned real data and moved no supported disposition. The second is the dead
-end a model actually repeats. A read that moved a disposition can never
-preclude anything, and neither can a provider failure or inadmissible evidence.
-
-There is no expiry and no time window. A receipt is identified by the content
-of its immutable binding set. Current facts dominate history: new evidence, a
-changed candidate set, a changed tool contract, a changed model revision or a
-changed policy each make the old receipt stop matching exactly, and it stops
-precluding.
+A receipt never selects a tool, changes a probability, scores a candidate, authorizes a repair or decides what is true. It precludes only on an exact match of capability, arguments and decision context: the task, the query, the admissible evidence, candidate membership and every pinned version. Only two outcome classes can preclude: `no_progress`, where the read admitted nothing, and `disposition_unchanged`, where it returned real data and moved no supported disposition. There is no expiry. New evidence, a changed candidate set, tool contract, model revision or policy breaks the exact match, and the receipt stops precluding.
 
 ## How it works
 
-| Role | Who holds it |
-| --- | --- |
-| Choose the diagnostic | Strands Decider 2B, through one typed `choice` question. The only model that selects a tool, for D1 and for an optional D2. |
-| Execute the chosen read | The controller. Read-only, argument-free diagnostics only. |
-| Decide what happened | The deterministic verifier, from observed facts. |
-| Write the receipt | The verifier, never the model. |
-| Match and preclude | The controller, on an exact context match, before the first Decider request. |
-| Apply the repair | Deterministic code, authorized only by verifier-held evidence. |
-| Narrate the result | Amazon Bedrock Nova Lite, after the result is fixed, holding no authority. |
+- **Decider 2B** answers one typed `choice` question. It is the only model that selects a tool. The base checkpoint serves at runtime; the LoRA-adapted checkpoint is experimental.
+- **The controller** matches receipts, precludes before the first Decider request, and runs read-only diagnostics.
+- **The deterministic verifier** decides what happened and writes every receipt. A repair runs only on verifier-held evidence.
+- **Amazon Bedrock Nova Lite** narrates after the result is fixed and holds no authority.
 
-Hard bounds, enforced before the call they pay for: **two Decider choices per
-call** (D1 and one optional D2 re-decision) and **at most two diagnostic reads
-per call**. Both loop-escape proofs configured the read bound to **one**, so a
-call cannot afford the dead end and the answer. A preclusion costs no read and
-no inference. The optional second decision is the design bound for a call whose
-first read moves nothing while a read remains; the observed Run 2 never needed
-it, because the dead end was gone before the first choice. No recursion, no
-third choice, and no budget reset by renaming a tool, reordering an evidence
-set, or retrying under a new identity.
+Each call is bounded at two Decider choices and at most two diagnostic reads; both proofs set the read bound to one. A preclusion costs no read and no inference. A caller cannot select the scenario, provider, model, tools or mode, and no secret is minted, stored or read on any path.
 
-A caller cannot select the scenario, the provider, the model, the tools, the
-mode, or the acceptance tier. No secret is minted, stored, or read on any path,
-telemetry is sanitized at the source, and evaluator truth never reaches a
-runtime role or a model input. The full boundary is in
-[`docs/hackathon-validation.md`](docs/hackathon-validation.md).
+On AWS the controller runs on Amazon Bedrock AgentCore Runtime and the pinned checkpoint on a private, network-isolated Amazon SageMaker endpoint. Every hop is request-signed and scoped to one action. Nothing in this repository creates, deploys or spends; the shape is readable in `infra/` and `deployment/`.
 
 ## Local quickstart
 
-Python and [uv](https://docs.astral.sh/uv/). No model download, no cloud
-account, no credentials, no network call.
+You need Python and [uv](https://docs.astral.sh/uv/). No model download, cloud account, credentials or network call.
 
 ```sh
 uv venv --python 3.12
@@ -204,130 +76,30 @@ uv run unstuck doctor --mode offline
 uv run python -m unstuck.cascade.scenarios
 ```
 
-The last command prints the shipped cold-start and history scenarios. Its
-selector is a deterministic stand-in labelled `mock`. Its choices are
-synthetic, not a model's, and it measures nothing. These are the earlier
-two-read scenarios, not a reproduction of the optimized one-read proof.
-The evaluation runner and private proof inputs are intentionally not shipped
-in the public export. The curated proof is in
-[`dist/public-demo/loop-escape-proof.json`](dist/public-demo/loop-escape-proof.json).
+The last command prints the shipped scenarios with a deterministic selector labelled `mock`. Its choices are synthetic and it measures nothing. These are the earlier two-read scenarios, not the one-read proof. Install the `ui` extra and run `uv run unstuck serve` for a loopback-only web view. The real checkpoint needs the `strands-decider` package and a local snapshot.
 
-For the local web view of a run, install the `ui` extra and run
-`uv run unstuck serve`. It binds loopback only and publishes no port.
+The pattern on its own, standard library only, is in [`recipes/diagnostic-tool-selection/`](recipes/diagnostic-tool-selection/).
 
-Running the real checkpoint locally needs the `strands-decider` package and a
-local snapshot, deliberately not dependencies of the shipped wheel.
+## Limits
 
-## On AWS
+- One synthetic case, one fixture, one pinned checkpoint, each proof run once: n = 1, no rate. The checkpoint was chosen because it repeats this dead end.
+- The latency comparison is one observation per flow. No general latency benefit and no cost effect follow from it.
+- The LoRA ranking result is offline, synthetic, one seed and in-distribution. No claim is made about unseen situations or safety. A constant rule that prefers the schema-key read where offered gets 128 of 160 first choices right (80.0%) on the same rows, one fewer than the adapted checkpoint.
+- Not claimed: general model quality, calibrated confidences, statistical significance, production readiness or novelty.
 
-The same pinned checkpoint, served privately, reached by the same seam. Every
-hop is request-signed and scoped to one action:
+Full record, failed runs and both hosted proofs included: [`docs/hackathon-validation.md`](docs/hackathon-validation.md). Every claim traces to [`docs/claim-register.md`](docs/claim-register.md). ML detail: [`docs/research/decider-adaptation-findings.md`](docs/research/decider-adaptation-findings.md).
 
-- Operator to controller, on the agent runtime's invoke action: one role, one
-  runtime, one endpoint.
-- Controller to Decider and controller to narrator, each through an interface
-  endpoint: one action on one target, and the endpoint policy allows exactly one
-  principal and denies every other.
-- Decider outbound: nothing at all. Network isolation on, no address
-  translation gateway, no internet gateway.
+### The offline fine-tune evidence
 
-The controller runs on Amazon Bedrock AgentCore Runtime. The checkpoint runs on
-a private Amazon SageMaker real-time endpoint in private subnets, from a
-digest-pinned private image. Narration is one Amazon Bedrock Nova Lite call.
+This is an offline synthetic test of controlled variation, in-distribution: one seed, four test scenario families, and 64 integrated calls that replay 64 of the 160 row answers through the controller. The families are disjoint from training by name and fixture, but all 20 model-visible test situations occur in training. The only new surface is 80 rows under a renamed tool catalog that never appears in training or calibration, where correct first choices moved from 64 of 80 (80.0%) to 70 of 80 (87.5%), recorded as 64/80 to 70/80.
 
-Nothing in this repository creates, deploys, or spends. The hosting shape is
-readable from the definitions themselves: the synthesis-only infrastructure in
-`infra/`, the container and serving definitions in `deployment/`, and the
-example configuration beside them.
-
-## The reusable pattern
-
-[`recipes/diagnostic-tool-selection/`](recipes/diagnostic-tool-selection/) is
-the pattern on its own, for anyone who wants it in their own agent. Standard
-library only: no framework, no cloud software development kit, no Pydantic, no
-database, and no import from this application. Copy the directory, swap in your
-catalog and your model call, then `python example.py`.
-
-The independence is checked rather than promised. A test imports the recipe
-from a copy of its own directory with nothing but that directory and the
-standard library on the import path, so a hidden dependency fails a test rather
-than surprising an adopter.
+Wasted first reads moved from 20 of 64 to 15 of 64 calls, recorded as 20/64 to 15/64: five improved calls and none worse, four of the five in one family, exact paired p = 0.0625. False repairs and false preclusions were 0, but those errors were structurally unreachable here, so the zeros are not safety evidence. ECE uses the project's normalized confidence and is descriptive; no calibration gate was applied. A private hosted canary was run later and missed its pre-registered exact-choice parity gate, so no hosted result is claimed. No latency or cost claim is made. Both v2 follow-up studies stopped before any training, at [`STOP_INSUFFICIENT_HOLDOUT`](experiments/decider_finetune_v2/viability-report.json) and [`STOP_RECEIPT_STATES_COLLAPSE`](experiments/decider_finetune_v2/NEXT-EXPERIMENT.md).
 
 ## How the story got here
 
-The investigation was not tidy, and flattening it would hide the finding. Every
-earlier run stays in the record with its verdict as written:
+Earlier runs stay in the record with their verdicts. The first local experiment is UNVALIDATED: the outcome taxonomy judged a read only by whether its evidence was new, which is why `disposition_unchanged` exists. The second is FAIL, on a criterion frozen before it ran. The five-case local golden run passed seven frozen criteria.
 
-- The first local experiment is **UNVALIDATED**. The refusal never fired,
-  because the outcome taxonomy classified a read by evidence novelty alone. The
-  measurement located the defect, and `disposition_unchanged` was added.
-- The second local experiment is **FAIL**, on one criterion frozen before it
-  ran. Noticing afterwards that it measured the whole call rather than the
-  mechanism did not license changing it.
-- The first cloud attempt failed on a measured provider-latency cause. Three
-  exits were refused, including raising a number to make a run pass, and **no
-  default moved**.
-- The five-case local golden run **PASSED** seven frozen criteria: 5 of 5
-  cases, 10 complete pairs, 40 real selector calls, 0 false blocks.
-- **Superseded as the lead claim: the post-choice pair.** An earlier run of the
-  same case on the same endpoint let Decider 2B see the full option set on the
-  second call. It repeated `inspect_pipeline`, the controller refused that exact
-  repeat before any read, and a second Decider call chose `inspect_schema_keys`,
-  which completed the call on two inferences and 54.8 s of client time. That
-  result stands as written, on n = 1. Precluding the dead end before the first
-  request reaches the same terminal result on one inference, which is why the
-  earlier shape is no longer the lead.
-- **Superseded as the lead claim: the two-read cloud pair.** Under a two-read
-  bound, the first call already repaired inside one call: its dead-end D1 spent
-  a read, then a same-call D2 spent the second. The second call blocked the
-  repeat and spent one read. That result still holds, on n = 1 pair, but it
-  proves efficiency only, one fewer read. It cannot show an escape, because
-  nothing was stuck. Its record is in
-  [`dist/public-demo/final-golden-summary.json`](dist/public-demo/final-golden-summary.json).
-
-The demo page, architecture figure, pitch deck and narrated video all show the
-current pre-selection sequence: Run 1 stores the receipt; Run 2 precludes the
-proven dead end before the first Decider request, then completes on one fresh
-choice. The video, [`dist/video/unstuck-demo.mp4`](dist/video/unstuck-demo.mp4),
-combines eight current pitch frames with ten labelled offline replay steps:
-147.567 seconds, 1280x720, 30 fps, 5.23 MB. All ten build gates passed without
-skips, warnings or overrides. The encoded replay and timeline were inspected,
-and source and artifact bindings matched before explicit local promotion.
-Its honesty statement and gate report are in
-[`dist/video/README.md`](dist/video/README.md). None is publicly published yet.
-
-![Three lanes on one synthetic case. The memoryless control repeats inspect_pipeline on 3 calls and stays unresolved. Run 1 spends one inference and one read, stays unresolved in 21.6 seconds, and the verifier stores a Decision Receipt. Run 2 exact-matches the receipt and precludes the dead end before the first Decider request. The same Decider chooses inspect_schema_keys once, and verified repair completes the call in 26.6 seconds.](docs/architecture.svg)
-
-## Limitations, and what is not claimed
-
-- One synthetic case, one fixture, one pinned checkpoint, each proof run once.
-  n = 1. No rate and no generalization to other cases, fixtures, models or
-  workloads.
-- The checkpoint was chosen because it repeats this dead end, not because it
-  performed well.
-- "Run 1 pays the learning cost once" names a verifier record and a measured
-  elapsed time, not a change in the model. The checkpoint is unchanged between
-  calls, and on its first exposure to the full option set it chose the dead
-  end.
-- This is a decision loop across calls, bounded at two Decider choices per
-  call. It is not an infinite loop and no infinite loop was observed.
-- The measured Run 2 latency reduction applies only to this case. On the
-  hosted endpoint Run 1's one inference took 20.7 s and Run 2's took 25.2 s,
-  each one observation at n = 1.
-- The measured comparison sets one flow against the other on one case, each run
-  once. It is an observation, not a rate and not a general result, and no cost
-  effect follows from it.
-
-Not claimed anywhere, now or later without new evidence: the model's general
-accuracy, calibrated confidences, statistical significance, any rate, a general
-latency benefit, a cost benefit, a cost saving, production readiness, novelty, or
-compliance with any regime.
-
-The complete record, failed runs included:
-[`docs/hackathon-validation.md`](docs/hackathon-validation.md). Every claim
-traces to [`docs/claim-register.md`](docs/claim-register.md), and what a public
-file may carry is
-[`docs/public-scrub-policy.md`](docs/public-scrub-policy.md).
+**Superseded as the lead claim:** the post-choice pair, which completed on two inferences in 54.8 s, and the two-read pair, which shows efficiency only because nothing was stuck ([`final-golden-summary.json`](dist/public-demo/final-golden-summary.json)).
 
 ## Testing
 
@@ -336,25 +108,8 @@ uv run pytest -q                            # the full suite
 uv run python -m publishing.public_scan     # the fail-closed public leakage scan
 ```
 
-Tests come before the behaviour they check for anything touching safety,
-contracts, budgets, or security negatives, and no test is weakened to make work
-pass. A fixture fails any test that reaches for a socket.
-`tests/public_deliverables/test_public_story.py` fails if this opening drifts
-from the approved story or the curated record leaks an identifier.
-
-## Status
-
-Not published and not submitted. Publishing and submitting are separate owner
-actions and neither has been taken.
-[`docs/submission-checklist.md`](docs/submission-checklist.md) records what is
-met, ready, and pending.
+`tests/public_deliverables/test_public_story.py` fails if this opening drifts from the approved story or the curated record leaks an identifier.
 
 ## Licence
 
-Apache-2.0. See [`LICENSE`](LICENSE) and [`NOTICE`](NOTICE) for pinned
-dependencies, whose licence verification is recorded as unverified and pending.
-Strands Decider 2B is a separate upstream model under its own licence and terms.
-
----
-
-Tags: `#strands-decider-2b` `#tool-selection`
+Apache-2.0. See [`LICENSE`](LICENSE) and [`NOTICE`](NOTICE) for pinned dependencies, whose licence verification is recorded as unverified and pending. Strands Decider 2B is a separate upstream model under its own licence and terms.

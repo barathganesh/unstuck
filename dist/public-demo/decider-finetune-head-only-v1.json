@@ -1,0 +1,49 @@
+{
+  "evidence_version": "decider-finetune-head-only-v1",
+  "classification": "offline synthetic, in-distribution controlled variation",
+  "source_report_hash_base64": "Lzc28VBH81rlWpsSNpYb815MHK8uj2rOSGjp84hqFUI=",
+  "baseline_checkpoint": "the public open-model release named in experiments/decider_finetune/configs/; public open-model provenance, not a deployment identity",
+  "adapted_checkpoint": "private adapted checkpoint; its identity is not published",
+  "sample_sizes": {
+    "choice_rows": 160,
+    "integrated_calls": 64,
+    "integrated_calls_replay_choice_row_answers": true,
+    "scenario_families": 4,
+    "model_visible_situations": 20,
+    "model_visible_situations_also_in_training": 20,
+    "renamed_catalog_rows": 80,
+    "training_seed_count": 1
+  },
+  "comparison": {
+    "first_choice_correct": {
+      "baseline": "97/160",
+      "adapted": "107/160"
+    },
+    "integrated_wasted_first_reads": {
+      "baseline": "20/64",
+      "adapted": "20/64"
+    },
+    "ece": {
+      "baseline": 0.165,
+      "adapted": 0.408
+    },
+    "nll": {
+      "baseline": 0.93,
+      "adapted": 0.955
+    },
+    "ece_definition": {
+      "confidence": "the project's normalized confidence, (n * pmax - 1) / (n - 1)",
+      "use": "descriptive only; no calibration gate was applied",
+      "precision": "rounded to three decimals"
+    },
+    "verdict": "rejected",
+    "refused_on": "the wasted-first-read criterion; calibration is not a harness criterion"
+  },
+  "limitations": [
+    "The head-only result improved first-choice correctness but did not reduce integrated wasted first reads, so the harness refused it.",
+    "Its ECE rose; that is recorded descriptively and was not the reason for refusal.",
+    "All 20 model-visible test situations occur in training; only the renamed-catalog slice is a new surface.",
+    "No latency or cost claim is supported.",
+    "The head-only checkpoint was not deployed."
+  ]
+}

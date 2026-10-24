@@ -1,0 +1,164 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720" role="img" aria-labelledby="ml-flow-title ml-flow-description" preserveAspectRatio="xMidYMid meet">
+  <title id="ml-flow-title">Receipts constrain. LoRA ranks what remains. A Decision Receipt exact-precludes a proven dead end, a LoRA-adapted Decider 2B trained offline on verifier labels ranks the remaining tools, and the verifier still decides every outcome.</title>
+  <desc id="ml-flow-description">Three zones. WHY: a new call can repeat a tool choice already proven useless, and a Decision Receipt exact-precludes only that repeat before selection. After preclusion several valid tools remain, and a receipt cannot say which of them is most productive, so a LoRA-adapted Decider 2B ranks what remains. OFFLINE TRAINING, once, before any run: every diagnostic offered in a frozen synthetic corpus was executed, the deterministic verifier labelled which read moved the supported disposition, those labels trained LoRA adapters and the Decider choice head, and the checkpoint was frozen and replayed through the same controller path. A one-way connector carries only the frozen checkpoint into runtime; nothing flows back. RUNTIME DECISION, every call: the exact Decision Receipt filters the offer first, the remaining tools keep their original order, the base or adapted Decider 2B ranks them and remains the only model tool selector, the controller executes the chosen read, and the verifier decides the outcome and writes the next receipt. Nothing learns at runtime. The animation plays once: the productive read moves from second to first inside the Decider while the receipt, the offer and the verifier stay fixed. The order is schematic, not a measured row. Reduced motion and animation failure show the final order. OFFLINE RESULT, synthetic, one seed, in-distribution controlled variation: correct first choices 129 of 160 decisions (80.6%), up from 97 (60.6%), 32 more decisions; wasted first reads 15 of 64 full calls (23.4%), down from 20 (31.3%), 5 fewer calls; verified completions 49 of 64 calls (76.6%), up from 44 (68.8%), 5 more calls. Head-only training reached 107 of 160 correct first choices, but wasted reads stayed at 20 of 64 calls, so it was rejected. A separate same-device CPU replay: correct first choices 132 of 160 (82.5%), up from 96 (60.0%); wasted first reads 14 of 64, down from 20; completions 50 of 64, up from 44. CPU and CUDA differed on 3 of 160 near-tie decisions. The adapted checkpoint is experimental and is not the deployed runtime selector. No hosted, latency or cost result is shown.</desc>
+  <defs>
+    <style><![CDATA[
+      svg { background: #141310; color: #F5F1E8; width: 100%; height: auto; display: block; }
+      text { fill: #F5F1E8; font-family: Helvetica, Arial, sans-serif; font-size: 20px; font-weight: 500; }
+      .heading { font-family: Georgia, serif; font-size: 36px; font-weight: 700; letter-spacing: -0.5px; }
+      .zone { font-size: 20px; font-weight: 700; letter-spacing: 1px; }
+      .mono { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 20px; }
+      .strong { font-weight: 700; }
+      .muted { fill: #BDB3A2; }
+      .ember { fill: #F1834B; }
+      .ink { fill: #141310; }
+      .paper { fill: #F5F1E8; }
+      .frame { fill: none; stroke: #BDB3A2; stroke-width: 2; }
+      .track { fill: none; stroke: #BDB3A2; stroke-width: 3; }
+      .rule { stroke: #BDB3A2; stroke-width: 1; }
+      .lead { fill: none; stroke: #F1834B; stroke-width: 3; }
+      .feed { fill: none; stroke: #F1834B; stroke-width: 3; stroke-dasharray: 8 6; }
+      .rank-rise { animation: rank-rise 6s cubic-bezier(0.16, 1, 0.3, 1) 0.4s 1 both; }
+      .rank-fall { animation: rank-fall 6s cubic-bezier(0.16, 1, 0.3, 1) 0.4s 1 both; }
+      @keyframes rank-rise {
+        0%, 35% { transform: translate(0px, 42px); }
+        65%, 100% { transform: translate(0px, 0px); }
+      }
+      @keyframes rank-fall {
+        0%, 35% { transform: translate(0px, -42px); }
+        65%, 100% { transform: translate(0px, 0px); }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        * { animation: none !important; }
+        .rank-rise, .rank-fall { transform: translate(0px, 0px); }
+      }
+    ]]></style>
+  </defs>
+  <rect width="1280" height="720" fill="#141310"/>
+  <g id="header">
+    <text class="muted" x="44" y="38">TWO CORE MECHANISMS, ONE TOOL SELECTOR</text>
+    <text class="muted" x="1236" y="38" text-anchor="end">Experimental checkpoint, not the deployed selector</text>
+    <text class="heading" x="44" y="80">Receipts constrain. LoRA ranks what remains.</text>
+    <path class="rule" d="M44 98 H1236"/>
+  </g>
+  <g id="why-zone" data-zone="why">
+    <text class="zone muted" x="44" y="126">WHY</text>
+    <text x="44" y="156">A new call can repeat a choice already proven useless.</text>
+    <text class="muted" x="664" y="156">→</text>
+    <text class="strong" x="700" y="156">Decision Receipt precludes only that exact repeat.</text>
+    <text x="44" y="186">Several valid tools remain; a receipt cannot rank them.</text>
+    <text class="muted" x="664" y="186">→</text>
+    <text class="strong ember" x="700" y="186">LoRA-adapted Decider 2B ranks what remains.</text>
+    <path class="rule" d="M44 204 H1236"/>
+  </g>
+  <g id="training-zone" data-zone="training">
+    <text class="zone muted" x="44" y="232">OFFLINE TRAINING, ONCE, BEFORE ANY RUN</text>
+    <text class="muted" x="1236" y="232" text-anchor="end">labels come from the verifier, not a model</text>
+    <g id="train-corpus" data-step="1">
+      <path class="frame" d="M44 246 H254 V338 H44 Z"/>
+      <text x="60" y="274">Frozen corpus</text>
+      <text class="muted" x="60" y="300">synthetic offers</text>
+    </g>
+    <path class="track" d="M260 292 H281 M275 286 L282 292 L275 298"/>
+    <g id="train-execute" data-step="2">
+      <path class="frame" d="M289 246 H499 V338 H289 Z"/>
+      <text x="305" y="274">Execute every</text>
+      <text class="muted" x="305" y="300">offered read</text>
+    </g>
+    <path class="track" d="M505 292 H526 M520 286 L527 292 L520 298"/>
+    <g id="train-label" data-step="3">
+      <path class="frame" d="M534 246 H744 V338 H534 Z"/>
+      <text x="550" y="274">Verifier labels</text>
+      <text class="muted" x="550" y="300">which read moved</text>
+      <text class="muted" x="550" y="324">the disposition</text>
+    </g>
+    <path class="track" d="M750 292 H771 M765 286 L772 292 L765 298"/>
+    <g id="train-lora" data-step="4">
+      <path class="lead" d="M779 246 H989 V338 H779 Z"/>
+      <text class="ember" x="795" y="274">Train LoRA</text>
+      <text class="muted" x="795" y="300">adapters and</text>
+      <text class="muted" x="795" y="324">choice head</text>
+    </g>
+    <path class="track" d="M995 292 H1016 M1010 286 L1017 292 L1010 298"/>
+    <g id="train-freeze" data-step="5">
+      <path class="frame" d="M1024 246 H1234 V338 H1024 Z"/>
+      <text x="1040" y="274">Freeze, replay</text>
+      <text class="muted" x="1040" y="300">same controller</text>
+      <text class="muted" x="1040" y="324">path</text>
+    </g>
+  </g>
+  <g id="checkpoint-feed" data-direction="one-way">
+    <path class="feed" d="M1129 340 V354 H640 V376"/>
+    <path class="lead" d="M633 371 L640 380 L647 371"/>
+    <text class="ember" x="1236" y="376" text-anchor="end">frozen checkpoint only; nothing flows back</text>
+  </g>
+  <g id="runtime-zone" data-zone="runtime">
+    <text class="zone muted" x="44" y="376">RUNTIME DECISION, EVERY CALL</text>
+    <g id="receipt-station" data-boundary="fixed">
+      <path class="paper" d="M44 384 H244 V522 L234 517 L224 524 L214 517 L204 524 L194 517 L184 524 L174 517 L164 524 L154 517 L144 524 L134 517 L124 524 L114 517 L104 524 L94 517 L84 524 L74 517 L64 524 L54 517 L44 522 Z"/>
+      <text class="strong ink" x="58" y="414">Decision Receipt</text>
+      <path d="M58 424 H230" stroke="#141310" stroke-width="1"/>
+      <text class="ink" x="58" y="452">exact match</text>
+      <text class="ink" x="58" y="476">precludes only</text>
+      <text class="ink" x="58" y="500">that repeat</text>
+    </g>
+    <path class="track" d="M250 456 H269 M263 450 L270 456 L263 462"/>
+    <g id="offer-station" data-boundary="fixed">
+      <path class="frame" d="M277 384 H477 V528 H277 Z"/>
+      <text x="293" y="414">Offer</text>
+      <text class="muted" x="293" y="452">remaining tools,</text>
+      <text class="muted" x="293" y="476">original order</text>
+    </g>
+    <path class="track" d="M483 456 H502 M496 450 L503 456 L496 462"/>
+    <g id="ranking-station" data-stage="ranking">
+      <path class="lead" d="M510 384 H770 V528 H510 Z"/>
+      <text class="strong" x="526" y="410">Decider 2B ranks</text>
+      <text class="muted" x="526" y="434">base or adapted</text>
+      <text class="mono muted" x="526" y="467">1st</text>
+      <text class="mono muted" x="526" y="509">2nd</text>
+      <g id="productive-candidate" class="rank-rise">
+        <path class="lead" d="M574 446 H754 V476 H574 Z"/>
+        <text class="ember" x="588" y="467">productive read</text>
+      </g>
+      <g id="other-candidate" class="rank-fall">
+        <path class="frame" d="M574 488 H754 V518 H574 Z"/>
+        <text class="muted" x="588" y="509">other reads</text>
+      </g>
+    </g>
+    <path class="track" d="M776 456 H795 M789 450 L796 456 L789 462"/>
+    <g id="controller-station" data-boundary="fixed">
+      <path class="frame" d="M803 384 H1003 V528 H803 Z"/>
+      <text x="819" y="414">Controller</text>
+      <text class="muted" x="819" y="452">executes the</text>
+      <text class="muted" x="819" y="476">chosen read</text>
+    </g>
+    <path class="track" d="M1009 456 H1028 M1022 450 L1029 456 L1022 462"/>
+    <g id="verifier-station" data-boundary="fixed">
+      <path class="frame" d="M1036 384 H1236 V528 H1036 Z"/>
+      <text x="1052" y="414">Verifier</text>
+      <text class="muted" x="1052" y="452">decides outcome,</text>
+      <text class="muted" x="1052" y="476">writes the</text>
+      <text class="muted" x="1052" y="500">next receipt</text>
+    </g>
+    <path class="track" d="M1136 534 V550 H144 V534 M138 541 L144 533 L150 541"/>
+    <text class="muted" x="640" y="576" text-anchor="middle">The verifier's outcome becomes the next receipt. Nothing learns at runtime.</text>
+  </g>
+  <path class="rule" d="M44 592 H1236"/>
+  <g id="outcome-panel" data-panel="outcome">
+    <text class="zone muted" x="44" y="618">OFFLINE RESULT, SYNTHETIC, ONE SEED</text>
+    <text class="muted" x="1236" y="618" text-anchor="end">160 first-choice decisions, 64 full calls</text>
+    <g id="outcome-choices" data-metric="first_choice_correct">
+      <text x="44" y="648">Correct first choices: 60.6% <tspan class="ember">→ 80.6%</tspan></text>
+      <text class="muted" x="44" y="674">129 of 160, up from 97: 32 more</text>
+    </g>
+    <g id="outcome-wasted" data-metric="integrated_wasted_first_reads">
+      <text x="444" y="648">Wasted first reads: 31.3% <tspan class="ember">→ 23.4%</tspan></text>
+      <text class="muted" x="444" y="674">15 of 64 calls, down from 20: 5 fewer</text>
+    </g>
+    <g id="outcome-completions" data-metric="integrated_verified_completions">
+      <text x="844" y="648">Verified completions: 68.8% <tspan class="ember">→ 76.6%</tspan></text>
+      <text class="muted" x="844" y="674">49 of 64 calls, up from 44: 5 more</text>
+    </g>
+    <text id="outcome-head-only" class="muted" x="44" y="706">Head-only training reached 107 of 160 correct, but wasted reads stayed at 20 of 64 calls, so it was rejected.</text>
+  </g>
+</svg>

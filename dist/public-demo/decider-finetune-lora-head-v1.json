@@ -1,0 +1,89 @@
+{
+  "evidence_version": "decider-finetune-lora-head-v1",
+  "classification": "offline synthetic, in-distribution controlled variation",
+  "source_report_hash_base64": "2pvYJQ45+IgiubQxM3Ngsa8D/CqwIi8EV4K3tcZ7UyU=",
+  "baseline_checkpoint": "the public open-model release named in experiments/decider_finetune/configs/; public open-model provenance, not a deployment identity",
+  "adapted_checkpoint": "private adapted checkpoint; its identity is not published",
+  "training": {
+    "synthetic_rows": 900,
+    "gradient_rows": 855,
+    "validation_rows": 45,
+    "calibration_rows": 120,
+    "epochs": 2,
+    "optimizer_steps": 52,
+    "seed_count": 1,
+    "trainable_parameters": 17872384
+  },
+  "sample_sizes": {
+    "choice_rows": 160,
+    "integrated_calls": 64,
+    "integrated_calls_replay_choice_row_answers": true,
+    "scenario_families": 4,
+    "model_visible_situations": 20,
+    "model_visible_situations_also_in_training": 20,
+    "renamed_catalog_rows": 80,
+    "training_seed_count": 1
+  },
+  "comparison": {
+    "first_choice_correct": {
+      "baseline": "97/160",
+      "adapted": "129/160",
+      "corrected_rows": 32,
+      "broken_rows": 0,
+      "corrected_rows_on_production_catalog": 26
+    },
+    "first_choice_correct_renamed_catalog": {
+      "baseline": "64/80",
+      "adapted": "70/80"
+    },
+    "integrated_wasted_first_reads": {
+      "baseline": "20/64",
+      "adapted": "15/64",
+      "improved_calls": 5,
+      "worsened_calls": 0,
+      "improved_calls_in_one_family": 4,
+      "exact_paired_p_two_sided": 0.0625,
+      "seed_count": 1
+    },
+    "integrated_verified_completions": {
+      "baseline": "44/64",
+      "adapted": "49/64"
+    },
+    "paired_completion_regressions": 0,
+    "false_repairs_and_false_preclusions": {
+      "baseline": {
+        "observed": "0/0",
+        "structurally_reachable_in_these_families": false,
+        "safety_evidence": false
+      },
+      "adapted": {
+        "observed": "0/0",
+        "structurally_reachable_in_these_families": false,
+        "safety_evidence": false
+      }
+    },
+    "ece": {
+      "baseline": 0.165,
+      "adapted": 0.166
+    },
+    "nll": {
+      "baseline": 0.93,
+      "adapted": 0.373
+    },
+    "ece_definition": {
+      "confidence": "the project's normalized confidence, (n * pmax - 1) / (n - 1)",
+      "use": "descriptive only; no calibration gate was applied",
+      "precision": "rounded to three decimals"
+    },
+    "verdict": "promotion_eligible",
+    "verdict_scope": "wasted first reads, completion regressions, false repairs and false preclusions only; the verdict does not check calibration"
+  },
+  "limitations": [
+    "Decision Receipts remain the deterministic hard boundary.",
+    "Decider 2B remains the only model tool selector.",
+    "The wasted-first-read change is five calls on one seed, four of them in one family; the exact paired p is 0.0625.",
+    "All 20 model-visible test situations occur in training; only the renamed-catalog slice is a new surface.",
+    "No latency or cost claim is supported.",
+    "A private hosted canary was run later and missed its pre-registered exact-choice parity gate, so no hosted result is claimed."
+  ]
+}

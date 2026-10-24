@@ -1,0 +1,43 @@
+# FALLBACK, DOCUMENTED ONLY. Never run automatically; no script, test or runner in this
+# repository launches it.
+#
+# Use it only if the head-only run (head-only.yaml) is trained, calibrated and evaluated
+# on the frozen held-out set and fails the wasted-first-read criterion, and the owner
+# approves a second, separately frozen run. It trains the checkpoint's own LoRA adapter
+# and its head together. It is identical to head-only.yaml except for the four keys
+# marked FALLBACK; the same calibration and evaluation commands apply.
+#
+# Upstream commit d942e5515db750f80a51032629ec312455a87976. Architecture keys are absent
+# because init_from fixes them.
+
+init_from: "checkpoints/hobson-v19-bb282d78"
+train_files: ["data/unstuck/train.jsonl"]
+val_fraction: 0.05
+val_split_seed: 0
+
+freeze_torso: false          # FALLBACK: the adapter trains too
+gradient_checkpointing: true # FALLBACK: needed once the torso has a backward pass
+lr: 0.00002                  # FALLBACK: adapter step, well below the 1e-4 recipe value
+head_init: "random"
+
+kl_frozen_weight: 0.5        # FALLBACK: a stronger anchor, since more weights move
+kl_frozen_reference: "checkpoints/hobson-v19-bb282d78"
+precompute_frozen_kl: true
+group_by_length: true
+
+shuffle_options: true
+
+epochs: 2
+micro_batch_size: 8
+grad_accum: 4
+head_lr: 0.0002
+weight_decay: 0.01
+warmup_ratio: 0.03
+max_grad_norm: 1.0
+head_dropout: 0.05
+
+seed: 0
+max_steps: 0
+output_dir: "checkpoints/unstuck-lora-head-s0"
+log_every: 20
+eval_every: 200

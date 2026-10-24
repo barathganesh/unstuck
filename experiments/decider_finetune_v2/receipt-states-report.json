@@ -1,0 +1,137 @@
+{
+  "by_depth": {
+    "0": {
+      "productive_capability_counts": {
+        "inspect_pipeline": 48,
+        "inspect_schema_keys": 108
+      },
+      "rows": 156,
+      "signatures": 8,
+      "signatures_by_executable_choices": {
+        "3": 8
+      }
+    },
+    "1": {
+      "productive_capability_counts": {
+        "inspect_pipeline": 72,
+        "inspect_schema_keys": 162
+      },
+      "rows": 234,
+      "signatures": 12,
+      "signatures_by_executable_choices": {
+        "2": 8,
+        "3": 4
+      }
+    },
+    "2": {
+      "productive_capability_counts": {
+        "inspect_pipeline": 168,
+        "inspect_schema_keys": 378
+      },
+      "rows": 546,
+      "signatures": 16,
+      "signatures_by_executable_choices": {
+        "1": 4,
+        "2": 8,
+        "3": 4
+      }
+    }
+  },
+  "decision_level": {
+    "collapsed_to_training_core": 12,
+    "depth_2_multi_choice_seen_in_train": 0,
+    "depth_2_multi_choice_signatures": 12,
+    "depth_2_signatures": 16,
+    "depth_2_single_choice_signatures": 4,
+    "held_out_capabilities": [
+      "inspect_pipeline",
+      "inspect_schema_keys"
+    ],
+    "held_out_signatures": 12,
+    "non_collapsed": 0,
+    "non_collapsed_capabilities": [],
+    "receipt_names_label": 12,
+    "shares_families_with_train": true,
+    "train_held_out_intersection": 0,
+    "train_signatures": 20
+  },
+  "excluded": {
+    "absent": 0,
+    "ambiguous": 0,
+    "no_productive": 0,
+    "prior_not_executed": 156
+  },
+  "factorial_prototype_executed": false,
+  "failures": [
+    "collapse_to_training_core",
+    "productive_capabilities",
+    "no_receipt_information"
+  ],
+  "families": 13,
+  "family_atomic": {
+    "all_depths": {
+      "allocation_exists": false,
+      "component_family_counts": [
+        2,
+        3,
+        4,
+        4
+      ],
+      "components": 4,
+      "components_with_multiple_capabilities": 0,
+      "signatures": 36,
+      "states": 936
+    },
+    "depth_2_multi_choice_only": {
+      "allocation_exists": false,
+      "component_family_counts": [
+        2,
+        3,
+        4,
+        4
+      ],
+      "components": 4,
+      "components_with_multiple_capabilities": 0,
+      "signatures": 12,
+      "states": 390
+    },
+    "receipt_depths_only": {
+      "allocation_exists": false,
+      "component_family_counts": [
+        2,
+        3,
+        4,
+        4
+      ],
+      "components": 4,
+      "components_with_multiple_capabilities": 0,
+      "signatures": 28,
+      "states": 780
+    }
+  },
+  "information_bits": {
+    "distinct_cores": 8,
+    "label_given_core": 0.0,
+    "label_given_signature": 0.0,
+    "labels_per_core": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "receipt_information": 0.0
+  },
+  "model_inference_executed": false,
+  "proposed_split": null,
+  "rows": 936,
+  "safety_claim": false,
+  "scope": "assigned_v1_inventory_six_variants_production_catalog_receipt_depth_0_to_2",
+  "signature_count": 36,
+  "test_experiment_opened": false,
+  "training_executed": false,
+  "verdict": "STOP_RECEIPT_STATES_COLLAPSE"
+}

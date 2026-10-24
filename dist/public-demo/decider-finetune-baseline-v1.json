@@ -1,0 +1,40 @@
+{
+  "evidence_version": "decider-finetune-baseline-v1",
+  "classification": "offline synthetic, in-distribution controlled variation",
+  "source_report_hash_base64": "mmhHFlvJ/jz+gLL9BMihVPHsTYDv/qRhBkMFURCTnKY=",
+  "baseline_checkpoint": "the public open-model release named in experiments/decider_finetune/configs/; public open-model provenance, not a deployment identity",
+  "sample_sizes": {
+    "choice_rows": 160,
+    "integrated_calls": 64,
+    "integrated_calls_replay_choice_row_answers": true,
+    "scenario_families": 4,
+    "model_visible_situations": 20,
+    "model_visible_situations_also_in_training": 20,
+    "renamed_catalog_rows": 80,
+    "training_seed_count": 1
+  },
+  "metrics": {
+    "first_choice_correct": "97/160",
+    "first_choice_correct_production_catalog": "33/80",
+    "first_choice_correct_renamed_catalog": "64/80",
+    "integrated_wasted_first_reads": "20/64",
+    "integrated_verified_completions": "44/64",
+    "false_repairs_and_false_preclusions": {
+      "observed": "0/0",
+      "structurally_reachable_in_these_families": false,
+      "safety_evidence": false
+    },
+    "ece": 0.165,
+    "nll": 0.93,
+    "ece_definition": {
+      "confidence": "the project's normalized confidence, (n * pmax - 1) / (n - 1)",
+      "use": "descriptive only; no calibration gate was applied",
+      "precision": "rounded to three decimals"
+    }
+  },
+  "limitations": [
+    "All 20 model-visible test situations occur in training; only the renamed-catalog slice is a new surface.",
+    "No latency or cost claim is supported.",
+    "A private hosted canary was run later and missed its pre-registered exact-choice parity gate, so no hosted result is claimed."
+  ]
+}
