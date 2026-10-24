@@ -13,14 +13,7 @@ retained locally outside version control. This register describes them in words
 rather than naming any file or path, so that this file is itself safe to
 publish. Everything a reader can check is in the public artifacts named below.
 
-Two exclusions apply to the lead rows below. The drawn artifacts and the video
-(`docs/architecture.svg`, `docs/demo.html`, the pitch deck under
-`submission/pitch/`, and the rendered video) still show the **superseded
-post-D1 flow** and are pending a rebuild, so the lead rows do not describe
-them; what they currently show is recorded in the superseded section. And the
-official judging criteria and their weights are recorded once, in
-`docs/submission-checklist.md`, framed as external criteria; no weight, score,
-estimate or point total appears in this file.
+The README flowchart, browser replay and current video present the pre-selection sequence described by the lead rows. The video reuses recorded evidence and original synthetic narration; its edit is not a new experiment. Current encoded-file checks are in `dist/video/validation.json`. Official judging criteria and weights are recorded in `docs/submission-checklist.md` as external criteria; no weight, score, estimate or point total appears here.
 
 Run 1 happens once: one inference, 21.6 s client time, unresolved, with the
 receipt stored. Run 1 is not saved. The superseded post-D1 Run 2 made two
@@ -74,7 +67,7 @@ the receipt before selection. The memoryless control stays stuck.
 | E3 | Memoryless control, without receipts: 3 independent calls. Each call was offered all 4 diagnostics, chose `inspect_pipeline` (3 of 3), spent its 1 allowed read, and ended `unresolved` / `diagnostic_reads_exhausted` (3 of 3). | Supported | `loop-escape-proof.json`; the private loop-escape proof records (not published) |
 | E4 | Run 1, with receipts: decision history empty, all 4 diagnostics offered, Decider 2B chose `inspect_pipeline`, 1 inference, 1 read, ended `unresolved` / `diagnostic_reads_exhausted`. The verifier then stored a `disposition_unchanged` receipt citing that choice. | Supported | `loop-escape-proof.json`; the private loop-escape proof records (not published) |
 | E5 | Run 2, a new call on the same problem: the controller matched the Run 1 receipt exactly and precluded only that one proven dead end, before the first Decider request and before any read. Nothing else was removed from the option set. | Supported | `loop-escape-proof.json`; the private loop-escape proof records (not published) |
-| E6 | Run 2's single Decider request was offered the 3 remaining diagnostics in their original order and made one fresh choice, `inspect_schema_keys`. 1 inference, 1 read, repair applied, verification passed, `completed` / `populated_after_repair` (1 of 1). No second Decider call was made. | Supported | `loop-escape-proof.json`; the private loop-escape proof records (not published) |
+| E6 | Run 2's single Decider request was offered the 3 remaining options (two diagnostics plus request_review) in their original order and made one fresh choice, `inspect_schema_keys`. 1 inference, 1 read, repair applied, verification passed, `completed` / `populated_after_repair` (1 of 1). No second Decider call was made. | Supported | `loop-escape-proof.json`; the private loop-escape proof records (not published) |
 | E7 | 1 preclusion across the 5 hosted choices, and that preclusion cited the receipt Run 1 wrote. 0 false preclusions in the observed sequence of 5 choices. | Supported | `loop-escape-proof.json` |
 | E8 | The preclusion cost zero reads and zero inferences, so Run 2's one read and one inference both went to a path not already proven useless. That is the difference between the control and Run 2 on this case. | Supported | `loop-escape-proof.json`; `docs/decision-receipt.md`, "The bounded loop" |
 | E9 | The design bound was not reached. Each call allows at most two Decider choices, D1 and one optional D2 re-decision; the observed Run 2 used one, so the escape happened inside the first choice rather than through a re-decision. | Supported | `loop-escape-proof.json`; `docs/decision-receipt.md`, "Hard bounds" |

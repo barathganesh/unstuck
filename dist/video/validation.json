@@ -1,101 +1,135 @@
-[
-  {
-    "gate": "preflight",
-    "status": "PASS",
-    "detail": "toolchain complete",
-    "evidence": []
+{
+  "schema_version": 2,
+  "artifact": "dist/video/unstuck-demo.mp4",
+  "status": "PASS",
+  "scope": "Checks run on this local workflow-led edit only. The original private ten-gate report does not certify this file. Recorded AWS evidence supplies the terminal-result screens.",
+  "video": {
+    "duration_seconds": 128.8,
+    "frames": 3864,
+    "fps": 30,
+    "width": 1280,
+    "height": 720,
+    "video_codec": "h264",
+    "pixel_format": "yuv420p",
+    "audio_codec": "aac",
+    "audio_sample_rate": 48000,
+    "audio_channels": 1,
+    "bytes": 4817595,
+    "artist": "Barath Ganesh"
   },
-  {
-    "gate": "ssml-lint",
-    "status": "PASS",
-    "detail": "10 segments clean",
-    "evidence": []
+  "checks": [
+    {
+      "name": "geometry_and_duration",
+      "status": "PASS",
+      "detail": "ffprobe confirms 1280x720, 30 fps, 3864 frames, H.264/yuv420p, AAC mono at 48 kHz; 128.800 seconds is below 180 seconds."
+    },
+    {
+      "name": "full_decode",
+      "status": "PASS",
+      "detail": "FFmpeg decoded all video frames and the audio stream without an error."
+    },
+    {
+      "name": "black_frames",
+      "status": "PASS",
+      "detail": "FFmpeg blackdetect found no black span longer than 0.4 seconds."
+    },
+    {
+      "name": "audio_gaps",
+      "status": "PASS",
+      "detail": "Longest detected silence is 0.799083 seconds at a minus-40 dB threshold; none reaches one second."
+    },
+    {
+      "name": "narration_roundtrip",
+      "status": "PASS",
+      "detail": "Local faster-whisper base.en recognition matched the reordered narration with token similarity 0.9653. All scenes and the full closing sentence were recognized; brand spelling, number words and minor inflections were reviewed."
+    },
+    {
+      "name": "public_text_scan",
+      "status": "PASS",
+      "detail": "All 92 declared public text files and inspectable pitch-deck text pass the repository scanner, with all 24 positive controls passing."
+    },
+    {
+      "name": "encoded_text_scan",
+      "status": "PASS",
+      "detail": "Apple Vision OCR read 64 encoded frames at two-second intervals. The repository text scanner found zero forbidden identifiers. Barath Ganesh was recognized in six closing samples."
+    },
+    {
+      "name": "visual_review",
+      "status": "PASS",
+      "detail": "Fourteen encoded frames reviewed across the styled introduction, AWS flow, LoRA, source code, shell commands, logs, JSON results, metric pages and named closing. The code excerpt was checked at full size for clipping."
+    }
+  ],
+  "narration": {
+    "method": "Local faster-whisper base.en recognition of the final reordered encoded video.",
+    "token_similarity": 0.9653,
+    "differences": [
+      {
+        "authored": "read",
+        "recognized": "red"
+      },
+      {
+        "authored": "sagemaker",
+        "recognized": "sage maker"
+      },
+      {
+        "authored": "nova lite",
+        "recognized": "novolite"
+      },
+      {
+        "authored": "lora",
+        "recognized": "low ra"
+      },
+      {
+        "authored": "lora",
+        "recognized": "low ra"
+      },
+      {
+        "authored": "1",
+        "recognized": "one"
+      },
+      {
+        "authored": "2",
+        "recognized": "two"
+      },
+      {
+        "authored": "inspect",
+        "recognized": "inspects"
+      },
+      {
+        "authored": "percent",
+        "recognized": ""
+      }
+    ],
+    "recognized_transcript": [
+      " A report returned zero rows. Without receipts, Decider picked Inspect Pipeline on three calls.",
+      " Each spent its one red and ended unresolved. Decider serves from a private, always on Amazon Sage",
+      " Maker Endpoint. Amazon Bedrock Novolite narrates only after completion. Offline, we ran every",
+      " diagnostic and trained low RA plus Decider's Choice Head on Verifier Labels. At runtime,",
+      " the receipt removes one repeat, low RA ranks what remains, the Verifier owns truth,",
+      " The reusable recipe sends current state and matching history to Decider.",
+      " Only a proven exact repeat is withheld before selection. A receipt cannot pick a tool. Decider",
+      " chooses from the remaining tools. Run one happens once, one inference, 21.6 seconds of client time,",
+      " one read, unresolved. The deterministic Verifier stored a decision receipt, real data, no decision",
+      " moved. The model is unchanged. The system recorded a fact. Run two is a new call,",
+      " and the exact receipt matches. Before the first Decider request and before any read,",
+      " the controller precludes only the proven dead end. Decider makes one fresh choice,",
+      " inspects schema keys. One inference, one read, a verified repair, completed in 26.6 seconds.",
+      " Old Run 2 took 54.8 seconds and two inferences. Optimized Run 2 takes 26.6 seconds and one inference.",
+      " That is one fewer inference and an observed difference of 28.2 seconds or 51.4% lower client latency.",
+      " One synthetic case, each proof once. Across 160 decisions, correct first",
+      " choices rose from 97 to 129. Across 64 calls, wasted first reads fell from 20 to 15 and completions",
+      " rose from 44 to 49. CPU replay confirmed direction, one seed, experimental checkpoint.",
+      " One failed decision becomes a boundary. History can rule out one proven execution under one",
+      " identical context. It cannot choose the next tool. Decider chooses. The Verifier decides what the read",
+      " found."
+    ],
+    "captions": 36
   },
-  {
-    "gate": "prerender-data",
-    "status": "PASS",
-    "detail": "ten narrations and visual sources clean; eight exact embedded pitch images and two early ML frames",
-    "evidence": []
-  },
-  {
-    "gate": "timing",
-    "status": "PASS",
-    "detail": "all segments within thresholds",
-    "evidence": [
-      "01-hook: 26.9s, 154 wpm, worst gap 0.0s",
-      "02-ml-process: 13.8s, 130 wpm, worst gap 0.0s",
-      "03-ml-validation: 18.9s, 117 wpm, worst gap 0.0s",
-      "04-control-stays-stuck: 14.9s, 145 wpm, worst gap 0.0s",
-      "05-run-1-pays-once: 19.4s, 124 wpm, worst gap 0.0s",
-      "06-run-2-escapes: 23.6s, 140 wpm, worst gap 0.0s",
-      "07-proof: 24.9s, 130 wpm, worst gap 0.0s",
-      "08-private-aws-path: 17.0s, 134 wpm, worst gap 0.0s",
-      "09-reusable-pattern: 13.4s, 143 wpm, worst gap 0.0s",
-      "10-boundary: 13.8s, 139 wpm, worst gap 0.0s"
-    ]
-  },
-  {
-    "gate": "stt-roundtrip",
-    "status": "PASS",
-    "detail": "narration matches intent",
-    "evidence": [
-      "01-hook: 98% match (41 tokens)",
-      "02-ml-process: 95% match (21 tokens)",
-      "03-ml-validation: 100% match (27 tokens)",
-      "04-control-stays-stuck: 91% match (23 tokens)",
-      "05-run-1-pays-once: 100% match (25 tokens)",
-      "06-run-2-escapes: 97% match (36 tokens)",
-      "07-proof: 97% match (33 tokens)",
-      "08-private-aws-path: 92% match (25 tokens)",
-      "09-reusable-pattern: 100% match (23 tokens)",
-      "10-boundary: 100% match (23 tokens)"
-    ]
-  },
-  {
-    "gate": "stream-uniformity",
-    "status": "PASS",
-    "detail": "all 10 segments: 1280,720,yuv420p,30/1,0/0",
-    "evidence": []
-  },
-  {
-    "gate": "blackdetect",
-    "status": "PASS",
-    "detail": "no black span > 0.4s",
-    "evidence": []
-  },
-  {
-    "gate": "ocr-leak",
-    "status": "PASS",
-    "detail": "89 frames sampled, clean",
-    "evidence": []
-  },
-  {
-    "gate": "joined-timing",
-    "status": "PASS",
-    "detail": "no dead air >= 1.0s across 9 joins; 5356 frames at 30/1",
-    "evidence": [
-      "longest silence anywhere in the joined file: 0.78s"
-    ]
-  },
-  {
-    "gate": "final-artifact",
-    "status": "PASS",
-    "detail": "finished MP4 independently decoded, transcribed and visually sampled",
-    "evidence": [
-      "178.533s; 1280x720; 30 fps; yuv420p; uniform audio and video",
-      "10 narrated segments; 8 current pitch frames; 2 early ML frames; 10 labelled replay steps",
-      "109 OCR samples clean; full decode and timestamps clean",
-      "no black span over 0.4s; no dead air at or above 1.0s",
-      "01-hook: 98% match (41 tokens)",
-      "02-ml-process: 90% match (21 tokens)",
-      "03-ml-validation: 100% match (27 tokens)",
-      "04-control-stays-stuck: 91% match (23 tokens)",
-      "05-run-1-pays-once: 100% match (25 tokens)",
-      "06-run-2-escapes: 97% match (36 tokens)",
-      "07-proof: 97% match (33 tokens)",
-      "08-private-aws-path: 92% match (25 tokens)",
-      "09-reusable-pattern: 100% match (23 tokens)",
-      "10-boundary: 100% match (23 tokens)"
-    ]
-  }
-]
+  "notes": [
+    "Original synthetic Polly narration reordered to match the final chapter sequence.",
+    "Terminal sessions are working local replays of saved evidence, with recorded metrics and JSON outcomes.",
+    "AWS agent uses base Decider 2B; LoRA is the frozen offline training study.",
+    "Final metrics return to styled pages; Barath Ganesh closes the video.",
+    "OCR samples encoded frames; editable source text is also scanned."
+  ]
+}

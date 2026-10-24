@@ -293,13 +293,13 @@ def test_causal_story_and_exact_metrics_match_curated_proof() -> None:
     for phrase in (
         "WITH UNSTUCK",
         "RUN 1",
-        "receipt created",
-        "once / unresolved",
+        "verifier records the dead end",
+        "21.6s / unresolved",
         "Decision Receipt",
         "RUN 2",
         "dead end removed before selection",
         "Same Decider",
-        "one Decider choice",
+        "one choice / 26.6s",
         "inspect_schema_keys",
         "one read / verified repair",
         "completed",
@@ -314,7 +314,9 @@ def test_causal_story_and_exact_metrics_match_curated_proof() -> None:
         f"{client['difference']['relative']['value']}% lower observed Run 2 latency"
         in footer
     )
-    assert "n=1 Same synthetic case / each proof once" in footer
+    assert "n=1" in footer
+    assert "Earlier flow → receipt before selection" in footer
+    assert "Same case / each proof once" in footer
     assert "No dollar savings" in footer
     description = document.find(f"{NS}desc").text or ""
     for phrase in (
@@ -323,7 +325,7 @@ def test_causal_story_and_exact_metrics_match_curated_proof() -> None:
         "Run 1 is not saved",
         "before the first Decider request",
         "The receipt never chooses",
-        "three diagnostics keep their original order",
+        "two remaining diagnostics and request_review keep their original order",
         "one inference, 26.6 seconds",
         "two inferences, 54.8 seconds",
         "28.2 seconds",
@@ -374,9 +376,11 @@ def assert_readme_placement(readme: str) -> None:
         assert phrase in alt
     position = readme.index(f"![{alt}]")
     assert (
-        readme.index("Tags:") < position < readme.index("## The thirty second version")
+        readme.index("## The thirty second version")
+        < position
+        < readme.index("## What was measured")
     )
-    assert readme[:position].count("\n") < 25
+    assert readme[:position].count("\n") < 30
     assert readme.count(CAPTION) == 1 and readme.index(CAPTION) > position
     assert not re.search(r"<svg\b", readme, re.I)
     assert (ROOT / FLOW).is_file()

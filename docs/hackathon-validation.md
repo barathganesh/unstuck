@@ -86,7 +86,7 @@ same one-read bound, for one Run 1 and Run 2 pair in one session. Verdict
   verified.
 - Run 2: history matched the exact receipt Run 1 wrote, and the controller
   precluded that one dead end before the first Decider request and before any
-  read. Over the 3 remaining diagnostics the first decision chose
+  read. Over the 3 remaining options (two diagnostics plus request_review) the first decision chose
   `inspect_schema_keys`, which was also the final choice; no second Decider
   call was made; 1 read; 1 repair, verified; `completed` /
   `populated_after_repair`. Amazon Bedrock Nova Lite narrated only after that
@@ -140,10 +140,7 @@ and it is the evidence these numbers are cited from.
   was observed.
 - The checkpoint was chosen because it repeats this dead end, not because it
   performed well.
-- The published visuals and the video still show the superseded post-D1 flow:
-  `docs/architecture.svg`, `docs/demo.html`, the pitch deck under
-  `submission/pitch/` and the video artifacts. They are pending a rebuild
-  against this sequence and are not current.
+- The README flowchart, browser replay and current video show this pre-selection sequence. The local video edit changes presentation only; no measured experiment was rerun. Its current checks are in `dist/video/validation.json`.
 
 ## The experiments before it
 

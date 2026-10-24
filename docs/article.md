@@ -296,11 +296,7 @@ One smaller failure belongs on the record, because it is the mechanism working:
 the public bundle's sanitizer failed closed the first time it ran against a
 successful result, and the fix did not weaken the check.
 
-The published visuals have not caught up. The architecture diagram, the pitch
-frames, the browser demo page and the rendered video still show the superseded
-post-D1 flow, with a repeat blocked after the first Decider answer and a second
-Decider call behind it. They are pending a rebuild, and until it happens they
-are history rather than a picture of the current sequence.
+The README flowchart, browser replay and current video show preclusion before the first Decider request. The nine-scene local video leads with the incident, presents the research after the working example and credits Barath Ganesh. Its encoded-file checks are recorded in `dist/video/validation.json`; it remains unpublished.
 
 ## The reusable pattern
 
@@ -352,8 +348,7 @@ anything.
 Permute option order, since I never did. Run the held-out corpus, which has not
 been read. Measure how often an identical repeated context actually occurs in a
 workload somebody cares about, because that frequency decides whether this is
-worth doing. Run more than one case. Rebuild the diagram, the frames and the
-video on the current sequence.
+worth doing. Run more than one case.
 
 The result I am most confident in is the smallest one. A model that picks tools
 does not know what its last pick found out. Giving deterministic code verified

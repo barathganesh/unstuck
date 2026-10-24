@@ -596,7 +596,7 @@ def test_demo_sequence_precedes_choice_and_preserves_offer() -> None:
         'plate: "Dead end precluded before selection"'
     ) < run_two.index('plate: "Same Decider picks a new path"')
     preclusion, choice = run_two.split('plate: "Same Decider picks a new path"', 1)
-    assert '"3 diagnostics, original order"' in preclusion
+    assert '"2 diagnostics + request_review, original order"' in preclusion
     assert '"First Decider request", "not sent yet"' in preclusion
     assert '"Reads and inferences spent here", "0 and 0"' in preclusion
     assert '"Fresh choice", "inspect_schema_keys"' in choice
@@ -655,8 +655,8 @@ def test_deliverable_status_records_verified_video_awaiting_publication() -> Non
 
 def test_shipped_video_records_verified_video_awaiting_publication() -> None:
     report = json.loads(text_of("dist/video/validation.json"))
-    assert len(report) == 10
-    assert all(entry["status"] == "PASS" for entry in report)
+    assert report["status"] == "PASS"
+    assert all(entry["status"] == "PASS" for entry in report["checks"])
     checklist = flat(text_of("docs/submission-checklist.md"))
     assert "Verified local promotion is complete; public hosting remains Pending" in (
         checklist

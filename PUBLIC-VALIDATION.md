@@ -1,4 +1,25 @@
-# Public export validation
+# Current local presentation validation
+
+This revision presents the project as two controlled successes: the AWS diagnostic workflow and the verifier-labelled LoRA study. The video uses phased animated workflows, styled introduction, agent flow and LoRA first, followed by source code and shell demonstrations, final metric pages and the named closing.
+
+- Video: **128.800 seconds**, 1280x720, 30 fps, **3,864 frames**, **4,817,595 bytes**. H.264/yuv420p and AAC mono at 48 kHz, below 180 seconds.
+- Credit: **Barath Ganesh**, on screen and in MP4 metadata.
+- Media: complete decode passed; no black span over 0.4 seconds; longest detected silence 0.799083 seconds.
+- Narration: original synthetic Polly audio edited at sentence boundaries. Local recognition similarity 0.9653; recognition confirms the complete reordered narration and closing sentence.
+- Visuals: 14 encoded frames reviewed across the story; Apple Vision OCR scanned 64 encoded samples, with zero forbidden-identifier findings and six samples containing Barath's credit.
+- Captions: **36 optional SRT cues**, ordered and within the video.
+- Public scanner: **92 declared text files**, inspectable PowerPoint text and **24 positive controls** passed. The separate legacy deck-pixel check is skipped because Tesseract is absent; the current video received Apple Vision OCR.
+- Current presentation suite: **702 passed, 1 skipped, 37 deselected**. Ruff and whitespace checks passed.
+- Earlier configured suite: **2,695 passed, 2 skipped, 42 deselected**. Runtime, deployment code and measured research records are unchanged by this presentation revision.
+
+`dist/video/validation.json` records checks against this encoded revision. `PUBLIC-MANIFEST.json` records the current public file sizes and digests. Editable video sources are in `submission/video/`. The finished MP4 is ready to upload without rebuilding.
+
+All work remains local and uncommitted.
+
+<details>
+<summary>Previous export report (historical, before this presentation edit)</summary>
+
+# Previous public export validation
 
 This is an offline validation of the current public export. Paths in this
 document are relative to the export root. Nothing was published or uploaded.
@@ -323,3 +344,5 @@ Validation ran serially. No subagent, orchestration workflow, Git command,
 staging, commit, push, visibility change or remote publication was performed.
 The source checkout was not modified. This destination is ready for staging,
 subject to the measurement and reproducibility limitations stated here.
+
+</details>

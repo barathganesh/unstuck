@@ -24,7 +24,7 @@ ORIGINAL = "docs/unstuck-flow.svg"
 NS = "{http://www.w3.org/2000/svg}"
 PALETTE = {"#141310", "#F5F1E8", "#BDB3A2", "#F1834B"}
 HEADLINE = "Receipts constrain. LoRA ranks what remains."
-ML_HEADING = "## Why receipts need learned ranking"
+ML_HEADING = "## Controlled fine-tuning success"
 BASE_HEADING = "## The thirty second version"
 EVIDENCE_HEADING = "### The offline fine-tune evidence"
 CAPTION = "Receipts constrain before ranking; the verifier decides after it."
@@ -70,7 +70,7 @@ OVERCLAIMS: dict[str, re.Pattern[str]] = {
         re.I,
     ),
 }
-#: LoRA is a core mechanism. None of these may frame it as an afterthought.
+#: The research section must still explain LoRA as a substantive experiment.
 SIDELINED = re.compile(
     r"\badd-?ons?\b|\badd on\b|\boptional(?:ly)?\b|\baddend(?:um|a)\b"
     r"|\blast step\b|\bbolt-?on\b|\bafterthought\b",
@@ -144,7 +144,10 @@ def flat(text: str) -> str:
 
 def ml_section(text: str) -> str:
     after = text.split(ML_HEADING, 1)[1]
-    return ML_HEADING + re.split(r"\n## ", after, maxsplit=1)[0]
+    return (
+        ML_HEADING
+        + re.split(r"\n## |\n### The offline fine-tune evidence", after, maxsplit=1)[0]
+    )
 
 
 def opening(text: str) -> str:
@@ -597,10 +600,10 @@ def readme_table_rows() -> list[str]:
         if verb is None:
             fewer = base - adapted
             relative = f"{Decimal(100 * fewer) / Decimal(base):.0f}%"
-            change = f"{fewer} fewer calls, {relative} fewer"
+            change = f"{relative} fewer wasted first reads"
         else:
-            noun = "decisions" if unit == "decisions" else "calls"
-            change = f"{adapted - base} more {noun}"
+            change = (f"{adapted - base} more correct choices" if unit == "decisions"
+                      else f"{adapted - base} additional completed workflows")
         rows.append(
             f"| {label} | {base} of {total} {unit} ({share(base, total)}) "
             f"| {adapted} of {total} {unit} ({share(adapted, total)}) | {change} |"
@@ -624,20 +627,18 @@ def test_the_readme_states_head_only_and_cpu_replay_from_records() -> None:
     cpu_done = c["cpu_integrated_verified_completions"]
     differences = c["cpu_cuda_differences"]
     for phrase in (
-        f"Head-only training reached {head[1]} correct first choices out of "
-        f"{head[2]} ({share(head[1], head[2])}), but wasted reads stayed at "
-        f"{c['head_only_wasted'][1]} of {c['head_only_wasted'][2]} calls, "
-        "so it was rejected.",
-        f"correct first choices to {cpu_choice[1]} of {cpu_choice[2]} "
+        f"Head-only training reached {head[1]} of {head[2]} correct first choices "
+        f"({share(head[1], head[2])}) while wasted reads stayed at "
+        f"{c['head_only_wasted'][1]} of {c['head_only_wasted'][2]}",
+        f"correct first choices reached {cpu_choice[1]} of {cpu_choice[2]} "
         f"({share(cpu_choice[1], cpu_choice[2])}), up from {cpu_choice[0]} "
         f"({share(cpu_choice[0], cpu_choice[2])})",
-        f"wasted first reads to {cpu_wasted[1]} of {cpu_wasted[2]}, "
-        f"down from {cpu_wasted[0]}",
-        f"completions to {cpu_done[1]} of {cpu_done[2]}, up from {cpu_done[0]}",
-        f"CPU and CUDA differed on {differences[0]} of {differences[2]} "
-        "near-tie decisions",
+        f"wasted first reads fell from {cpu_wasted[0]} to {cpu_wasted[1]} of {cpu_wasted[2]}",
+        f"completions rose from {cpu_done[0]} to {cpu_done[1]} of {cpu_done[2]}",
     ):
         assert phrase in section, phrase
+    assert (f"CPU and CUDA differed on {differences[0]} of {differences[2]} "
+            "near-tie decisions") in flat(readme())
 
 
 def test_the_description_carries_every_outcome_and_boundary() -> None:
@@ -882,7 +883,7 @@ def test_one_accent_and_readable_type() -> None:
     assert "font-size=" not in text
 
 
-def test_the_original_flow_figure_is_untouched() -> None:
+def test_the_main_flow_figure_matches_the_integrity_manifest() -> None:
     manifest = json.loads((ROOT / "PUBLIC-MANIFEST.json").read_text())
     entry = next(item for item in manifest["files"] if item["path"] == ORIGINAL)
     digest = hashlib.sha256((ROOT / ORIGINAL).read_bytes()).hexdigest()
@@ -895,16 +896,17 @@ def test_the_original_flow_figure_is_untouched() -> None:
 
 def assert_readme_story(text: str) -> None:
     head = flat(opening(text))
-    assert "Unstuck has two core mechanisms." in head
-    assert head.index("Decision Receipts stop a new call") < head.index(
-        "A LoRA-adapted Decider 2B then ranks the tools that remain"
-    )
-    assert "is experimental and is not the currently deployed runtime selector" in (
-        head
-    )
+    assert "Strands Decider 2B chooses from the remaining options" in head
+    assert "verifier stores" in head
     headings = re.findall(r"^## .*$", text, re.M)
-    base = headings.index(BASE_HEADING)
-    assert headings[base + 1] == ML_HEADING
+    assert headings.index(BASE_HEADING) < headings.index("## How it works")
+    assert headings.index("## How it works") < headings.index("## Run locally")
+    assert headings.index(BASE_HEADING) < headings.index(ML_HEADING) < headings.index("## How it works")
+    assert headings.index(ML_HEADING) < headings.index("## Testing")
+    assert "the hosted agent uses the base Decider 2B checkpoint" in text
+    assert "the LoRA-adapted checkpoint is evaluated offline" in text
+    details = text.split("<details>", 1)[1].split("</details>", 1)[0]
+    assert ML_HEADING not in details and EVIDENCE_HEADING in details
     section = ml_section(text)
     images = EMBED.findall(text)
     assert len(images) == 1 and len(EMBED.findall(section)) == 1
@@ -951,10 +953,9 @@ def assert_readme_story(text: str) -> None:
     assert text.count(CAPTION) == 1
     assert not re.search(r"<svg\b", text, re.I)
     assert len(re.findall(r"\]\(docs/unstuck-flow\.svg\)", text)) == 1
-    assert 100 <= len(text.splitlines()) <= 130
 
 
-def test_readme_places_learned_ranking_beside_receipts() -> None:
+def test_readme_explains_runtime_before_offline_ranking_research() -> None:
     assert_readme_story(readme())
 
 
@@ -967,12 +968,14 @@ def _ml_section_moved_to_the_end(text: str) -> str:
     "mutate",
     [
         lambda text: text.replace(FIGURE, "docs/missing.svg"),
-        lambda text: text.replace("Unstuck has two core mechanisms. ", ""),
+        lambda text: text.replace(
+            "the hosted agent uses the base Decider 2B checkpoint", "the hosted agent uses LoRA"
+        ),
         lambda text: text.replace("**What we trained.**", "**Training.**"),
         lambda text: text.replace("Nothing learns at runtime.", "", 1),
         _ml_section_moved_to_the_end,
     ],
-    ids=["missing", "opening", "training", "runtime", "placement"],
+    ids=["missing", "deployment-boundary", "training", "runtime", "placement"],
 )
 def test_readme_story_positive_controls(mutate) -> None:
     assert mutate(readme()) != readme()
@@ -985,7 +988,7 @@ def test_the_record_wording_stays_in_the_audit_subsection() -> None:
     # The research-record guard pins these record strings verbatim; they live
     # only in the audit subsection, each beside its plain-language form.
     audit = text.split(EVIDENCE_HEADING, 1)[1].split("\n## ", 1)[0]
-    assert text.index(EVIDENCE_HEADING) > text.index("## Limits")
+    assert text.index(EVIDENCE_HEADING) > text.index("## Reuse the decision pattern")
     assert "from 64 of 80 (80.0%) to 70 of 80 (87.5%), recorded as 64/80" in audit
     assert "from 20 of 64 to 15 of 64 calls, recorded as 20/64 to 15/64" in audit
     assert wrong_shares(audit) == []

@@ -3,7 +3,7 @@
 Eight plates on the current pre-selection sequence. Run 1 pays the learning
 cost once: 1 inference, 21.6 s client time, unresolved, receipt stored. Run 1 is
 not saved. Run 2 exact-precludes only the proven dead end before the first
-Decider request, preserves the remaining 3 diagnostics in original order, and
+Decider request, preserves the remaining two diagnostics and request_review in original order, and
 lets Decider make one fresh choice: 1 inference, 1 read, completed in 26.6 s.
 The memoryless control stays 3 of 3 unresolved.
 
@@ -38,9 +38,7 @@ in one embedded block that the PowerPoint build reads. Editing the HTML and
 regenerating is the only supported way to change the deck. Nothing is authored
 twice.
 
-The frames are the video's target capture size. The existing rendered video
-still embeds the superseded frames and narration. It must be rebuilt separately
-from the current deck and written script before it can be described as current.
+The original deck remains a separate artifact. The current video retains selected recorded screens and uses additional editable screens under `submission/video/`, including a credit for Barath Ganesh. Its sequence is recorded in `docs/video-script.md`; see `dist/video/README.md` for the finished cut and current checks.
 
 ## Open it
 

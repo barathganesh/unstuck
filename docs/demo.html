@@ -440,7 +440,7 @@
         <tbody id="compare-body"></tbody>
       </table>
     </div>
-    <p class="compare-note">Values appear as the steps reach them. Same synthetic case, one diagnostic read per call. Run 2 offers only the 3 remaining diagnostics, in original order.</p>
+    <p class="compare-note">Values appear as the steps reach them. Same synthetic case, one diagnostic read per call. Run 2 offers two diagnostics plus request_review, in original order.</p>
   </section>
 </main>
 
@@ -467,7 +467,7 @@
       act: 0,
       plate: "Report returns zero rows",
       head: "A report comes back empty, and one read is allowed",
-      body: "A synthetic order report comes back empty. Decider 2B is offered four read-only diagnostics and picks one. Each call may spend one diagnostic read. If that read settles nothing, the call ends unresolved. The observed pair uses one Decider inference per call.",
+      body: "A synthetic order report comes back empty. Decider 2B is offered three read-only diagnostics plus request_review and picks one option. Each call may spend one diagnostic read. If that read settles nothing, the call ends unresolved. The observed pair uses one Decider inference per call.",
       facts: [
         ["Case", "one declared synthetic repairable case"],
         ["Initial options offered", "4"],
@@ -533,14 +533,14 @@
       act: 2,
       plate: "Dead end precluded before selection",
       head: "Only the dead end is precluded before selection",
-      body: "Before the first Decider request and before any read, the controller removes only inspect_pipeline from the offer. The 3 remaining diagnostics keep their original order. The preclusion spends no read and no inference. The receipt does not choose a replacement.",
+      body: "Before the first Decider request and before any read, the controller removes only inspect_pipeline from the offer. The two remaining diagnostics and request_review keep their original order. The preclusion spends no read and no inference. The receipt does not choose a replacement.",
       climax: true,
       struck: "inspect_pipeline",
       facts: [
         ["Precluded tool", "inspect_pipeline"],
         ["Preclusion cites", "the receipt Run 1 wrote"],
         ["Reads and inferences spent here", "0 and 0"],
-        ["Remaining offer", "3 diagnostics, original order"]
+        ["Remaining offer", "2 diagnostics + request_review, original order"]
       ],
       counters: { reads: 1, receipts: 1, blocks: 1, completed: 0, unresolved: 1 }
     },

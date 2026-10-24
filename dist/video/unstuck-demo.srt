@@ -1,0 +1,165 @@
+1
+00:00:00,160 --> 00:00:01,680
+A report returned zero rows.
+
+2
+00:00:02,640 --> 00:00:06,000
+Without receipts, Decider picked inspect
+pipeline on three calls.
+
+3
+00:00:06,760 --> 00:00:08,700
+Each spent its one read and ended
+unresolved.
+
+4
+00:00:09,713 --> 00:00:13,373
+Decider serves from a private, always-on
+Amazon SageMaker endpoint.
+
+5
+00:00:14,340 --> 00:00:16,780
+Amazon Bedrock Nova Lite narrates only
+after completion.
+
+6
+00:00:17,387 --> 00:00:22,007
+Offline, we ran every diagnostic and
+trained LoRA plus Decider's choice head
+
+7
+00:00:22,007 --> 00:00:26,047
+on verifier labels. At runtime, the
+receipt removes one repeat;
+
+8
+00:00:26,487 --> 00:00:27,907
+LoRA ranks what remains;
+
+9
+00:00:28,367 --> 00:00:29,527
+the verifier owns truth.
+
+10
+00:00:30,280 --> 00:00:34,140
+The reusable recipe sends current state
+and matching history to Decider.
+
+11
+00:00:34,560 --> 00:00:37,320
+Only a proven exact repeat is withheld
+before selection.
+
+12
+00:00:38,200 --> 00:00:39,540
+A receipt cannot pick a tool.
+
+13
+00:00:40,080 --> 00:00:42,060
+Decider chooses from the remaining tools.
+
+14
+00:00:42,880 --> 00:00:48,200
+Run 1 happens once: one inference, 21.6
+seconds of client time, one read,
+
+15
+00:00:48,660 --> 00:00:49,050
+Unresolved.
+
+16
+00:00:49,960 --> 00:00:54,380
+The deterministic verifier stored a
+Decision Receipt: real data, no decision
+
+17
+00:00:54,380 --> 00:00:56,480
+moved. The model is unchanged.
+
+18
+00:00:56,480 --> 00:00:58,860
+The system recorded a fact.
+
+19
+00:00:59,520 --> 00:01:02,300
+Run 2 is a new call, and the exact receipt
+matches.
+
+20
+00:01:03,060 --> 00:01:06,540
+Before the first Decider request and
+before any read, the controller
+
+21
+00:01:06,540 --> 00:01:08,620
+precludes only the proven dead end.
+
+22
+00:01:08,840 --> 00:01:11,780
+Decider makes one fresh choice, inspect
+schema keys.
+
+23
+00:01:12,440 --> 00:01:17,860
+One inference, one read, a verified
+repair, completed in 26.6 seconds.
+
+24
+00:01:18,600 --> 00:01:21,840
+Old Run 2 took 54.8 seconds and two
+inferences.
+
+25
+00:01:22,540 --> 00:01:26,260
+Optimized Run 2 takes 26.6 seconds and one
+inference.
+
+26
+00:01:26,900 --> 00:01:31,500
+That is one fewer inference and an
+observed difference of 28.2 seconds, or
+
+27
+00:01:31,500 --> 00:01:34,060
+51.4 percent lower client latency.
+
+28
+00:01:34,800 --> 00:01:37,060
+One synthetic case, each proof once.
+
+29
+00:01:37,400 --> 00:01:42,107
+Across 160 decisions, correct first
+choices rose from 97 to
+
+30
+00:01:42,107 --> 00:01:47,587
+129. Across 64 calls, wasted first reads
+fell from 20 to 15
+
+31
+00:01:47,587 --> 00:01:50,187
+and completions rose from 44 to 49;
+
+32
+00:01:50,867 --> 00:01:54,867
+CPU replay confirmed direction, one seed,
+experimental checkpoint.
+
+33
+00:01:55,747 --> 00:01:57,627
+One failed decision becomes a boundary.
+
+34
+00:01:58,207 --> 00:02:01,727
+History can rule out one proven execution
+under one identical context.
+
+35
+00:02:02,347 --> 00:02:03,667
+It cannot choose the next tool.
+
+36
+00:02:03,667 --> 00:02:07,907
+Decider chooses. The verifier decides what
+the read found.
